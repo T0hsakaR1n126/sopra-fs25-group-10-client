@@ -3,7 +3,6 @@ import "@ant-design/v5-patch-for-react-19";
 import styles from "@/styles/page.module.css";
 
 export default function Home() {
-  const router = useRouter();
   return (
     <div className={styles.page} style={{ fontSize: "2rem", fontWeight: "bold" }}>
       WE ARE GROUP 10
