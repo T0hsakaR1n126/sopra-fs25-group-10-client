@@ -1,19 +1,21 @@
 "use client"; // For components that need React hooks and browser APIs, SSR (server side rendering) has to be disabled. Read more here: https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering
 
-import { useRouter } from "next/navigation"; // use NextJS router for navigation
 import { useApi } from "@/hooks/useApi";
 import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
 import { Button, Form, Input } from "antd";
+import { useRouter } from "next/navigation"; // use NextJS router for navigation
 // Optionally, you can import a CSS module or file for additional styling:
 // import styles from "@/styles/page.module.css";
+import Link from "next/link"; // Import Link from Next.js
+
 
 interface FormFieldProps {
   label: string;
   value: string;
 }
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
   const router = useRouter();
   const apiService = useApi();
   const [form] = Form.useForm();
@@ -26,17 +28,22 @@ const Login: React.FC = () => {
     // clear: clearToken, // is commented out because we do not need to clear the token when logging in
   } = useLocalStorage<string>("token", ""); // note that the key we are selecting is "token" and the default value we are setting is an empty string
   // if you want to pick a different token, i.e "usertoken", the line above would look as follows: } = useLocalStorage<string>("usertoken", "");
-
-  const handleLogin = async (values: FormFieldProps) => {
+  
+  const handleRegister = async (values: FormFieldProps) => {
     try {
       // Call the API service and let it handle JSON serialization and error handling
       const response = await apiService.post<User>("/users", values);
-
-      // Use the useLocalStorage hook that returned a setter function (setToken in line 41) to store the token if available
+      
+      // Store the token if available
       if (response.token) {
         setToken(response.token);
       }
-
+      
+      // Store the user ID in local storage
+      if (response.id) {
+        localStorage.setItem("currentUserId", response.id.toString());
+      }
+      
       // Navigate to the user overview
       router.push("/users");
     } catch (error) {
@@ -47,39 +54,56 @@ const Login: React.FC = () => {
       }
     }
   };
-
+  
+  
   return (
+    <div className="login-enclosing-container">
     <div className="login-container">
-      <Form
-        form={form}
-        name="login"
-        size="large"
-        variant="outlined"
-        onFinish={handleLogin}
-        layout="vertical"
-      >
-        <Form.Item
-          name="username"
-          label="Username"
-          rules={[{ required: true, message: "Please input your username!" }]}
-        >
-          <Input placeholder="Enter username" />
-        </Form.Item>
-        <Form.Item
-          name="name"
-          label="Name"
-          rules={[{ required: true, message: "Please input your name!" }]}
-        >
-          <Input placeholder="Enter name" />
-        </Form.Item>
-        <Form.Item>
-          <Button type="primary" htmlType="submit" className="login-button">
-            Login
-          </Button>
-        </Form.Item>
-      </Form>
+    <Form
+    form={form}
+    name="login"
+    size="large"
+    variant="outlined"
+    onFinish={handleRegister}
+    layout="vertical"
+    >
+    <Form.Item
+    name="username"
+    label="Username"
+    rules={[{ required: true, message: "Please input your username!" }]}
+    >
+    <Input placeholder="Enter username" />
+    </Form.Item>
+    <Form.Item
+    name="name"
+    label="Name"
+    rules={[{ required: true, message: "Please input your name!" }]}
+    >
+    <Input placeholder="Enter name" />
+    </Form.Item>
+    <Form.Item
+    name="password"
+    label="Password"
+    rules={[{ required: true, message: "Please input your password!" }]}
+    >
+    <Input.Password placeholder="Enter password" visibilityToggle={true}/>
+    </Form.Item>
+    
+    <Form.Item>
+    <Button type="primary" htmlType="submit" className="login-button">
+    Register
+    </Button>
+    </Form.Item>
+    </Form>
+    </div>
+    <p>
+    Already have an account?{" "}
+    <Link href="/login" className="login-link">
+    Log in here
+    </Link>
+    </p>  
     </div>
   );
 };
 
-export default Login;
+export default Register;

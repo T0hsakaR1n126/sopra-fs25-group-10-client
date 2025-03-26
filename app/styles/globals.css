@@ -41,14 +41,28 @@ a {
   }
 }
 
-.login-container {
+.login-enclosing-container {
   display: flex;
+  flex-direction: column; /* Stack elements vertically */
   justify-content: center;
-  align-items: center;
+  align-items: center; /* Center content horizontally */
   min-height: 100vh;
   background-color: rgb(41, 44, 59);
 }
 
+.login-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(41, 44, 59);
+}
+
+.login-link {
+  color: white;
+  text-decoration: underline;
+  margin-top: 10px;
+}
 .login-button {
   width: 100%;
 }
@@ -59,4 +73,30 @@ a {
   align-items: center;
   min-height: 100vh;
   background-color: rgb(41, 44, 59);
+}
+
+/* Style individual date cells */
+.ant-picker-cell {
+  color: black !important; /* Change text color */
+}
+
+/* Style the weekday row (Sun, Mon, Tue, etc.) */
+.ant-picker-content tr thead {
+  background-color: black !important; /* Background color */
+}
+
+/* Style weekday names (Sun, Mon, Tue, etc.) */
+.ant-picker-content thead th {
+  color: #24a3d5 !important; /* Text color */
+}
+
+.ant-picker-header {
+  color: black !important; /* Change text color */
+  font-weight: bold !important; /* Make the font bold */
+  text-align: center; /* Center align the text */
+}
+
+.ant-message-notice {
+  color: black !important; /* Black text */
+  font-weight: bold !important; /* Bold text */
 }

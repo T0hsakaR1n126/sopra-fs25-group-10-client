@@ -4,7 +4,7 @@ import { ApplicationError } from "@/types/error";
 export class ApiService {
   private baseURL: string;
   private defaultHeaders: HeadersInit;
-
+  
   constructor() {
     this.baseURL = getApiDomain();
     this.defaultHeaders = {
@@ -12,16 +12,16 @@ export class ApiService {
       "Access-Control-Allow-Origin": "*",
     };
   }
-
+  
   /**
-   * Helper function to check the response, parse JSON,
-   * and throw an error if the response is not OK.
-   *
-   * @param res - The response from fetch.
-   * @param errorMessage - A descriptive error message for this call.
-   * @returns Parsed JSON data.
-   * @throws ApplicationError if res.ok is false.
-   */
+  * Helper function to check the response, parse JSON,
+  * and throw an error if the response is not OK.
+  *
+  * @param res - The response from fetch.
+  * @param errorMessage - A descriptive error message for this call.
+  * @returns Parsed JSON data.
+  * @throws ApplicationError if res.ok is false.
+  */
   private async processResponse<T>(
     res: Response,
     errorMessage: string,
@@ -51,79 +51,111 @@ export class ApiService {
       throw error;
     }
     return res.headers.get("Content-Type")?.includes("application/json")
-      ? res.json() as Promise<T>
-      : Promise.resolve(res as T);
+    ? res.json() as Promise<T>
+    :Promise.resolve(res as T);
   }
-
+  
   /**
-   * GET request.
-   * @param endpoint - The API endpoint (e.g. "/users").
-   * @returns JSON data of type T.
-   */
-  public async get<T>(endpoint: string): Promise<T> {
+  * GET request.
+  * @param endpoint - The API endpoint (e.g. "/users").
+  * @returns JSON data of type T.
+  */
+  public async get<T>(endpoint: string, options?: { headers?: Record<string, string> }): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
+    
+    const headers = {
+      ...this.defaultHeaders,
+      ...(options?.headers || {}),
+    };
+    
     const res = await fetch(url, {
       method: "GET",
-      headers: this.defaultHeaders,
+      headers,
     });
+    
     return this.processResponse<T>(
       res,
       "An error occurred while fetching the data.\n",
     );
   }
-
+  
+  
   /**
-   * POST request.
-   * @param endpoint - The API endpoint (e.g. "/users").
-   * @param data - The payload to post.
-   * @returns JSON data of type T.
-   */
-  public async post<T>(endpoint: string, data: unknown): Promise<T> {
+  * POST request.
+  * @param endpoint - The API endpoint (e.g. "/users").
+  * @param data - The payload to post.
+  * @returns JSON data of type T.
+  */
+  public async post<T>(endpoint: string, data: unknown, options?: { headers?: Record<string, string> }): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
+    
+    const headers = {
+      ...this.defaultHeaders,
+      ...(options?.headers || {}), // Merge optional headers
+    };
+    
     const res = await fetch(url, {
       method: "POST",
-      headers: this.defaultHeaders,
+      headers,
       body: JSON.stringify(data),
     });
+    
     return this.processResponse<T>(
       res,
       "An error occurred while posting the data.\n",
     );
   }
+  
+/**
+ * PUT request.
+ * @param endpoint - The API endpoint (e.g. "/users/123").
+ * @param data - The payload to update.
+ * @param options - Optional headers.
+ * @returns JSON data of type T.
+ */
+public async put<T>(endpoint: string, data: unknown, options?: { headers?: Record<string, string> }): Promise<T> {
+  const url = `${this.baseURL}${endpoint}`;
 
-  /**
-   * PUT request.
-   * @param endpoint - The API endpoint (e.g. "/users/123").
-   * @param data - The payload to update.
-   * @returns JSON data of type T.
-   */
-  public async put<T>(endpoint: string, data: unknown): Promise<T> {
-    const url = `${this.baseURL}${endpoint}`;
-    const res = await fetch(url, {
-      method: "PUT",
-      headers: this.defaultHeaders,
-      body: JSON.stringify(data),
-    });
-    return this.processResponse<T>(
-      res,
-      "An error occurred while updating the data.\n",
-    );
-  }
+  const headers = {
+    ...this.defaultHeaders,
+    ...(options?.headers || {}), // Merge optional headers
+  };
 
-  /**
-   * DELETE request.
-   * @param endpoint - The API endpoint (e.g. "/users/123").
-   * @returns JSON data of type T.
-   */
-  public async delete<T>(endpoint: string): Promise<T> {
-    const url = `${this.baseURL}${endpoint}`;
-    const res = await fetch(url, {
-      method: "DELETE",
-      headers: this.defaultHeaders,
-    });
-    return this.processResponse<T>(
-      res,
-      "An error occurred while deleting the data.\n",
-    );
-  }
+  const res = await fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(data),
+  });
+
+  return this.processResponse<T>(
+    res,
+    "An error occurred while updating the data.\n",
+  );
+}
+
+/**
+ * DELETE request.
+ * @param endpoint - The API endpoint (e.g. "/users/123").
+ * @param options - Optional headers.
+ * @returns JSON data of type T.
+ */
+public async delete<T>(endpoint: string, options?: { headers?: Record<string, string> }): Promise<T> {
+  const url = `${this.baseURL}${endpoint}`;
+
+  const headers = {
+    ...this.defaultHeaders,
+    ...(options?.headers || {}), // Merge optional headers
+  };
+
+  const res = await fetch(url, {
+    method: "DELETE",
+    headers,
+  });
+
+  return this.processResponse<T>(
+    res,
+    "An error occurred while deleting the data.\n",
+  );
+}
+
 }
