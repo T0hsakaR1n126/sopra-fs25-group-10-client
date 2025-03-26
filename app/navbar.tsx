@@ -72,7 +72,7 @@ export default function Navbar() {
         ) : (
             <>
             <Tooltip title="Login">
-            <Link href="/login">
+            <Link href="/auth/login">
             <LoginOutlined 
             style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }} 
             aria-label="Login"
@@ -81,7 +81,7 @@ export default function Navbar() {
             </Tooltip>
             
             <Tooltip title="Register">
-            <Link href="/register">
+            <Link href="/auth/register">
             <UserAddOutlined 
             style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }} 
             aria-label="Register"
