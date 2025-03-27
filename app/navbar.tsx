@@ -88,6 +88,16 @@ export default function Navbar() {
             />
             </Link>
             </Tooltip>
+
+            <Tooltip title="Profile">
+            <Link href="/profile">
+            <UserOutlined 
+            style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }} 
+            aria-label="Profile"
+            />
+            </Link>
+            </Tooltip>
+
             
             <Tooltip title="Leaderboard">
             <Link href="/leaderboard">
