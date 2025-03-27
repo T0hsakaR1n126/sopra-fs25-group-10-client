@@ -14,7 +14,7 @@
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.2",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
-    "next": "^15.2.0",
+    "next": "^15.2.4",
     "node-localstorage": "^3.0.5",
     "node-polyfill-webpack-plugin": "^4.1.0",
     "process": "^0.11.10",
