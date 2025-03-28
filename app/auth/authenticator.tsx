@@ -11,7 +11,6 @@ const Authenticator = ({ children }: { children: React.ReactNode }) => {
     const [isLoading, setIsLoading] = useState(true);
     // const [user, setUser] = useState<User | null>(null);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
       const token = localStorage.getItem("token");  
       const authentication = async () => {
@@ -39,7 +38,7 @@ const Authenticator = ({ children }: { children: React.ReactNode }) => {
             authentication();
             setIsLoading(false); // render children only if token exists
         }
-    }, [router]);
+    }, [router, apiService]);
 
     if (isLoading) return null; // no flash
 

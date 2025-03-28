@@ -7,7 +7,7 @@ import { useLogout } from "@/utils/useLogout";
 import { App, Button, Card, Input, message, Tag } from "antd";
 import dayjs from "dayjs";
 import { useParams, useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 // import DatePicker from "react-datepicker";
 // import "react-datepicker/dist/react-datepicker.css";
 import { DatePicker } from "antd";
@@ -30,8 +30,8 @@ const UserProfile: React.FC = () => {
   const { value: token } = useLocalStorage<string>("token", "");
   
   const [messageApi, contextHolder] = message.useMessage();
-  // //console.log("token from single user profile", token);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const messageRef = useRef(messageApi);
+  
   useEffect(() => {
     if (!token) return;
     
@@ -47,7 +47,7 @@ const UserProfile: React.FC = () => {
       } catch (error: unknown) {
         const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "User not found!";
         
-        messageApi.error({
+        messageRef.current.error({
           content: errorMessage,
           style: {
             color: "black",
@@ -65,7 +65,7 @@ const UserProfile: React.FC = () => {
       fetchUser();
       
       fetchUser();
-    }, [apiService, id, token]); 
+    }, [apiService, id, token, router]); 
     
     const handleDateSelect = (date: dayjs.Dayjs | null) => {
       if (!date) {
@@ -96,7 +96,7 @@ const UserProfile: React.FC = () => {
       if (!user) return;
       
       if (!token) {
-        messageApi.error("Authentication error. Please log in again.");
+        messageRef.current.error("Authentication error. Please log in again.");
         return;
       }
       
@@ -109,7 +109,7 @@ const UserProfile: React.FC = () => {
       }
       
       if (Object.keys(updatedFields).length === 0) {
-        messageApi.info({
+        messageRef.current.info({
           content: "No changes made.",
           style: { color: "#000", borderRadius: "8px", fontWeight: "bold" },
         });
@@ -124,7 +124,7 @@ const UserProfile: React.FC = () => {
           { headers: { userToken: token } }
         );
         
-        messageApi.success({
+        messageRef.current.success({
           content: "Profile updated successfully.",
           style: { color: "black", borderRadius: "8px", fontWeight: "bold" },
         });
@@ -147,7 +147,7 @@ const UserProfile: React.FC = () => {
           errorMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message ?? "An unknown error occurred";
         }
         
-        messageApi.error({
+        messageRef.current.error({
           content: `Error: ${errorMessage}`,
           style: { color: "black", borderRadius: "8px", fontWeight: "bold" },
         });
