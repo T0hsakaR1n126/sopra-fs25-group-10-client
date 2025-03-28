@@ -2,6 +2,7 @@
 
 import { useApi } from "@/hooks/useApi";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import Authenticator from "@/auth/authenticator";
 import { User } from "@/types/user";
 import { Button, Form, Input } from "antd";
 import Link from "next/link";
@@ -55,43 +56,43 @@ const Login: React.FC = () => {
   
   return (
     <div className="login-enclosing-container">
-    <div className="login-container">
-    <Form
-    form={form}
-    name="login"
-    size="large"
-    variant="outlined"
-    onFinish={handleLogin}
-    layout="vertical"
-    >
-    <Form.Item
-    name="username"
-    label="Username"
-    rules={[{ required: true, message: "Please input your username!" }]}
-    >
-    <Input placeholder="Enter username" />
-    </Form.Item>
-    <Form.Item
-    name="password"
-    label="Password"
-    rules={[{ required: true, message: "Please input your password!" }]}
-    >
-    <Input.Password placeholder="Enter password" visibilityToggle={true}/>
-    </Form.Item>
-    
-    <Form.Item>
-    <Button type="primary" htmlType="submit" className="login-button">
-    Login
-    </Button>
-    </Form.Item>
-    </Form>
-    </div>
-    <p>
-    Don&apos;t have an account yet?{" "}
-    <Link href="/register" className="login-link">
-    Register here
-    </Link>
-    </p>  
+      <div className="login-container">
+        <Form
+        form={form}
+        name="login"
+        size="large"
+        variant="outlined"
+        onFinish={handleLogin}
+        layout="vertical"
+        >
+          <Form.Item
+          name="username"
+          label="Username"
+          rules={[{ required: true, message: "Please input your username!" }]}
+          >
+            <Input placeholder="Enter username" />
+          </Form.Item>
+          <Form.Item
+          name="password"
+          label="Password"
+          rules={[{ required: true, message: "Please input your password!" }]}
+          >
+            <Input.Password placeholder="Enter password" visibilityToggle={true}/>
+          </Form.Item>
+      
+          <Form.Item>
+            <Button type="primary" htmlType="submit" className="login-button">
+            Login
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
+      <p>
+        Don&apos;t have an account yet?{" "}
+        <Link href="/register" className="login-link">
+        Register here
+        </Link>
+      </p>  
     </div>
   );
 };
