@@ -31,6 +31,7 @@ const UserProfile: React.FC = () => {
   
   const [messageApi, contextHolder] = message.useMessage();
   // //console.log("token from single user profile", token);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!token) return;
     

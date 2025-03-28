@@ -2,7 +2,6 @@
 
 import { useApi } from "@/hooks/useApi";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import Authenticator from "@/auth/authenticator";
 import { User } from "@/types/user";
 import { Button, Form, Input } from "antd";
 import Link from "next/link";
