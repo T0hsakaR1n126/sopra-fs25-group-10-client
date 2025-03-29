@@ -12,7 +12,14 @@ const ProfilePage = () => {
     avatar: "/default-avatar.png",
   });
 
-  const handleSave = async (values: any) => {
+  type ProfileFormValues = {
+    username: string;
+    email?: string;
+    bio?: string;
+    avatar: string;
+  };
+
+  const handleSave = async (values: ProfileFormValues) => {
     // Mock API Call to check unique username
     if (values.username === "takenUsername") {
       message.error("Username is already taken. Please choose another.");
