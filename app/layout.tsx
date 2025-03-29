@@ -1,9 +1,12 @@
-import type { Metadata } from "next";
+"use client"; 
+
 import { Geist, Geist_Mono } from "next/font/google";
 import { ConfigProvider, theme } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "@/styles/globals.css";
 import Navbar from "./navbar";
+import { usePathname } from "next/navigation";
+import { metadata } from "./utils/metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,14 +18,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "sopra-fs25-group-10",
-  description: "sopra-fs25-template-client",
-};
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const excludeNavbar = ["/"];
+
   return (
     <html lang="en">
+      <head>
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ConfigProvider
           theme={{
@@ -42,7 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         >
           {/* ✅ Navbar is now imported here */}
-          <Navbar />
+          {!excludeNavbar.includes(usePathname()) && <Navbar />}
           
           {/* Page Content */}
           <AntdRegistry>{children}</AntdRegistry>

@@ -98,7 +98,7 @@ const Register: React.FC = () => {
       </div>
       <p>
         Already have an account?{" "}
-        <Link href="/login" className="login-link">
+        <Link href="/users/login" className="login-link">
         Log in here
         </Link>
       </p>  
