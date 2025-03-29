@@ -22,7 +22,7 @@ Note: If a team member fails to show continuous progress after using their Joker
 
 | **Student**      | **Date**  | **Link to Commit**          | **Description**                     | **Relevance**                          |
 |-------------------|-----------|-----------------------------|-------------------------------------|-----------------------------------------|
-| **@rkoonireddy** | [26-03-2025]    | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/pull/16/commits/c95362e412ef16c1dcfe1341aeb9c382e30d7934          | Home Page Creation]     | Bringing the prototype to life. Ensure s that the envisaged prototype is feasible to implement.     |
+| **@rkoonireddy** | [26-03-2025]    | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/pull/16/commits/c95362e412ef16c1dcfe1341aeb9c382e30d7934          | Home Page Creation    | Bringing the prototype to life. Ensure s that the envisaged prototype is feasible to implement.     |
 | **@rkoonireddy** | 30-03-2025    | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/pull/19/commits/debf9aa741acf9b93be53709a8496a4040acb2b9          | Login, Register, ReduxStore implementations    | Handling game data for a session is daunting if we continue to use LocalStore and left without a way to visualise and securely manage id. I have changed our current LocalStorage view to ReduxStore with persistence, enabling best of both worlds.     |
 |                   | [date]    | [Link to Commit 2]          | [Brief description of the task]     | [Why this contribution is relevant]     |
 | **[@githubUser2]** | [date]    | [Link to Commit 1]          | [Brief description of the task]     | [Why this contribution is relevant]     |
