@@ -66,7 +66,7 @@ const HomePage = () => {
               <Image src="/play-button.png" alt="Play" width={30} height={30} />
             </Button>
             <Text style={{ color: '#fff', marginTop: '10px', display: 'block' }}>
-              Let's play
+              Let&apos;s play
               <span className="dots">.</span>
             </Text>
 
