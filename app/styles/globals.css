@@ -47,7 +47,7 @@ a {
   justify-content: center;
   align-items: center; /* Center content horizontally */
   min-height: 100vh;
-  background-color: rgb(41, 44, 59);
+  /* background-color: rgb(41, 44, 59); */
 }
 
 .login-container {
@@ -55,7 +55,7 @@ a {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: rgb(41, 44, 59);
+  /* background-color: rgb(41, 44, 59); */
 }
 
 .login-link {
@@ -99,4 +99,43 @@ a {
 .ant-message-notice {
   color: black !important; /* Black text */
   font-weight: bold !important; /* Bold text */
+}
+
+/* Global styles for Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  background: #000;
+  color: #fff;
+  z-index: 1000; /* Ensures it stays above other elements */
+}
+
+/* Push the body content down to prevent overlap */
+body {
+  padding-top: 80px; /* Adjust based on navbar height */
+}
+
+/* Container for the right-side icons */
+.nav-icons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Common styles for icons */
+.nav-icon {
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.nav-icon:hover {
+  color: #1e90ff; /* Change color on hover */
+  transform: scale(1.1); /* Slightly enlarge icon */
 }
