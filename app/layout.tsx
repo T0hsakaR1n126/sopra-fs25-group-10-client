@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import { metadata } from "@/utils/metadata";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ConfigProvider, theme } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
@@ -15,14 +15,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "sopra-fs25-group-10",
-  description: "sopra-fs25-template-client",
-};
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <title>{metadata.title}</title>
+        <meta name="description" content={metadata.description} />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ConfigProvider
           theme={{
@@ -43,7 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           {/* ✅ Navbar is now imported here */}
           <Navbar />
-          
+
           {/* Page Content */}
           <AntdRegistry>{children}</AntdRegistry>
         </ConfigProvider>
