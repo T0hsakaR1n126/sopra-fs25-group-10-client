@@ -6,7 +6,7 @@ import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "@/styles/globals.css";
 import Navbar from "./navbar";
 import { usePathname } from "next/navigation";
-import { metadata } from "./utils/metadata";
+import { metadata } from "@/utils/metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
