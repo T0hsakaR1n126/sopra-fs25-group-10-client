@@ -4,6 +4,7 @@ import { ConfigProvider, theme } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "@/styles/globals.css";
 import Navbar from "./navbar";
+import ReduxProvider from "./ReduxProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -20,23 +21,24 @@ export { metadata };
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+     <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <ReduxProvider>
         <ConfigProvider
-          theme={{
-            algorithm: theme.defaultAlgorithm,
-            token: {
-              colorPrimary: "#22426b",
-              borderRadius: 8,
-              colorText: "#fff",
-              fontSize: 16,
-              colorBgContainer: "#16181D",
-            },
-            components: {
-              Button: { colorPrimary: "#75bd9d", algorithm: true, controlHeight: 38 },
-              Input: { colorBorder: "gray", colorTextPlaceholder: "#888888", algorithm: false },
-              Form: { labelColor: "#fff", algorithm: theme.defaultAlgorithm },
-            },
-          }}
+        theme={{
+          algorithm: theme.defaultAlgorithm,
+          token: {
+            colorPrimary: "#22426b",
+            borderRadius: 8,
+            colorText: "#fff",
+            fontSize: 16,
+            colorBgContainer: "#16181D",
+          },
+          components: {
+            Button: { colorPrimary: "#75bd9d", algorithm: true, controlHeight: 38 },
+            Input: { colorBorder: "gray", colorTextPlaceholder: "#888888", algorithm: false },
+            Form: { labelColor: "#fff", algorithm: theme.defaultAlgorithm },
+          },
+        }}
         >
           {/* ✅ Navbar is now imported here */}
           <Navbar />
@@ -44,7 +46,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* Page Content */}
           <AntdRegistry>{children}</AntdRegistry>
         </ConfigProvider>
-      </body>
+      </ReduxProvider>
+     </body>
     </html>
   );
 }
