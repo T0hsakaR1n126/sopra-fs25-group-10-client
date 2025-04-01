@@ -37,7 +37,7 @@ Note: If a team member fails to show continuous progress after using their Joker
 | **@T0hsakaR1n126** | 30-03-2026         | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/233485540c384f35bdb3ea7a6133ceb70618ef5f |implement mapperDTO related to Game entity | This DTO will be API communicate with frontend about information of game. |
 | **@T0hsakaR1n126** | 30-03-2026         | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/cf871d40de6eb96c8e36d01b22edd29db4cd1961 |implement gameCreate contorller and gameCreate gameService |This method is used to create game.|
 | **@JaveyBae** | 27-03-2025         |  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/a0c1f089f5203e889a146b84548ba05b78717fc9 |implement Ui design of user profile | User profile is a necessary part of user system. This module enables user to change personal data and stores user preference. |
-| **@JaveyBae** | 27-03-2025         |  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/a0c1f089f5203e889a146b84548ba05b78717fc9 |implement register Restful API feature |This module is a prerequisite for the normal use of the registration function |
+| **@JaveyBae** | 27-03-2025         |  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/40fb2571aa77210d776085d24b4cc7a08bbb91af |implement register Restful API feature |This module is a prerequisite for the normal use of the registration function |
 
 
                                                                                                                                                    |
