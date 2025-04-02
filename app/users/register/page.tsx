@@ -1,14 +1,15 @@
-"use client"; // For components that need React hooks and browser APIs, SSR (server side rendering) has to be disabled. Read more here: https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering
+"use client";
 
 import { useApi } from "@/hooks/useApi";
-import useLocalStorage from "@/hooks/useLocalStorage";
 import { User } from "@/types/user";
-import { Button, Form, Input } from "antd";
-import { useRouter } from "next/navigation"; // use NextJS router for navigation
-// Optionally, you can import a CSS module or file for additional styling:
-// import styles from "@/styles/page.module.css";
-import Link from "next/link"; // Import Link from Next.js
+import { Layout, Row, Col, Form, Input, Button } from "antd";
+import Image from 'next/image';
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useDispatch } from "react-redux"; // Import useDispatch
+import { login } from "@/userSlice"; // Import login action from your userSlice
 
+const { Content } = Layout;
 
 interface FormFieldProps {
   label: string;
@@ -19,90 +20,95 @@ const Register: React.FC = () => {
   const router = useRouter();
   const apiService = useApi();
   const [form] = Form.useForm();
-  // useLocalStorage hook example use
-  // The hook returns an object with the value and two functions
-  // Simply choose what you need from the hook:
-  const {
-    // value: token, // is commented out because we do not need the token value
-    set: setToken, // we need this method to set the value of the token to the one we receive from the POST request to the backend server API
-    // clear: clearToken, // is commented out because we do not need to clear the token when logging in
-  } = useLocalStorage<string>("token", ""); // note that the key we are selecting is "token" and the default value we are setting is an empty string
-  // if you want to pick a different token, i.e "usertoken", the line above would look as follows: } = useLocalStorage<string>("usertoken", "");
-  
+  const dispatch = useDispatch(); // Set up dispatch for Redux actions
+
   const handleRegister = async (values: FormFieldProps) => {
     try {
       // Call the API service and let it handle JSON serialization and error handling
       const response = await apiService.post<User>("/users", values);
-      
-      // Store the token if available
-      if (response.token) {
-        setToken(response.token);
+
+      if (response.token && response.id) {
+        // Dispatch login action to Redux store
+        dispatch(
+          login({
+            username: response.username ?? "",
+            status: response.status ?? "OFFLINE",
+            userId: response.id.toString(),
+            token: response.token,
+          })
+        );
+
+        // Navigate to the user overview (or wherever the user should go after registration)
+        router.push("/lobby");
       }
-      
-      // Store the user ID in local storage
-      if (response.id) {
-        localStorage.setItem("currentUserId", response.id.toString());
-      }
-      
-      // Navigate to the user overview
-      router.push("/users");
     } catch (error) {
       if (error instanceof Error) {
-        alert(`Something went wrong during the login:\n${error.message}`);
+        alert(`Something went wrong during registration:\n${error.message}`);
       } else {
-        console.error("An unknown error occurred during login.");
+        console.error("An unknown error occurred during registration.");
       }
     }
   };
-  
-  
+
   return (
-    <div className="login-enclosing-container">
-      <div className="login-container">
-        <Form
-        form={form}
-        name="login"
-        size="large"
-        variant="outlined"
-        onFinish={handleRegister}
-        layout="vertical"
-        >
-          <Form.Item
-          name="username"
-          label="Username"
-          rules={[{ required: true, message: "Please input your username!" }]}
-          >
-            <Input placeholder="Enter username" />
-          </Form.Item>
-          <Form.Item
-          name="name"
-          label="Name"
-          rules={[{ required: true, message: "Please input your name!" }]}
-          >
-            <Input placeholder="Enter name" />
-          </Form.Item>
-          <Form.Item
-          name="password"
-          label="Password"
-          rules={[{ required: true, message: "Please input your password!" }]}
-          >
-            <Input.Password placeholder="Enter password" visibilityToggle={true}/>
-          </Form.Item>
-      
-          <Form.Item>
-            <Button type="primary" htmlType="submit" className="login-button">
-            Register
-            </Button>
-          </Form.Item>
-        </Form>
-      </div>
-      <p>
-        Already have an account?{" "}
-        <Link href="/users/login" className="login-link">
-        Log in here
-        </Link>
-      </p>  
-    </div>
+    <Content style={{ minHeight: "100vh", padding: "50px" }}>
+      <Row justify="center" align="middle" style={{ textAlign: "center" }}>
+        <Col xs={24} md={16}>
+          <Image
+            src="/mapmaster-logo.png"
+            alt="MapMaster Logo"
+            width={350}
+            height={300}
+          />
+          <div className="login-container">
+            <Form
+              form={form}
+              name="register"
+              size="large"
+              onFinish={handleRegister}
+              layout="vertical"
+            >
+              <Form.Item
+                name="username"
+                label="Username"
+                rules={[{ required: true, message: "Please input your username!" }]}
+              >
+                <Input placeholder="Enter username" />
+              </Form.Item>
+
+              <Form.Item
+                name="name"
+                label="Name"
+                rules={[{ required: true, message: "Please input your name!" }]}
+              >
+                <Input placeholder="Enter name" />
+              </Form.Item>
+
+              <Form.Item
+                name="password"
+                label="Password"
+                rules={[{ required: true, message: "Please input your password!" }]}
+              >
+                <Input.Password placeholder="Enter password" visibilityToggle={true} />
+              </Form.Item>
+
+              <Form.Item>
+                <Button type="primary" htmlType="submit" className="login-button">
+                  Register
+                </Button>
+              </Form.Item>
+            </Form>
+          </div>
+
+          <p>
+            Already have an account?{" "}
+            <Link href="/users/login" className="login-link">
+              Log in here
+            </Link>
+          </p>
+        </Col>
+      </Row>
+    </Content>
   );
 };
 

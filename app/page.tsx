@@ -2,11 +2,11 @@
 
 import { Button, Col, Layout, Row, Typography } from "antd";
 import Image from 'next/image';
-import { useRouter } from "next/navigation"; // use NextJS router for navigation
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const { Content } = Layout;
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const HomePage = () => {
   const router = useRouter();
@@ -66,7 +66,7 @@ const HomePage = () => {
               <Image src="/play-button.png" alt="Play" width={30} height={30} />
             </Button>
             <Text style={{ color: '#fff', marginTop: '10px', display: 'block' }}>
-              Let's play
+              Let&apos;s play
               <span className="dots">.</span>
             </Text>
 
