@@ -5,6 +5,7 @@ import "@/styles/globals.css";
 import Navbar from "./navbar";
 import ReduxProvider from "./ReduxProvider";
 import { metadata } from "@/utils/metadata";
+import { usePathname } from "next/navigation";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
