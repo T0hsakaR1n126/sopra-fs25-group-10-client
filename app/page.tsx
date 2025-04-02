@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 const { Content } = Layout;
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const HomePage = () => {
   const router = useRouter();
@@ -31,11 +31,11 @@ const HomePage = () => {
           </Text>
 
           {/* Rules Section */}
-          {/* <div style={{ color: '#fff', fontSize: '1rem', textAlign: 'center', marginBottom: "30px" }}>
-            <Title level={4} style={{ color: '#fff', textDecoration: 'underline' }}>Rules</Title> */}
+          <div style={{ color: '#fff', fontSize: '1rem', textAlign: 'center', marginBottom: "30px" }}>
+            <Title level={4} style={{ color: '#fff', textDecoration: 'underline' }}>Rules</Title>
 
             {/* Remove list bullets */}
-            {/* <ol style={{ listStyleType: "none", paddingLeft: 0 }}>
+            <ol style={{ listStyleType: "none", paddingLeft: 0 }}>
               <li style={{ marginBottom: "20px" }}>
                 <Title level={5} style={{ color: '#fff' }}>Game Modes</Title>
                 <ul style={{ listStyleType: "none", paddingLeft: 0 }}>
@@ -43,7 +43,7 @@ const HomePage = () => {
                     <Text strong>Solo Mode:</Text> Practice and simulate the game.
                   </li>
                   <li>
-                    <Text strong>Combat Mode:</Text> 1v1 or Team vs Team matches.
+                    <Text strong>Combat Mode:</Text>  Battles for multiple players.
                   </li>
                 </ul>
               </li>
@@ -58,7 +58,7 @@ const HomePage = () => {
                 </ul>
               </li>
             </ol>
-          </div> */}
+          </div>
 
           {/* Play Button */}
           <div style={{ textAlign: 'center', marginTop: '30px' }}>

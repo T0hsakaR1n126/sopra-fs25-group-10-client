@@ -25,30 +25,42 @@ export default function Navbar() {
             </Tooltip>
 
             {/* Right-side Icons */}
-            <div className="nav-icons">
+            <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
                 {isLoggedIn ? (
                     <>
                         <Tooltip title="Profile">
-                            <Link href="/profile">
-                                <UserOutlined className="nav-icon" aria-label="Profile" />
+                            <Link href="/users/profile">
+                                <UserOutlined
+                                    style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }}
+                                    aria-label="Profile"
+                                />
                             </Link>
                         </Tooltip>
 
                         <Tooltip title="Game History">
                             <Link href="/history">
-                                <HistoryOutlined className="nav-icon" aria-label="Game History" />
+                                <HistoryOutlined
+                                    style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }}
+                                    aria-label="Game History"
+                                />
                             </Link>
                         </Tooltip>
 
                         <Tooltip title="Leaderboard">
                             <Link href="/leaderboard">
-                                <TrophyOutlined className="nav-icon" aria-label="Leaderboard" />
+                                <TrophyOutlined
+                                    style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }}
+                                    aria-label="Leaderboard"
+                                />
                             </Link>
                         </Tooltip>
 
                         <Tooltip title="Learning">
                             <Link href="/learning">
-                                <BookOutlined className="nav-icon" aria-label="Learning" />
+                                <BookOutlined
+                                    style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }}
+                                    aria-label="Learning"
+                                />
                             </Link>
                         </Tooltip>
 
@@ -67,7 +79,10 @@ export default function Navbar() {
                     <>
                         <Tooltip title="Login">
                             <Link href="/users/login">
-                                <LoginOutlined className="nav-icon" aria-label="Login" />
+                                <LoginOutlined
+                                    style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }}
+                                    aria-label="Login"
+                                />
                             </Link>
                         </Tooltip>
 
