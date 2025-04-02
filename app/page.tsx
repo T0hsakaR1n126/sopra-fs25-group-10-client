@@ -1,3 +1,5 @@
+"use client";
+
 import { Button, Col, Layout, Row, Typography } from "antd";
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
