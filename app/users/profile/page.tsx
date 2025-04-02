@@ -5,7 +5,7 @@ import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user"
 import { useParams, useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
-import Authenticator from "@/auth/authenticator";
+// import Authenticator from "@/auth/authenticator";
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -13,8 +13,6 @@ const ProfilePage = () => {
   const id = useParams().id;
   const {
     value: token, // is commented out because we do not need the token value
-    set: setToken, // we need this method to set the value of the token to the one we receive from the POST request to the backend server API
-    clear: clearToken, // is commented out because we do not need to clear the token when logging in
   } = useLocalStorage<string>("token", "");
 
   const [form] = Form.useForm();
@@ -22,23 +20,23 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const avatar = ["/avatar_1.png", "/avatar_2.png", "/avatar_3.png", "/avatar_4.png", "/avatar_5.png", "/avatar_6.png"];
 
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const response: User = await apiService.get<User>(`/users/${id}/profile`);
-  //       setUser(response);
-  //     } catch (error) {
-  //       if (error instanceof Error) {
-  //         alert(`Something went wrong while fetching user:\n${error.message}`);
-  //         router.push("/lobby");
-  //       } else {
-  //         console.error("An unknown error occurred while fetching user.");
-  //       }
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response: User = await apiService.get<User>(`/users/${id}/profile`);
+        setUser(response);
+      } catch (error) {
+        if (error instanceof Error) {
+          alert(`Something went wrong while fetching user:\n${error.message}`);
+          router.push("/lobby");
+        } else {
+          console.error("An unknown error occurred while fetching user.");
+        }
+      }
+    };
 
-  //   fetchUser();
-  // }, [apiService]);
+    fetchUser();
+  }, [apiService]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -80,13 +78,13 @@ const ProfilePage = () => {
 
       {/* Profile Form */}
       {/* {!user && ( // only for test */}
-      {!user && (
+      {user && (
         <>
           <Form
             form={form}
             layout="vertical"
             onFinish={handleSave}
-            // initialValues={user} // only for test
+            initialValues={user} // only for test
             style={{ marginTop: "20px" }}
           >
             <Form.Item label="Avatar" shouldUpdate>
@@ -138,8 +136,8 @@ const ProfilePage = () => {
             </Form.Item>
           </Form>
           <br />
-          {/* {user.token === token ? ( */}
-          {!user ? ( // only for test
+          {user.token === token ? (
+          // {!user ? ( // only for test
             !isEditing ? (
               <>
                 <Button type="primary" onClick={handleEdit} style={{ marginRight: '20px' }}>

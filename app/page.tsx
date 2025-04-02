@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 const { Content } = Layout;
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const HomePage = () => {
   const router = useRouter();
