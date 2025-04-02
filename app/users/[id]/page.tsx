@@ -265,3 +265,6 @@
   
 //   export default UserProfile;
   
+export default function UserProfile() {
+  return null;
+}
