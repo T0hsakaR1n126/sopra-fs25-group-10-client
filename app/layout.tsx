@@ -1,10 +1,12 @@
+"use client"
+
 import { Geist, Geist_Mono } from "next/font/google";
 import { ConfigProvider, theme } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "@/styles/globals.css";
 import Navbar from "./navbar";
 import ReduxProvider from "./ReduxProvider";
-import { metadata } from "@/utils/metadata";
+// import { metadata } from "@/utils/metadata";
 import { usePathname } from "next/navigation";
 
 const geistSans = Geist({
@@ -17,7 +19,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export { metadata };
+// export { metadata };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const excludeNavbar = ["/"];
