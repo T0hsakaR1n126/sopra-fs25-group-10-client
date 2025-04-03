@@ -1,6 +1,6 @@
 import { getApiDomain } from "@/utils/domain";
 import { ApplicationError } from "@/types/error";
-
+import { GameScoreResponse } from "@/types/game";
 export class ApiService {
   private baseURL: string;
   private defaultHeaders: HeadersInit;
@@ -51,8 +51,8 @@ export class ApiService {
       throw error;
     }
     return res.headers.get("Content-Type")?.includes("application/json")
-    ? res.json() as Promise<T>
-    :Promise.resolve(res as T);
+      ? res.json() as Promise<T>
+      : Promise.resolve(res as T);
   }
   
   /**
@@ -79,7 +79,6 @@ export class ApiService {
     );
   }
   
-  
   /**
   * POST request.
   * @param endpoint - The API endpoint (e.g. "/users").
@@ -91,7 +90,7 @@ export class ApiService {
     
     const headers = {
       ...this.defaultHeaders,
-      ...(options?.headers || {}), // Merge optional headers
+      ...(options?.headers || {}),
     };
     
     const res = await fetch(url, {
@@ -106,56 +105,65 @@ export class ApiService {
     );
   }
   
-/**
- * PUT request.
- * @param endpoint - The API endpoint (e.g. "/users/123").
- * @param data - The payload to update.
- * @param options - Optional headers.
- * @returns JSON data of type T.
- */
-public async put<T>(endpoint: string, data: unknown, options?: { headers?: Record<string, string> }): Promise<T> {
-  const url = `${this.baseURL}${endpoint}`;
+  /**
+  * PUT request.
+  * @param endpoint - The API endpoint (e.g. "/users/123").
+  * @param data - The payload to update.
+  * @param options - Optional headers.
+  * @returns JSON data of type T.
+  */
+  public async put<T>(endpoint: string, data: unknown, options?: { headers?: Record<string, string> }): Promise<T> {
+    const url = `${this.baseURL}${endpoint}`;
 
-  const headers = {
-    ...this.defaultHeaders,
-    ...(options?.headers || {}), // Merge optional headers
-  };
+    const headers = {
+      ...this.defaultHeaders,
+      ...(options?.headers || {}),
+    };
 
-  const res = await fetch(url, {
-    method: "PUT",
-    headers,
-    body: JSON.stringify(data),
-  });
+    const res = await fetch(url, {
+      method: "PUT",
+      headers,
+      body: JSON.stringify(data),
+    });
 
-  return this.processResponse<T>(
-    res,
-    "An error occurred while updating the data.\n",
-  );
-}
+    return this.processResponse<T>(
+      res,
+      "An error occurred while updating the data.\n",
+    );
+  }
 
-/**
- * DELETE request.
- * @param endpoint - The API endpoint (e.g. "/users/123").
- * @param options - Optional headers.
- * @returns JSON data of type T.
- */
-public async delete<T>(endpoint: string, options?: { headers?: Record<string, string> }): Promise<T> {
-  const url = `${this.baseURL}${endpoint}`;
+  /**
+  * DELETE request.
+  * @param endpoint - The API endpoint (e.g. "/users/123").
+  * @param options - Optional headers.
+  * @returns JSON data of type T.
+  */
+  public async delete<T>(endpoint: string, options?: { headers?: Record<string, string> }): Promise<T> {
+    const url = `${this.baseURL}${endpoint}`;
 
-  const headers = {
-    ...this.defaultHeaders,
-    ...(options?.headers || {}), // Merge optional headers
-  };
+    const headers = {
+      ...this.defaultHeaders,
+      ...(options?.headers || {}),
+    };
 
-  const res = await fetch(url, {
-    method: "DELETE",
-    headers,
-  });
+    const res = await fetch(url, {
+      method: "DELETE",
+      headers,
+    });
 
-  return this.processResponse<T>(
-    res,
-    "An error occurred while deleting the data.\n",
-  );
-}
+    return this.processResponse<T>(
+      res,
+      "An error occurred while deleting the data.\n",
+    );
+  }
 
+  /**
+   * Fetches game score data for a specific game by gameId.
+   * @param gameId - The ID of the game to fetch the score for.
+   * @returns GameScoreResponse containing the game data.
+   */
+  public async getGameScore(gameId: string): Promise<GameScoreResponse> {
+    const endpoint = `/api/game/${gameId}/score`; // API endpoint to fetch game score
+    return this.get<GameScoreResponse>(endpoint); // Call the generic `get` method and return the result
+  }
 }
