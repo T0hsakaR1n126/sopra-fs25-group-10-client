@@ -27,17 +27,17 @@ const Login: React.FC = () => {
       // Call the API service and let it handle JSON serialization and error handling
       const response = await apiService.post<User>("/login", values);
   
-      if (response.token && response.id) {
+      if (response.token && response.userId) {
         // Dispatch login action to Redux store without localStorage
         dispatch(login({ 
-          username: response.username ?? "",
-          status: response.status ?? "", 
-          userId: response.id.toString(), 
-          token: response.token 
-        }));
+            username: response.username ?? "",
+            status: response.status ?? "",
+            userId: response.userId.toString(),
+            token: response.token
+          }));
   
         // Navigate to the user overview
-        router.push("/lobby");
+        router.push("/game");
       }
     } catch (error) {
       if (error instanceof Error) {

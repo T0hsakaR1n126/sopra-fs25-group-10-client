@@ -25,21 +25,21 @@ const Register: React.FC = () => {
   const handleRegister = async (values: FormFieldProps) => {
     try {
       // Call the API service and let it handle JSON serialization and error handling
-      const response = await apiService.post<User>("/users", values);
+      const response = await apiService.post<User>("/register", values);
 
-      if (response.token && response.id) {
+      if (response.token && response.userId) {
         // Dispatch login action to Redux store
         dispatch(
           login({
             username: response.username ?? "",
             status: response.status ?? "OFFLINE",
-            userId: response.id.toString(),
+            userId: response.userId.toString(),
             token: response.token,
           })
         );
 
         // Navigate to the user overview (or wherever the user should go after registration)
-        router.push("/lobby");
+        router.push("/game");
       }
     } catch (error) {
       if (error instanceof Error) {
