@@ -1,0 +1,92 @@
+/* Lobby Container */
+.lobby-container {
+    min-height: 100vh;
+    align-items: center;
+    background-color: #000;
+    color: #fff;
+  }
+  
+  /* Lobby Content */
+  .lobby-content {
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  /* Titles & Text */
+  .lobby-title {
+    color: #fff;
+    margin-bottom: 10px;
+  }
+  
+  .lobby-subtitle {
+    color: #fff;
+    display: block;
+    margin-bottom: 20px;
+  }
+  
+  /* Toggle Button */
+  .toggle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .toggle-label {
+    color: #fff;
+    margin-right: 10px;
+  }
+  
+  /* Table */
+  .ant-table-thead > tr > th {
+    color: #fff;
+    background-color: #000;
+    border-bottom: 1px solid #333;
+  }
+  
+  .ant-table-tbody > tr {
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .ant-table-tbody > tr:hover {
+    background-color: #111;
+  }
+  
+  .ant-table-tbody > tr > td {
+    border-bottom: 1px solid #333;
+  }
+  
+  .lobby-table-row:nth-child(even) {
+    background-color: #0a0a0a;
+  }
+  
+  /* Passcode Input & Button */
+  .passcode-container {
+    margin-top: 30px;
+    text-align: center;
+  }
+  
+  .passcode-text {
+    color: #fff;
+    display: block;
+    margin-bottom: 5px;
+  }
+  
+  .passcode-input {
+    max-width: 300px;
+    margin-bottom: 10px;
+  }
+  
+  /* Loading & Error Text */
+  .loading-text {
+    color: #fff;
+    text-align: center;
+  }
+  
+  .error-text {
+    color: #ff4d4f;
+    text-align: center;
+  }
+  
