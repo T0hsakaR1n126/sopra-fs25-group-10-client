@@ -1,4 +1,4 @@
-"use client"; // ✅ Mark this as a Client Component
+"use client";
 
 import { useRouter } from "next/navigation";
 import { message } from "antd";
@@ -20,7 +20,7 @@ export const useLogout = () => {
   const handleLogout = async (): Promise<void> => {
     if (!currentUserId || !userToken) {
       dispatch(logout());
-      router.push("/users/login");
+      router.push("/");
       return;
     }
 
@@ -28,7 +28,8 @@ export const useLogout = () => {
       console.log("Logging out...");
 
       // Call the API to log out the user
-      await apiService.put(`/logout/${currentUserId}`, {}, {
+      // await apiService.put(`/logout/${currentUserId}`, {}, {
+      await apiService.post(`/logout`, {}, {
         headers: { userToken: userToken || "" },
       });
 
@@ -36,7 +37,7 @@ export const useLogout = () => {
       dispatch(logout());
 
       console.log("Logged out successfully!");
-      router.push("/users/login");
+      router.push("/game");
     } catch (error) {
       messageApi.error(`Error logging out: ${String(error)}`);
     }
