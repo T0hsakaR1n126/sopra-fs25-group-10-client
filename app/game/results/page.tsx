@@ -62,8 +62,8 @@ interface GameData {
 
 const Results = () => {
   const apiService = useApi();
-  const userId = useSelector((state: RootState) => state.user.userId);
-  const username = useSelector((state: RootState) => state.user.username);
+  // const userId = useSelector((state: RootState) => state.user.userId);
+  // const username = useSelector((state: RootState) => state.user.username);
   const [loading, setLoading] = useState(true);
   const [gameData, setGameData] = useState<GameData | null>(null);
 
