@@ -5,8 +5,8 @@ import Head from "next/head";
 import Image from "next/image";
 import { Layout, Typography, Row, Col, Card } from "antd";
 import { useApi } from "@/hooks/useApi";
-import { useSelector } from "react-redux";
-import { RootState } from "../../";
+// import { useSelector } from "react-redux";
+// import { RootState } from "../../";
 import styles from "../../styles/results.module.css";
 
 const { Content } = Layout;
