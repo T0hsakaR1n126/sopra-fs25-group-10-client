@@ -1,4 +1,4 @@
-"use client"; // ✅ Mark this as a Client Component
+"use client"; 
 
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
@@ -49,7 +49,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Content style={{ minHeight: "100vh", padding: "50px" }}>
+    <Content style={{ backgroundColor: "black",minHeight: "100vh", padding: "50px" }}>
       <Row justify="center" align="middle" style={{ textAlign: "center" }}>
         <Col xs={24} md={16}>
           <Image
