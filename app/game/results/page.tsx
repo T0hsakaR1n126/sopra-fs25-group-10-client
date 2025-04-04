@@ -1,90 +1,195 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
+import Image from "next/image";
 import { Layout, Typography, Row, Col, Card } from "antd";
-import { useApi } from "@/hooks/useApi"; // Import the custom API hook
+import { useApi } from "@/hooks/useApi";
+import { useSelector } from "react-redux";
+import { RootState } from "../../";
+import styles from "../../styles/results.module.css";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 interface TeamCardProps {
   teamName: string;
-  players: string[];
   score: number;
+  players?: string[];
   bgColor: string;
+  isWinner?: boolean;
 }
 
-const TeamCard: React.FC<TeamCardProps> = ({ teamName, players, score, bgColor }) => (
+const TeamCard: React.FC<TeamCardProps> = ({
+  teamName,
+  score,
+  players = [],
+  bgColor,
+  isWinner = false,
+}) => (
   <Card
-    style={{ backgroundColor: bgColor, borderRadius: "20px", padding: "20px", width: "100%" }}
-    bodyStyle={{ display: "flex", flexDirection: "column", alignItems: "center" }}
+    className={`${styles.teamCard} ${isWinner ? styles.winnerCard : ""}`}
+    style={{ backgroundColor: bgColor }}
+    bodyStyle={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+    }}
   >
-    <Title level={4} style={{ color: "#000" }}>{teamName}</Title>
-    {players.map((player: string, index: number) => (
-      <Text key={index} style={{ color: "#000", margin: "5px 0" }}>{player}</Text>
+    <Title level={4} className={styles.teamTitle}>{teamName}</Title>
+    {players.map((player, index) => (
+      <Text key={index} className={styles.playerText}>
+        {player}
+      </Text>
     ))}
-    <Title level={3} style={{ color: "#000", marginTop: "10px" }}>{score} points</Title>
+    <Title level={3} className={styles.scoreText}>{score} points</Title>
   </Card>
 );
 
 interface GameData {
-  winningTeam: string | null;
-  team1: { name: string; players: string[]; score: number };
-  team2: { name: string; players: string[]; score: number };
+  mode: "solo" | "combat";
+  combatType?: "1v1" | "team";
+  userScore: number;
+  opponentScore?: number;
+  userName?: string;
+  opponentName?: string;
+  isWinner?: boolean;
+  userTeamName?: string;
+  opponentTeamName?: string;
+  userTeamPlayers?: string[];
+  opponentTeamPlayers?: string[];
 }
 
 const Results = () => {
-  const dummyGameId = "12345"; // Hardcoded dummy game ID
-  const apiService = useApi(); // Initialize API service hook
+  const apiService = useApi();
+  const userId = useSelector((state: RootState) => state.user.userId);
+  const username = useSelector((state: RootState) => state.user.username);
   const [loading, setLoading] = useState(true);
-  const [gameData, setGameData] = useState<GameData>({
-    winningTeam: null,
-    team1: { name: "", players: [], score: 0 },
-    team2: { name: "", players: [], score: 0 },
-  });
+  const [gameData, setGameData] = useState<GameData | null>(null);
+
+  const gameId = "dummy-123"; // Replace with actual router param in production
 
   useEffect(() => {
-    if (dummyGameId) {
-      handleFetchGameScore(dummyGameId); // Use the dummy game ID
-    } else {
-      console.log("No game ID found");
-    }
-  }, [dummyGameId]);
+    fetchGameResults(gameId);
+  }, [gameId]);
 
-  /**
-   * Fetch game score data and set it in the state.
-   * @param gameId - The game ID from the query params
-   */
-  const handleFetchGameScore = async (gameId: string) => {
+  const fetchGameResults = async (id: string) => {
     setLoading(true);
     try {
-      const data = await apiService.getGameScore(gameId); // Fetch game score using the API service
-      console.log("Fetched game data:", data);
-
-      setGameData({
-        winningTeam: data["winning team"] || "No Winner",
-        team1: {
-          name: data.team1?.name || "Team 1",
-          players: data.team1?.players || ["Player 1", "Player 2"],
-          score: data.team1?.score || 0,
-        },
-        team2: {
-          name: data.team2?.name || "Team 2",
-          players: data.team2?.players || ["Player 3", "Player 4"],
-          score: data.team2?.score || 0,
-        },
-      });
+      const res = await apiService.get(`/game/${id}/results`);
+      console.log("API Game Results:", res);
+      setGameData(res as GameData);
     } catch (error) {
-      console.error("Error fetching game results:", error);
-      // Fallback to dummy data if there's an error
-      setGameData({
-        winningTeam: "No Winner Yet",
-        team1: { name: "Team 1", players: ["Alice", "Bob"], score: 5 },
-        team2: { name: "Team 2", players: ["Charlie", "Dave"], score: 3 },
-      });
+      console.error("Failed to fetch game results:", error);
+
+      // 🧪 DUMMY fallback for local/dev use only. REMOVE IN PRODUCTION.
+      const dummy: GameData = {
+        mode: "combat",
+        combatType: "team",
+        userScore: 15,
+        opponentScore: 12,
+        userTeamName: "Team Alpha",
+        opponentTeamName: "Team Bravo",
+        userTeamPlayers: ["Alice", "Bob", "Carlos"],
+        opponentTeamPlayers: ["Diana", "Eli", "Faye"],
+        isWinner: true,
+      };
+      setGameData(dummy);
     } finally {
       setLoading(false);
     }
+  };
+
+  const renderContent = () => {
+    if (!gameData) return null;
+
+    const {
+      mode,
+      combatType,
+      userScore,
+      opponentScore,
+      isWinner,
+      userName,
+      opponentName,
+      userTeamName,
+      opponentTeamName,
+      userTeamPlayers,
+      opponentTeamPlayers,
+    } = gameData;
+
+    if (mode === "solo") {
+      return (
+        <Row justify="center" align="middle">
+          <Col>
+            <Title level={3} className={styles.title}>
+              You scored {userScore} points!
+            </Title>
+            <Image
+              src="/solo.gif"
+              alt="Solo game"
+              width={280}
+              height={280}
+              priority
+            />
+          </Col>
+        </Row>
+      );
+    }
+
+    const userLabel = combatType === "team" ? userTeamName : userName;
+    const opponentLabel = combatType === "team" ? opponentTeamName : opponentName;
+
+    return (
+      <>
+        <Row justify="center">
+          <Col span={24} className={styles.headerCol}>
+            <Title
+              level={2}
+              className={`${styles.title} ${
+                isWinner ? styles.winTitle : styles.loseTitle
+              }`}
+            >
+              {isWinner
+                ? `🎉 ${userLabel} wins! 🎉`
+                : `${opponentLabel} takes the win — better luck next time!`}
+            </Title>
+          </Col>
+        </Row>
+
+        <Row gutter={[24, 24]} justify="center" align="top">
+          <Col xs={24} sm={12} md={8}>
+            <TeamCard
+              teamName={userLabel || "You"}
+              score={userScore}
+              players={combatType === "team" ? userTeamPlayers : undefined}
+              bgColor="#f0f0f0"
+              isWinner={isWinner}
+            />
+          </Col>
+
+          <Col xs={24} sm={12} md={8} className={styles.centerCol}>
+            <Image
+              src={isWinner ? "/congrats.gif" : "/betterluck.gif"}
+              alt={isWinner ? "Congrats" : "Better Luck"}
+              width={300}
+              height={300}
+              priority
+              className={styles.gifImage}
+            />
+          </Col>
+
+          <Col xs={24} sm={12} md={8}>
+            <TeamCard
+              teamName={opponentLabel || "Opponent"}
+              score={opponentScore ?? 0}
+              players={combatType === "team" ? opponentTeamPlayers : undefined}
+              bgColor="#e6f7ff"
+              isWinner={!isWinner}
+            />
+          </Col>
+        </Row>
+      </>
+    );
   };
 
   return (
@@ -95,46 +200,16 @@ const Results = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Layout style={{ minHeight: "100vh", backgroundColor: "#000" }}>
-        <Content style={{ padding: "50px" }}>
-          <Row justify="center" align="middle">
-            <Col span={24} style={{ textAlign: "center", marginBottom: "20px" }}>
-              {loading ? (
-                <Text style={{ color: "#fff", fontSize: "18px" }}>Loading results...</Text>
-              ) : (
-                <Title level={2} style={{ color: "#fff" }}>
-                  🎉 {gameData.winningTeam ? `Congratulations to ${gameData.winningTeam}!` : "Awaiting results..."} 🎉
-                </Title>
-              )}
-            </Col>
-          </Row>
-
-          {!loading && (
-            <Row gutter={[24, 24]} justify="center">
-              <Col xs={24} sm={12} md={8}>
-                <TeamCard
-                  teamName={gameData.team1.name}
-                  players={gameData.team1.players}
-                  score={gameData.team1.score}
-                  bgColor="#f0f0f0"
-                />
-              </Col>
-              <Col xs={24} sm={12} md={8} style={{ display: "flex", justifyContent: "center" }}>
-                <img
-                  src="/congrats.gif"
-                  alt="Congrats"
-                  style={{ width: "200px", height: "200px", objectFit: "contain" }}
-                />
-              </Col>
-              <Col xs={24} sm={12} md={8}>
-                <TeamCard
-                  teamName={gameData.team2.name}
-                  players={gameData.team2.players}
-                  score={gameData.team2.score}
-                  bgColor="#e6f7ff"
-                />
+      <Layout className={styles.layout}>
+        <Content className={styles.content}>
+          {loading ? (
+            <Row justify="center">
+              <Col>
+                <Text className={styles.loadingText}>Loading results...</Text>
               </Col>
             </Row>
+          ) : (
+            renderContent()
           )}
         </Content>
       </Layout>
