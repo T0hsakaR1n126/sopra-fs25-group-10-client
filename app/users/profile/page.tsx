@@ -5,6 +5,7 @@ import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user"
 import { useParams, useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import Image from "next/image";
 // import Authenticator from "@/auth/authenticator";
 
 const ProfilePage = () => {
@@ -118,10 +119,12 @@ const ProfilePage = () => {
                   })}
                 </div>
               ) : (
-                <img
-                  src={form.getFieldValue("avatar") || "/avatar_1.png"} // only for show
-                  alt="avatar"
-                  style={{ width: 48, height: 48, borderRadius: "50%", display: "block" }}
+                <Image
+                src={form.getFieldValue("avatar") || "/avatar_1.png"}
+                alt="avatar"
+                width={48}
+                height={48}
+                style={{ borderRadius: "50%", display: "block" }}
                 />
               ))}
             </Form.Item>

@@ -62,7 +62,7 @@ const HomePage = () => {
 
           {/* Play Button */}
           <div style={{ textAlign: 'center', marginTop: '30px' }}>
-            <Button type="primary" size="large" shape="circle" onClick={() => router.push("/users/login")}>
+            <Button type="primary" size="large" shape="circle" onClick={() => router.push("/game")}>
               <Image src="/play-button.png" alt="Play" width={30} height={30} />
             </Button>
             <Text style={{ color: '#fff', marginTop: '10px', display: 'block' }}>
