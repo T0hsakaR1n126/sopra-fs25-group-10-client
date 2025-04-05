@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useApi } from "@/hooks/useApi";
 import { Game } from "@/types/game";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import styles from "@/styles/lobby.module.css";
 
 const Lobby: React.FC = () => {
@@ -11,34 +11,44 @@ const Lobby: React.FC = () => {
   const router = useRouter();
   const [showSidebar, setShowSidebar] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
-  
+
   // only for mock, remove when backend is ready
-  useEffect(() => {
-    setGames( [
-      { gameName: "Map genies", playersNumber: "1 / 5", owner: "RocketMan", password: "password", gameId: "1", modeType: "normal", time: "5" },
-      { gameName: "Map Dragons", playersNumber: "4 / 5", owner: "RocketWo", password: "password", gameId: "1", modeType: "normal", time: "5" },
-      { gameName: "Map xx", playersNumber: "1 / 5", owner: "RocketNN", password: "password", gameId: "1", modeType: "normal", time: "5" },
-      { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
-    ])
-  }, []);
-  
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
+  const paginatedGames = games.slice(start, start + itemsPerPage);
   // useEffect(() => {
-  //     const fetchGames = async () => {
-  //       try {
-  //         const response: Game[] = await apiService.get("/lobby");
-  //         setGames(response);
-  //       } catch (error) {
-  //         if (error instanceof Error) {
-  //           alert(`Something went wrong while fetching user:\n${error.message}`);
-  //           router.push("/game");
-  //         } else {
-  //           console.error("An unknown error occurred while fetching user.");
-  //         }
-  //       }
-  //     };
-  
-  //     fetchGames();
-  //   }, [apiService]);
+  //   setGames([
+  //     { gameName: "Map genies", playersNumber: "1 / 5", owner: "RocketMan", password: "password", gameId: "1", modeType: "normal", time: "5" },
+  //     { gameName: "Map Dragons", playersNumber: "4 / 5", owner: "RocketWo", password: "password", gameId: "1", modeType: "normal", time: "5" },
+  //     { gameName: "Map xx", playersNumber: "1 / 5", owner: "RocketNN", password: "password", gameId: "1", modeType: "normal", time: "5" },
+  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
+  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
+  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
+  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
+  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
+  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
+  //   ])
+  // }, []);
+
+  useEffect(() => {
+      const fetchGames = async () => {
+        try {
+          const response: Game[] = await apiService.get("/lobby");
+          setGames(response);
+        } catch (error) {
+          if (error instanceof Error) {
+            alert(`Something went wrong while fetching user:\n${error.message}`);
+            router.push("/game");
+          } else {
+            console.error("An unknown error occurred while fetching user.");
+          }
+        }
+      };
+
+      fetchGames();
+    }, [apiService]);
 
   return (
     <div className={styles.page}>
@@ -52,7 +62,7 @@ const Lobby: React.FC = () => {
           <div>Owner</div>
         </div>
 
-        {games.map((lobby, idx) => (
+        {paginatedGames.map((lobby, idx) => (
           <div key={idx} className={styles.lobbyCard}>
             <div className={styles.teamName}>
               {lobby.gameName}
@@ -62,6 +72,23 @@ const Lobby: React.FC = () => {
             <div className={styles.ownerLink}>{lobby.owner}</div>
           </div>
         ))}
+        <div className={styles.pagination}>
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            Prev
+          </button>
+
+          <span>Page {currentPage}</span>
+
+          <button
+            onClick={() => setCurrentPage((p) => p + 1)}
+            disabled={end >= games.length}
+          >
+            Next
+          </button>
+        </div>
       </div>
 
       {/* Toggle Button */}
