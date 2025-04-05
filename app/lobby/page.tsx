@@ -22,14 +22,14 @@ interface GameSession {
 const Lobby: React.FC = () => {
   const [gameSessions, setGameSessions] = useState<GameSession[]>([]);
   const [passcode, setPasscode] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
   const [gameMode, setGameMode] = useState<"team" | "1v1">("team");
 
   useEffect(() => {
     const fetchActiveGames = async () => {
-      setLoading(true);
-      setError(null);
+    //   setLoading(true);
+    //   setError(null);
       try {
         const response = await fetch("/game/combat/active");
         if (!response.ok) {
@@ -37,23 +37,33 @@ const Lobby: React.FC = () => {
         }
         const data = await response.json();
 
-        const formattedSessions: GameSession[] = data.map((game: any) => ({
+        interface GameData {
+          gameId: string | null;
+          teamName?: string;
+          playersInGame?: number;
+          maxPlayers?: number;
+          owner?: string;
+          isPrivate?: boolean;
+          mode?: "team" | "1v1";
+        }
+
+        const formattedSessions: GameSession[] = data.map((game: GameData) => ({
           key: game.gameId ? game.gameId.toString() : Math.random().toString(),
           teamName: game.teamName || "Unnamed Team",
           players: `${game.playersInGame || 0} / ${game.maxPlayers || 5}`,
           owner: game.owner || "Unknown",
           publicPrivate: game.isPrivate ? <LockOutlined /> : null,
-          gameId: game.gameId,
+          gameId: game.gameId || "",
           mode: game.mode || "team",
         }));
 
         setGameSessions(formattedSessions);
       } catch (e) {
         console.error("Failed to fetch active games:", e);
-        setError("Failed to load active games.");
+        // setError("Failed to load active games.");
         setGameSessions(mockData); // Show test data on failure
       } finally {
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
