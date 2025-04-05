@@ -25,22 +25,12 @@ const Register: React.FC = () => {
   const handleRegister = async (values: FormFieldProps) => {
     try {
       // Call the API service and let it handle JSON serialization and error handling
-      const response = await apiService.post<User>("/users", values);
+      const response = await apiService.post<User>("/register", values);
 
-      if (response.token && response.id) {
-        // Dispatch login action to Redux store
-        dispatch(
-          login({
-            username: response.username ?? "",
-            status: response.status ?? "OFFLINE",
-            userId: response.id.toString(),
-            token: response.token,
-          })
-        );
-
-        // Navigate to the user overview (or wherever the user should go after registration)
-        router.push("/lobby");
-      }
+      // Navigate to the user overview (or wherever the user should go after registration)
+      alert("Registration successful! You can now log in.");
+      router.push("/users/login");
+      
     } catch (error) {
       if (error instanceof Error) {
         alert(`Something went wrong during registration:\n${error.message}`);
