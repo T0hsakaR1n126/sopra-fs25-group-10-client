@@ -6,7 +6,7 @@ import { Game } from "@/types/game";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/lobby.module.css";
 import CreateForm from './create/page';
-import { handleJoinGame } from './join/page';
+import { handleJoinGame } from './join/handleJoinGame';
 import { useSelector } from 'react-redux';
 
 const Lobby: React.FC = () => {
