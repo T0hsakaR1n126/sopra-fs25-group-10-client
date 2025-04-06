@@ -5,6 +5,9 @@ import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.share
 export const handleJoinGame = async (game: Game, userId: string, apiService: ApiService, router: AppRouterInstance): Promise<void> => {
   if (game.password) {
     const password = prompt("Enter the game password:");
+    if (password === null || password.trim() === "") {
+      return;
+    }
     game.password = password;
   } else {
     game.password = "";
