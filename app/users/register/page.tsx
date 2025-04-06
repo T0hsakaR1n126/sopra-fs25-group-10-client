@@ -19,7 +19,7 @@ const Register: React.FC = () => {
   const router = useRouter();
   const apiService = useApi();
   const [form] = Form.useForm();
-  // const dispatch = useDispatch(); // Set up dispatch for Redux actions
+  const dispatch = useDispatch(); // Set up dispatch for Redux actions
 
   const handleRegister = async (values: FormFieldProps) => {
     try {
