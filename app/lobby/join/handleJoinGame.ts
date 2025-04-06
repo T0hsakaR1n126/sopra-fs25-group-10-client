@@ -14,8 +14,8 @@ export const handleJoinGame = async (game: Game, userId: string, apiService: Api
   }
   console.log(JSON.stringify(game, null, 2));
   try {
-    await apiService.put<Game>(`/lobby/${userId}`, game);
-    router.push(`/game/${game.gameId}`);
+    await apiService.put<Game>(`/lobbyIn/${userId}`, game);
+    router.push(`/game/start/${game.gameId}`);
   } catch (error) {
     if (error instanceof Error) {
       alert(`Something went wrong during game joining:\n${error.message}`);
