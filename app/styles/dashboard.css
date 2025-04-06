@@ -1,145 +1,123 @@
-/* Game Body */
 .game-body {
     background-color: #000;
     height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: sans-serif;
 }
 
-.image-container {
-    display: flex;
-    justify-content: center;
-    margin-top: -20vh;
-    margin-bottom: -20vh; /* Adds space below the image */
-}
-/* Button Container */
 .game-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 4vw;
+    gap: 40px;
     position: relative;
-    margin-top: -20vh;
+    margin-top: -20px;
 }
 
-/* General Button Styles */
-.big-button{
-    width: 26vw;
-    height: 12vh;
-    border-radius: 2vw;
-    color: white;
-    font-size: 2vw;
+.button {
+    width: 400px;
+    height: 300px;
+    border-radius: 40px;
+    color: #fff;
+    font-size: 48px;
     font-weight: bold;
     border: none;
     cursor: pointer;
-    transition: background 0.3s ease-in-out;
 }
 
-.small-button {
-    width: 12vw;
-    height: 6vh;
-    border-radius: 2vw;
-    color: white;
-    font-size: 1.5vw;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out;
-}
-
-/* Button Colors */
-.blue {
-    background-color: #03A9F4;
-}
-
-.green {
+.solo-button {
     background-color: #4CAF50;
 }
 
-/* Popup Container */
+.combat-button {
+    background-color: #03A9F4;
+}
+
 .popup {
     position: absolute;
     text-align: center;
     justify-content: center;
     align-items: center;
-    top: 110%;
-    width: 25vw;
-    background-color: #000;
-    border-radius: 2vw;
-    font-size: 1.5vw;
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    gap: 30px;
+    top: 100%;
+    margin-top: 10px;
+    width: 400px;
+    background-color: #fff;
+    border-radius: 25px;
+    padding: 10px;
+    font-size: 18px;
+    color: #000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     opacity: 0;
+    transform: translateY(-20px);
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* When Popup is Visible */
 .popup.visible {
     opacity: 1;
     transform: translateY(0);
     pointer-events: auto;
 }
 
-/* Popup Header Styling */
-.popup-header {
-    font-size: 1.2vw;
-    font-weight: bold;
-    color: #fff;
+.popup.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
 }
 
-/* Popup Content Layout */
-.popup-content {
+.popup-label {
+    font-size: 16px;
+    color: #333;
+}
+
+.popup-controls {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    /* gap: 2vw; */
-    width: 100%;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.popup-header {
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
 .time-select {
-    /* padding: 0.5vw; */
-    font-size: 1.2vw;
-    text-align: center;
-    border-radius: 0.5vw;
-    border: 0px solid #ccc;
-    width: 40%;
-    margin-bottom: 2vh;
+    margin-top: 5px;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
-.time-select option {
-    text-align: center; /* This centers the text for most browsers */
-}
-
-.start-btn, .start-combat-btn {
-    padding: 1.5vh 2vw;
-    font-size: 1.2vw;
-    border-radius: 2vw;
+.start-btn {
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 15px;
     border: none;
-    background-color:#03A9F4;
+    background-color: #4caf50;
     color: white;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: background 0.2s;
 }
 
-.start-btn:hover, .start-combat-btn:hover {
+.start-btn:hover {
     background-color: #45a049;
 }
 
-.combat-mode-select {
-    display: flex;
-    gap: 1vw;
-    margin-bottom: 2vh;
+.small-text {
+    display: block;
+    font-size: 12px;
+    margin-top: 4px;
+    color: #333;
 }
 
-.combat-private-public {
-    display: flex;
-    align-items: center;
-    gap: 1vw;
-    font-size: 1.2vw;
-    margin-bottom: 2vh;
+.solo-container {
+    position: relative;
 }
