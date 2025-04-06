@@ -39,8 +39,6 @@ Note: If a team member fails to show continuous progress after using their Joker
 | **@JaveyBae**      | 27-03-2025     | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/a0c1f089f5203e889a146b84548ba05b78717fc9          | implement Ui design of user profile                        | User profile is a necessary part of user system. This module enables user to change personal data and stores user preference.                                                                                                                        |
 | **@JaveyBae**      | 27-03-2025     | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/40fb2571aa77210d776085d24b4cc7a08bbb91af          | implement register Restful API feature                     | This module is a prerequisite for the normal use of the registration function                                                                                                                                                                        |
 
-    |
-
 ---
 
 ## Contributions Week 2 - [Begin Date] to [End Date]
@@ -56,10 +54,9 @@ Note: If a team member fails to show continuous progress after using their Joker
 | **@JaveyBae**  |    06-04-2025         |   https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/cd47a4d7122412b80234dc7d7f208ddfd69cc1f6     | Design and implement the learning progress page, It can show country data, it is an example. After backend finished ,it will show answer | This work helps show that user's learning stage.|             
 |  **@JaveyBae**     |  06-04-2025        | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/00df8685c76ec2e4c45f52f9ed2c2d59fc84342b      | implement  game join API | This work makes game join operation possible in the progress.           |
 |  **@JaveyBae**     |  06-04-2025        | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/6bc71aec5d88a27ae913ebf2695bdb15df34ffc4     | (Not finished) provided an original UI for game history | This work makes users can track their history game. |
-| **[@githubUser3]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
-|                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
-| **[@githubUser4]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
-|                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
+| **@rkoonireddy**   | 03-04-2025     | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/tree/c4a6b96356205c789f2644460ee9fbf451b10127 | Design and implement the UI to display the game result including the winner and player scores. Designed mock data view. | Game results UI with mock views. one the users end the game session ,they will see results view based on the game type. |
+| **@rkoonireddy**   | 06-04-2025     | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/tree/cd892431722e890422b88e0e1612d1899ea16895 | Game session home UI design and replication to frontend. |Game session entry design with players, time, and options design.|
+| **@rkoonireddy**   | 04-04-2025     | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/tree/42f07adcfeb4f42c6b849dbcc02709f9e95cc4a1  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/tree/1464f4428b4ef5a137c2c6289854b3c8e22c0131 | 24-62-design-and-implement-the-game-session-creation-page-with-game-type-and-time-limit-fields | 1. designed the page and edited styles and hideable view options 2. Ensured that the integration works with backend, issues were there in used API slugs in integration 3. Corrected the logout hook to post instead of put. |
 | **[@githubUser5]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
 |                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
 
