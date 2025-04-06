@@ -11,7 +11,7 @@ export const handleJoinGame = async (game: Game, userId: string, apiService: Api
   }
   console.log(JSON.stringify(game, null, 2));
   try {
-    const response = await apiService.put<Game>(`/lobby/${userId}`, game);
+    await apiService.put<Game>(`/lobby/${userId}`, game);
     router.push(`/game/${game.gameId}`);
   } catch (error) {
     if (error instanceof Error) {

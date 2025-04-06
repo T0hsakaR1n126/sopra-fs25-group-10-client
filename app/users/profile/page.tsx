@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { Input, Button, Form } from "antd";
 import { useApi } from "@/hooks/useApi";
-import Image from "next/image";
 import { User } from "@/types/user"
 import { useParams, useRouter } from "next/navigation";
 import useLocalStorage from "@/hooks/useLocalStorage";
