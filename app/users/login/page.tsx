@@ -1,4 +1,4 @@
-"use client"; // ✅ Mark this as a Client Component
+"use client";
 
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
@@ -30,11 +30,12 @@ const Login: React.FC = () => {
       if (response.token && response.userId) {
         // Dispatch login action to Redux store without localStorage
         dispatch(login({ 
-          username: response.username ?? "",
-          status: response.status ?? "", 
-          userId: response.userId.toString(), 
-          token: response.token 
-        }));
+            username: response.username ?? "",
+            status: response.status ?? "",
+            userId: response.userId.toString(),
+            token: response.token
+          }));
+
   
         // Navigate to the user overview
         router.push("/game");

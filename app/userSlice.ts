@@ -15,6 +15,13 @@ interface LearningProgress {
   correctGuesses: number;
 }
 
+interface GameResults {
+  mode: "solo" | "combat";
+  winningTeam: string | null;
+  team1: { name: string; players?: string[]; score: number };
+  team2: { name: string; players?: string[]; score: number };
+}
+
 interface UserState {
   isLoggedIn: boolean;
   userId: string | null; // For logged-in users
@@ -25,6 +32,7 @@ interface UserState {
   learningProgress: LearningProgress[];
   currentGameMode: string | null; // "solo" or "combat"
   currentTeamId: string | null;
+  gameResults: GameResults | null; // Store the last game result
   isGuest: boolean; // To track if the user is a guest
 }
 
@@ -39,6 +47,7 @@ const initialState: UserState = {
   learningProgress: [],
   currentGameMode: null,
   currentTeamId: null,
+  gameResults: null, // Initially, there are no results
   isGuest: true, // Initially, user is a guest
 };
 
@@ -65,6 +74,7 @@ const userSlice = createSlice({
       state.status = "OFFLINE";
       state.gameHistory = [];
       state.learningProgress = [];
+      state.gameResults = null; // Clear the game results
       state.isGuest = true;
       state.currentGameMode = null;
       state.currentTeamId = null;
@@ -111,10 +121,17 @@ const userSlice = createSlice({
     setTeamId(state, action: PayloadAction<string | null>) {
       state.currentTeamId = action.payload;
     },
+    // Set the game results (new action to store game results)
+    setGameResults(state, action: PayloadAction<GameResults>) {
+      state.gameResults = action.payload; // Store the game results
+    },
   },
 });
 
 // Export actions for use in components
-export const { login, logout, guestLogin, updateUsername, setCurrentGameMode, addGameHistory, updateLearningProgress, setTeamId } = userSlice.actions;
+export const { 
+  login, logout, guestLogin, updateUsername, setCurrentGameMode, 
+  addGameHistory, updateLearningProgress, setTeamId, setGameResults 
+} = userSlice.actions;
 
 export default userSlice.reducer;
