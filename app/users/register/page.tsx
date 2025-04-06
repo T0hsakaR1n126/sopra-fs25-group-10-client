@@ -5,6 +5,7 @@ import { User } from "@/types/user";
 import { Layout, Row, Col, Form, Input, Button } from "antd";
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux"; // Import useDispatch
 import Link from "next/link";
 
 const { Content } = Layout;
