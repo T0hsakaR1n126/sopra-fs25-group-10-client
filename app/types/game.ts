@@ -1,5 +1,3 @@
-// src/types/game.ts
-
 export interface GameScoreResponse {
     "winning team": string;
     team1: {
@@ -13,4 +11,13 @@ export interface GameScoreResponse {
       score: number;
     };
   }
-  
+
+export interface Game {
+    gameId: string | null;
+    gameName: string | null;
+    password: string | null;
+    modeType: string | null;
+    time: string | null;
+    playersNumber: string | null;
+    owner: string | null;
+  }

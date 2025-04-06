@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 // export { metadata };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const excludeNavbar = ["/"];
+  const excludeNavbar = ["/", "/users/login", "/users/register"];
 
   return (
     <html lang="en">

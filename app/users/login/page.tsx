@@ -1,4 +1,4 @@
-"use client"; // ✅ Mark this as a Client Component
+"use client";
 
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
@@ -35,10 +35,12 @@ const Login: React.FC = () => {
             userId: response.userId.toString(),
             token: response.token
           }));
+
   
         // Navigate to the user overview
         router.push("/game");
       }
+      
     } catch (error) {
       if (error instanceof Error) {
         alert(`Something went wrong during the login:\n${error.message}`);

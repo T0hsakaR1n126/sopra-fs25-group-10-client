@@ -29,7 +29,7 @@ const ProfilePage = () => {
       } catch (error) {
         if (error instanceof Error) {
           alert(`Something went wrong while fetching user:\n${error.message}`);
-          router.push("/lobby");
+          router.push("/game");
         } else {
           console.error("An unknown error occurred while fetching user.");
         }
