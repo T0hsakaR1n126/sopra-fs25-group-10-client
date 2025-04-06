@@ -1,0 +1,141 @@
+/* General Layout */
+.layout {
+  min-height: 100vh;
+  background-color: #000; /* Black background */
+}
+
+.content {
+  padding: 20px;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.teamBoxGreen, .teamBoxBlue {
+  background-color: #333; /* Darker background for team boxes */
+  padding: 10px;
+  border-radius: 8px;
+  width: 200px;
+}
+
+.teamBoxGreen {
+  background-color: #2e8b57; /* Green for Team 1 */
+}
+
+.teamBoxBlue {
+  background-color: #1e3a8a; /* Blue for Team 2 */
+}
+
+.whiteText {
+  color: #fff; /* White text color */
+}
+
+.timerBox {
+  background-color: #444;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.timerLabel {
+  font-size: 16px;
+  color: #fff;
+}
+
+.timer {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.mainRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.questionBox {
+  flex: 1;
+  padding: 20px;
+  background-color: #222; /* Dark background for question box */
+  border-radius: 8px;
+  color: #fff;
+}
+
+.questionBox .label {
+  font-size: 16px;
+  color: #fff;
+}
+
+.questionBox .text {
+  font-size: 18px;
+  color: #fff;
+}
+
+.hintRow {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.hintLabel {
+  font-size: 16px;
+  color: #fff;
+}
+
+.hintIcon {
+  width: 30px;
+  height: 30px;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: transform 0.3s ease-in-out;
+}
+
+.hintIcon:hover {
+  transform: scale(1.2); /* Slight zoom effect when hovered */
+}
+
+.hintUsed {
+  opacity: 0.5; /* Fade out used hints */
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.mapContainer {
+  flex: 2;
+  position: relative;
+}
+
+.mapImage {
+  width: 100%;
+  border-radius: 8px;
+  border: 3px solid #fff; /* White border for the map image */
+}
+
+.mapOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  color: #fff;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+
+.endSessionButtons {
+  display: flex;
+  justify-content: space-evenly;
+  margin-top: 20px;
+}
+
+.endButton {
+  width: 200px;
+  font-size: 16px;
+}
