@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Typography, Space, Button } from 'antd';
 import styles from '../../styles/gameScreen.module.css';
+import { useRouter } from 'next/navigation';
 
 const { Content } = Layout;
 const { Text } = Typography;
@@ -15,6 +16,7 @@ const GameScreen = () => {
   const [hintsUsed, setHintsUsed] = useState(0); // Tracks the number of hints used
   const [hintCost] = useState(4); // Removed setHintCost
   const [currentHintText, setCurrentHintText] = useState(''); // State to store the current hint text
+  const router = useRouter();
 
   const [hints, setHints] = useState([
     { id: 0, text: 'Hint 0: Country with famous pyramids', used: false, available: true },
@@ -32,7 +34,7 @@ const GameScreen = () => {
     if (timeLeft === 0) {
       clearInterval(timer);
       console.log('Redirecting to results...');
-      // router.push('/game/results');
+      router.push('/game/results');
     }
 
     return () => clearInterval(timer);
