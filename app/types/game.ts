@@ -19,5 +19,6 @@ export interface Game {
     modeType: string | null;
     time: string | null;
     playersNumber: string | null;
+    realPlayersNumber: string | null;
     owner: string | null;
   }

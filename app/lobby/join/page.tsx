@@ -1,12 +1,23 @@
-import React from 'react';
+import { Game } from '@/types/game';
+import { ApiService } from '@/api/apiService';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
-const GuestPage: React.FC = () => {
-    return (
-        <div>
-            <h1>Welcome, Guest!</h1>
-            <p>Please sign in to access more features.</p>
-        </div>
-    );
+export const handleJoinGame = async (game: Game, userId: string, apiService: ApiService, router: AppRouterInstance): Promise<void> => {
+  if (game.password) {
+    const password = prompt("Enter the game password:");
+    game.password = password;
+  } else {
+    game.password = "";
+  }
+  console.log(JSON.stringify(game, null, 2));
+  try {
+    const response = await apiService.put<Game>(`/lobby/${userId}`, game);
+    router.push(`/game/${game.gameId}`);
+  } catch (error) {
+    if (error instanceof Error) {
+      alert(`Something went wrong during game joining:\n${error.message}`);
+    } else {
+      console.error("An unknown error occurred during game joining.");
+    }
+  }
 };
-
-export default GuestPage;
