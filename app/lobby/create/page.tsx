@@ -1,6 +1,7 @@
+"use client";
+
 import React, { useState } from 'react';
 import styles from "@/styles/lobby.module.css";
-import { useDispatch } from 'react-redux';
 import { useApi } from '@/hooks/useApi';
 import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
