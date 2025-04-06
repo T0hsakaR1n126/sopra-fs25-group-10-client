@@ -47,8 +47,9 @@ Note: If a team member fails to show continuous progress after using their Joker
 
 | **Student**        | **Date** | **Link to Commit** | **Description**           | **Relevance**                 |
 | ------------------------ | -------------- | ------------------------ | ------------------------------- | ----------------------------------- |
-| **[@githubUser1]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
-|                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
+| **@fuxinyu01**  | 05-04-2025         | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/fa51c2e7da908aa615429ee925a363a3062ed548       | implement get profile and put profile function and test |This contribution enables users to manage their personal information, which is essential for personalization and proper user experience. It also improves the overall usability and functionality of the application.|
+|            **@fuxinyu01**              | 06-04-2025         | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/2dd61a3ae332170448677548df34b8654b3de0e4       | implement mode selection and end game function | This feature introduces flexible game types and ensures proper game session lifecycle management. It enhances the gameplay logic and supports key user stories around starting and ending game sessions.
+ |
 | **[@githubUser2]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
 |                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
 | **[@githubUser3]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
