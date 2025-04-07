@@ -5,12 +5,16 @@ import { useApi } from "@/hooks/useApi";
 import { Game } from "@/types/game";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/lobby.module.css";
+import CreateForm from './create/page';
+import { handleJoinGame } from './join/handleJoinGame';
+import { useSelector } from 'react-redux';
 
 const Lobby: React.FC = () => {
   const apiService = useApi();
   const router = useRouter();
   const [showSidebar, setShowSidebar] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
+  const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
 
   // only for mock, remove when backend is ready
   const [currentPage, setCurrentPage] = useState(1);
@@ -33,22 +37,23 @@ const Lobby: React.FC = () => {
   // }, []);
 
   useEffect(() => {
-      const fetchGames = async () => {
-        try {
-          const response: Game[] = await apiService.get("/lobby");
-          setGames(response);
-        } catch (error) {
-          if (error instanceof Error) {
-            alert(`Something went wrong while fetching user:\n${error.message}`);
-            router.push("/game");
-          } else {
-            console.error("An unknown error occurred while fetching user.");
-          }
+    const fetchGames = async () => {
+      try {
+        const response: Game[] = await apiService.get("/lobby");
+        setGames(response);
+        console.log(JSON.stringify(response, null, 2));
+      } catch (error) {
+        if (error instanceof Error) {
+          alert(`Something went wrong while fetching user:\n${error.message}`);
+          router.push("/game");
+        } else {
+          console.error("An unknown error occurred while fetching user.");
         }
-      };
+      }
+    };
 
-      fetchGames();
-    }, [apiService]);
+    fetchGames();
+  }, [apiService]);
 
   return (
     <div className={styles.page}>
@@ -62,16 +67,20 @@ const Lobby: React.FC = () => {
           <div>Owner</div>
         </div>
 
-        {paginatedGames.map((lobby, idx) => (
-          <div key={idx} className={styles.lobbyCard}>
-            <div className={styles.teamName}>
-              {lobby.gameName}
-              {lobby.password !== null && <span title="Private game">🔒</span>}
+        {paginatedGames.length === 0 ? (
+          <div className={styles.emptyMessage}>No Available Game</div>
+        ) : (
+          paginatedGames.map((game, idx) => (
+            <div key={idx} className={styles.lobbyCard} onClick={() => handleJoinGame(game, userId, apiService, router)}>
+              <div className={styles.teamName}>
+                {game.gameName}
+                {game.password !== "" && <span title="Private game">🔒</span>}
+              </div>
+              <div>{game.realPlayersNumber} / {game.playersNumber}</div>
+              <div className={styles.ownerLink}>{game.owner}</div>
             </div>
-            <div>{lobby.playersNumber}</div>
-            <div className={styles.ownerLink}>{lobby.owner}</div>
-          </div>
-        ))}
+          ))
+        )}
         <div className={styles.pagination}>
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
@@ -98,35 +107,7 @@ const Lobby: React.FC = () => {
 
       {/* Sidebar */}
       <div className={`${styles.rightPanel} ${showSidebar ? styles.show : ""}`}>
-        <h2 className={styles.createTitle}>Create Game Session</h2>
-        <form className={styles.form}>
-          <label>
-            Max Players:
-            <select className={styles.input}>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </label>
-
-          <label>
-            Duration:
-            <select className={styles.input}>
-              <option value="5">5 Minutes</option>
-              <option value="10">10 Minutes</option>
-              <option value="15">15 Minutes</option>
-              <option value="30">30 Minutes</option>
-            </select>
-          </label>
-
-          <label>
-            Password (optional):
-            <input type="text" className={styles.input} />
-          </label>
-
-          <button type="submit" className={styles.createButton}>Create</button>
-        </form>
+        <CreateForm />
       </div>
     </div>
   );

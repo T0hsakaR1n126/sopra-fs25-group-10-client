@@ -37,7 +37,7 @@ export const useLogout = () => {
       dispatch(logout());
 
       console.log("Logged out successfully!");
-      router.push("/game");
+      router.push("/users/login");
     } catch (error) {
       messageApi.error(`Error logging out: ${String(error)}`);
     }
