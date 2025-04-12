@@ -11,7 +11,7 @@ const { Text } = Typography;
 const GameScreen = () => {
   const [team1Score] = useState(2); // Removed setTeam1Score
   const [team2Score] = useState(4); // Removed setTeam2Score
-  const [timeLeft, setTimeLeft] = useState(5); // Timer for 5 seconds
+  const [timeLeft, setTimeLeft] = useState(60); // Timer for 5 seconds
   const [currentCountryQuestion] = useState('Which country is this?'); // Removed setCurrentCountryQuestion
   const [hintsUsed, setHintsUsed] = useState(0); // Tracks the number of hints used
   const [hintCost] = useState(4); // Removed setHintCost
@@ -97,10 +97,10 @@ const GameScreen = () => {
     // TODO: Implement logic to end the session for this player
   };
 
-  const handleEndForEveryone = () => {
-    console.log("Ending session for everyone...");
-    // TODO: Implement logic to end the session for everyone
-  };
+  // const handleEndForEveryone = () => {
+  //   console.log("Ending session for everyone...");
+  //   // TODO: Implement logic to end the session for everyone
+  // };
 
   return (
     <Layout className={styles.layout}>
@@ -153,14 +153,14 @@ const GameScreen = () => {
           >
             End session for me
           </Button>
-          <Button
+          {/* <Button
             className={styles.endButton}
             onClick={handleEndForEveryone}
             type="primary"
             danger
           >
             End for everyone
-          </Button>
+          </Button> */}
         </div>
       </Content>
     </Layout>
