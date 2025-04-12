@@ -42,17 +42,43 @@ export default function GameHistoryPage() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const data = await apiService.get("/history") as MatchHistoryItem[];
-        setHistory(data);
-      } catch (e) {
-        setError("Failed to load data. Displaying fallback records.");
+        setLoading(true);
+  
+        const response = await apiService.get("/history");
+  
+        if (
+          Array.isArray(response) &&
+          response.every(
+            (item) =>
+              "id" in item &&
+              "name" in item &&
+              "date" in item &&
+              "result" in item &&
+              "duration" in item &&
+              "mode" in item &&
+              "score" in item
+          )
+        ) {
+          setHistory(response as MatchHistoryItem[]);
+        } else {
+          throw new Error("Invalid data format from server.");
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Failed to fetch match history:", error.message);
+          setError("Failed to load game history. Showing mock data.");
+        } else {
+          setError("Unknown error occurred.");
+        }
         setHistory(fallbackHistory);
       } finally {
         setLoading(false);
       }
     };
+  
     fetchHistory();
   }, []);
+  
 
   // ✅ Filter and paginate the records
   const filtered = history.filter((entry) => {
