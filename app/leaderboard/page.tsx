@@ -1,102 +1,125 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { countryCodeMap } from "@/utils/countryCodeMap";
-import { useApi } from "@/hooks/useApi";
-import { useParams } from "next/navigation";
-import styles from "@/styles/GuestStatsGrid.module.css";
+import { useApi } from "@/hooks/useApi"; // ✅ 引入 API Hook
+import "./leaderboard.css";
 
-interface Country {
+type LeaderboardEntry = {
+  id: number;
   name: string;
-  answered: number;
-}
+  score: number;
+  type: "Team" | "Single";
+};
 
-const GuestPage: React.FC = () => {
-  const apiService = useApi();
-  const { id } = useParams();
+const fallbackLeaderboard: LeaderboardEntry[] = [
+  { id: 1, name: "Map Genies", score: 1500, type: "Team" },
+  { id: 2, name: "Map Maniacs", score: 1499, type: "Team" },
+  { id: 3, name: "Map Mangoes", score: 1492, type: "Team" },
+  { id: 4, name: "Map Gooses", score: 1450, type: "Team" },
+  { id: 5, name: "Map Maniacs", score: 1430, type: "Team" },
+  { id: 6, name: "Map Dragons", score: 1400, type: "Team" },
+  { id: 7, name: "Solo Stars", score: 1390, type: "Single" },
+  { id: 8, name: "Solo Beast", score: 1375, type: "Single" },
+  { id: 9, name: "Solo X", score: 1350, type: "Single" },
+];
 
-  const [countryData, setCountryData] = useState<Country[]>([]);
+export default function LeaderboardPage() {
+  const apiService = useApi(); // ✅ 获取 API 客户端
+
+  const [entries, setEntries] = useState<LeaderboardEntry[]>(fallbackLeaderboard);
+  const [filter, setFilter] = useState<"Team" | "Single">("Team");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
 
   useEffect(() => {
-    const fetchCountryStats = async () => {
+    const fetchLeaderboard = async () => {
       try {
-        setLoading(true);
-
-        const response: Country[] = await apiService.get(`/users/${id}/statistics`);
-
-        if (Array.isArray(response) && response.every(item => "name" in item && "answered" in item)) {
-          setCountryData(response);
-        } else {
-          throw new Error("Invalid data format from server.");
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error("Failed to fetch country statistics:", error.message);
-          setError("Failed to load user country statistics. Showing mock data.");
-        } else {
-          setError("Unknown error occurred.");
-        }
-
-        // fallback mock data
-        setCountryData([
-          { name: "Switzerland", answered: 25 },
-          { name: "United States", answered: 30 },
-          { name: "France", answered: 18 },
-          { name: "Germany", answered: 22 },
-          { name: "Japan", answered: 20 },
-          { name: "China", answered: 27 },
-          { name: "India", answered: 24 },
-          { name: "Italy", answered: 19 },
-          { name: "Spain", answered: 21 },
-          { name: "Brazil", answered: 26 },
-          { name: "Canada", answered: 23 },
-          { name: "Russia", answered: 17 },
-          { name: "South Korea", answered: 22 },
-          { name: "Australia", answered: 20 },
-          { name: "Mexico", answered: 18 },
-          { name: "United Kingdom", answered: 29 },
-          { name: "Argentina", answered: 16 },
-          { name: "South Africa", answered: 15 },
-        ]);
+        const data = await apiService.get("/leaderboard") as LeaderboardEntry[];
+        setEntries(data);
+      } catch (e) {
+        console.error(e);
+        setError("Failed to load leaderboard. Showing fallback data.");
+        setEntries(fallbackLeaderboard);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCountryStats();
-  }, [apiService, id]);
+    fetchLeaderboard();
+  }, []);
+
+  const filtered = entries
+    .filter((entry) => entry.type === filter)
+    .sort((a, b) => b.score - a.score);
+
+  const paginated = filtered.slice(0, currentPage * itemsPerPage);
+  const hasMore = paginated.length < filtered.length;
+
+  const getRankClass = (index: number): string => {
+    if (index === 0) return "lobbyCard first";
+    if (index === 1) return "lobbyCard second";
+    if (index === 2) return "lobbyCard third";
+    return "lobbyCard";
+  };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.heading}>User Statistics</h1>
+    <div className="container page">
+      <h2 className="title">Global Leaderboard</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       {loading ? (
-        <p className={styles.loading}>Loading...</p>
-      ) : error ? (
-        <p className={styles.error}>{error}</p>
-      ) : null}
+        <p>Loading...</p>
+      ) : (
+        <>
+          {/* Filter buttons */}
+          <div style={{ display: "flex", gap: "12px", marginBottom: "20px", justifyContent: "center" }}>
+            {["Team", "Single"].map((type) => (
+              <button
+                key={type}
+                onClick={() => setFilter(type as "Team" | "Single")}
+                style={{
+                  padding: "6px 14px",
+                  borderRadius: "20px",
+                  border: "2px solid white",
+                  backgroundColor: filter === type ? "#0ea5e9" : "transparent",
+                  color: "white",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                }}
+              >
+                {type}
+              </button>
+            ))}
+          </div>
 
-      <div className={styles.grid}>
-        {countryData.map((country, index) => {
-          const countryCode = countryCodeMap[country.name] || "unknown";
-          return (
-            <div key={index} className={styles.card}>
-              <img
-                src={`/flag/${countryCode}.png`}
-                alt={country.name}
-                className={styles.flag}
-              />
-              <p className={styles.label}>
-                {country.name}: {country.answered} questions
-              </p>
+          {/* Leaderboard list */}
+          <div className="leftPanel">
+            {paginated.map((entry, index) => (
+              <div className={getRankClass(index)} key={entry.id}>
+                <div>{index + 1}. {entry.name}</div>
+                <div>{entry.score}</div>
+              </div>
+            ))}
+
+            {[...Array(Math.max(0, 7 - paginated.length))].map((_, idx) => (
+              <div className="lobbyCard" key={`empty-${idx}`} style={{ opacity: 0.2 }} />
+            ))}
+          </div>
+
+          {/* Load more */}
+          {hasMore && (
+            <div
+              className="scrollDownBtn"
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              title="Load more"
+            >
+              ⬇️
             </div>
-          );
-        })}
-      </div>
+          )}
+        </>
+      )}
     </div>
   );
-};
-
-export default GuestPage;
+}
