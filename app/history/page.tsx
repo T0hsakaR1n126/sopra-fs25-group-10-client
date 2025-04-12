@@ -4,8 +4,19 @@ import React, { useState, useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
 import "./gamehistory.css";
 
-// ✅ All mock data (used for simulated pagination)
-const fallbackHistory = [
+// ✅ Define the type for game history items
+type MatchHistoryItem = {
+  id: number;
+  name: string;
+  date: string;
+  result: string;
+  duration: string;
+  mode: string;
+  score: number;
+};
+
+// ✅ Fallback mock data in case API fails
+const fallbackHistory: MatchHistoryItem[] = [
   { id: 1, name: "Map Genies", date: "01.01.2025", result: "5 of 10 correct", duration: "60 mins", mode: "Team Play", score: 1500 },
   { id: 2, name: "Player 1", date: "01.01.2025", result: "5 of 10 correct", duration: "60 mins", mode: "Own Play", score: 200 },
   { id: 3, name: "Team Alpha", date: "02.01.2025", result: "6 of 10 correct", duration: "55 mins", mode: "Team Play", score: 1600 },
@@ -19,23 +30,21 @@ const fallbackHistory = [
 ];
 
 export default function GameHistoryPage() {
-  //const apiService = useApi();
-  const [history, setHistory] = useState(fallbackHistory);
+  const apiService = useApi();
+  const [history, setHistory] = useState<MatchHistoryItem[]>(fallbackHistory);
   const [filter, setFilter] = useState<"All" | "Single" | "Team">("All");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
 
-  // Load data (can be replaced with real API call)
+  // ✅ Load history from API or fallback
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        // const data = await apiService.get("/history"); // Real API endpoint
-        // setHistory(data);
-        setHistory(fallbackHistory); // Use fallback mock data
-      } catch (_) {
+        const data = await apiService.get("/history") as MatchHistoryItem[];
+        setHistory(data);
+      } catch (e) {
         setError("Failed to load data. Displaying fallback records.");
         setHistory(fallbackHistory);
       } finally {
@@ -45,7 +54,7 @@ export default function GameHistoryPage() {
     fetchHistory();
   }, []);
 
-  // ✅ Filtered and paginated data
+  // ✅ Filter and paginate the records
   const filtered = history.filter((entry) => {
     if (filter === "All") return true;
     return filter === "Team" ? entry.mode === "Team Play" : entry.mode === "Own Play";
@@ -71,7 +80,7 @@ export default function GameHistoryPage() {
             {["All", "Single", "Team"].map((type) => (
               <button
                 key={type}
-                onClick={() => setFilter(type as any)}
+                onClick={() => setFilter(type as "All" | "Single" | "Team")}
                 style={{
                   padding: "6px 14px",
                   borderRadius: "20px",
@@ -87,7 +96,7 @@ export default function GameHistoryPage() {
             ))}
           </div>
 
-          {/* ✅ Record list */}
+          {/* ✅ History record cards */}
           <div className="leftPanel">
             {paginated.map((item) => (
               <div className="lobbyCard" key={item.id}>
@@ -100,6 +109,7 @@ export default function GameHistoryPage() {
               </div>
             ))}
 
+            {/* Placeholder cards to align layout */}
             {[...Array(Math.max(0, 7 - paginated.length))].map((_, idx) => (
               <div className="lobbyCard" key={`empty-${idx}`} style={{ opacity: 0.2 }} />
             ))}
@@ -120,4 +130,3 @@ export default function GameHistoryPage() {
     </div>
   );
 }
-
