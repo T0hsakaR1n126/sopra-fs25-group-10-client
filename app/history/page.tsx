@@ -19,7 +19,7 @@ const fallbackHistory = [
 ];
 
 export default function GameHistoryPage() {
-  const apiService = useApi();
+  //const apiService = useApi();
   const [history, setHistory] = useState(fallbackHistory);
   const [filter, setFilter] = useState<"All" | "Single" | "Team">("All");
   const [loading, setLoading] = useState(true);
@@ -35,7 +35,7 @@ export default function GameHistoryPage() {
         // const data = await apiService.get("/history"); // Real API endpoint
         // setHistory(data);
         setHistory(fallbackHistory); // Use fallback mock data
-      } catch (e) {
+      } catch (_) {
         setError("Failed to load data. Displaying fallback records.");
         setHistory(fallbackHistory);
       } finally {
@@ -120,3 +120,4 @@ export default function GameHistoryPage() {
     </div>
   );
 }
+
