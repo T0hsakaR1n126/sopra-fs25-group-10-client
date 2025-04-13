@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/gameStart.module.css';
 import { Client } from '@stomp/stompjs';
-import * as SockJS from 'sockjs-client';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/types/user';
 import { useApi } from '@/hooks/useApi';
@@ -13,6 +12,7 @@ const GameStart = () => {
   const router = useRouter();
   const gameId = useParams()?.id;
   const apiService = useApi();
+  const SockJS = require('sockjs-client');
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
 
   const [players, setPlayers] = useState<User[]>([]);
