@@ -12,7 +12,10 @@ const GameStart = () => {
   const router = useRouter();
   const gameId = useParams()?.id;
   const apiService = useApi();
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const SockJS = require('sockjs-client');
+  
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
 
   const [players, setPlayers] = useState<User[]>([]);
