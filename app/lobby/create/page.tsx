@@ -10,14 +10,16 @@ import { Game } from '@/types/game';
 const CreateForm: React.FC = () => {
   const apiService = useApi();
   const router = useRouter();
-  const username = useSelector((state: { user: { username: string } }) => state.user.username)
+  const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
   const [isPrivate, setIsPrivate] = useState(false);
   const [gameName, setGameName] = useState("");
   const [password, setPassword] = useState("");
   const [maxPlayers, setMaxPlayers] = useState("2");
   const [duration, setDuration] = useState("5");
 
-  const handleCreateGame = async () => {
+  const handleCreateGame = async (e: React.FormEvent) => {
+    e.preventDefault(); // Prevent default form submission
+    
     if (!gameName.trim()) {
       alert("Game name cannot be empty!");
       return;
@@ -28,18 +30,20 @@ const CreateForm: React.FC = () => {
       playersNumber: maxPlayers,
       time: duration,
       password: password,
-      owner: username,
+      ownerId: userId,
       gameId: null,
       realPlayersNumber: null,
-      modeType: "combat" // placeholder
+      modeType: "combat", // placeholder
+      endTime: null
     };
 
     try {
+      console.log(newGame)
       const response = await apiService.post<Game>("/games", newGame);
       console.log(JSON.stringify(response, null, 2));
       if (response.gameId)  {
         alert("Game created successfully!");
-        router.push("/game/1v1")
+        router.push(`/game/start/${response.gameId}`);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -99,7 +103,7 @@ const CreateForm: React.FC = () => {
         <label>
           Password:
           <input
-            type="text"
+            type="password"
             className={styles.input}
             value={password}
             onChange={(e) => setPassword(e.target.value)}

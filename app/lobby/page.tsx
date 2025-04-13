@@ -64,7 +64,7 @@ const Lobby: React.FC = () => {
         <div className={styles.headerRow}>
           <div>Game Name</div>
           <div>Player in Game</div>
-          <div>Owner</div>
+          <div>Private</div>
         </div>
 
         {paginatedGames.length === 0 ? (
@@ -74,10 +74,9 @@ const Lobby: React.FC = () => {
             <div key={idx} className={styles.lobbyCard} onClick={() => handleJoinGame(game, userId, apiService, router)}>
               <div className={styles.teamName}>
                 {game.gameName}
-                {game.password !== "" && <span title="Private game">🔒</span>}
               </div>
-              <div>{game.realPlayersNumber} / {game.playersNumber}</div>
-              <div className={styles.ownerLink}>{game.owner}</div>
+              <div className={styles.playerCount}>{game.realPlayersNumber} / {game.playersNumber}</div>
+              <div className={styles.ownerLink}>{game.password !== "" && <span title="Private game">🔒</span>}</div>
             </div>
           ))
         )}
