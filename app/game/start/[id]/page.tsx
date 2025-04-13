@@ -7,11 +7,16 @@ import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/types/user';
 import { useApi } from '@/hooks/useApi';
 import { useSelector } from 'react-redux';
+import { Game } from '@/types/game';
+import { useDispatch } from "react-redux"; // Import useDispatch
+import { gameStart } from '@/gameSlice';
+
 
 const GameStart = () => {
   const router = useRouter();
   const gameId = useParams()?.id;
   const apiService = useApi();
+  const dispatch = useDispatch(); // Set up dispatch for Redux actions
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const SockJS = require('sockjs-client');
@@ -23,12 +28,14 @@ const GameStart = () => {
   const [isTeamMode, setIsTeamMode] = useState(false);
   const [teamName, setTeamName] = useState("");
   const [isTeamNameSaved, setIsTeamNameSaved] = useState(false);
+  const [ownerName, setOwnerName] = useState("");
 
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
         const response: User[] = await apiService.get<User[]>(`/ready/${gameId}`);
         setPlayers(response);
+        setOwnerName(response[0].username ?? "");
       } catch (error) {
         if (error instanceof Error) {
           alert(`Something went wrong while fetching players:\n${error.message}`);
@@ -56,6 +63,21 @@ const GameStart = () => {
             console.error('Invalid message:', err);
           }
         });
+
+        client.subscribe(`/topic/start/${gameId}/hints`, (message) => {
+          try {
+            const game: Game = JSON.parse(message.body);
+            if (game.time && game.hints) {
+              dispatch(gameStart({
+                time: game.time ?? "",
+                hints: game.hints ?? [],
+              }));
+              router.push(`/game/${gameId}`);
+            }
+          } catch (err) {
+            console.error('Invalid message:', err);
+          }
+        });
       },
       onDisconnect: () => {
         console.log('STOMP disconnected');
@@ -79,6 +101,14 @@ const GameStart = () => {
     }
   }
 
+  const handleBegin = async () => {
+    try {
+      await apiService.put(`/start/${gameId}`, {});
+    } catch (error) {
+      console.error('Error starting game:', error);
+    }
+  }
+
   return (
     <div className={styles.card}>
       <h3 className={styles.title}>Game</h3>
@@ -91,7 +121,7 @@ const GameStart = () => {
         ))}
       </div>
 
-      <div className={styles.inlineField}>
+      {username === ownerName && <div className={styles.inlineField}>
         <span className={styles.labelText}>Team Mode</span>
 
         <label className={styles.switch}>
@@ -102,33 +132,33 @@ const GameStart = () => {
               setIsTeamMode(e.target.checked);
               setTeamName("");
               setIsTeamNameSaved(false);
-            }} 
+            }}
           />
           <span className={styles.slider}></span>
         </label>
-      </div>
+      </div>}
 
       {isTeamMode && (
         <>
           {isTeamNameSaved ? (
-          <p className={styles.teamName}>Team Name: {teamName}</p>
+            <p className={styles.teamName}>Team Name: {teamName}</p>
           ) : (
-          <label>
-            <input
-              type="text"
-              className={styles.input}
-              value={teamName}
-              placeholder='Enter your team name'
-              onChange={(e) => setTeamName(e.target.value)}
-            />
-          </label>
+            <label>
+              <input
+                type="text"
+                className={styles.input}
+                value={teamName}
+                placeholder='Enter your team name'
+                onChange={(e) => setTeamName(e.target.value)}
+              />
+            </label>
           )}
         </>
       )}
 
       <div className={styles.buttonGroup}>
         {!isTeamNameSaved && isTeamMode && <button className={styles.button} onClick={() => { setTeamName(teamName); setIsTeamNameSaved(true); }}>Save</button>}
-        {username === players[0].username && <button className={styles.button}>Begin</button>}
+        {username === ownerName && <button className={styles.button} onClick={handleBegin}>Begin</button>}
         <button className={styles.button} onClick={handleExitGame}>Exit</button>
       </div>
     </div>

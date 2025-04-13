@@ -4,10 +4,9 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ConfigProvider, theme } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "@/styles/globals.css";
-import Navbar from "./navbar";
 import ReduxProvider from "./ReduxProvider";
 // import { metadata } from "@/utils/metadata";
-import { usePathname } from "next/navigation";
+import NavbarWrapper from "./hooks/navbarWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,8 +21,6 @@ const geistMono = Geist_Mono({
 // export { metadata };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const excludeNavbar = ["/", "/users/login", "/users/register"];
-
   return (
     <html lang="en">
      <body className={`${geistSans.variable} ${geistMono.variable}`}>
@@ -45,10 +42,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           },
         }}
         >
-          {/* ✅ Navbar is now imported here */}
-          {!excludeNavbar.includes(usePathname()) && <Navbar />}
-          {/* Page Content */}
-          <AntdRegistry>{children}</AntdRegistry>
+          <NavbarWrapper>
+            <AntdRegistry>{children}</AntdRegistry>
+          </NavbarWrapper>
         </ConfigProvider>
       </ReduxProvider>
      </body>

@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import userReducer from "./userSlice";
+import gameReducer from "./gameSlice"; // Import your game slice reducer
 
 // Redux Persist configuration
 const persistConfig = {
@@ -12,6 +13,7 @@ const persistConfig = {
 // Combine reducers
 const rootReducer = combineReducers({
   user: userReducer, // user slice
+  game: gameReducer,
 });
 
 // Wrap the rootReducer with persistReducer
