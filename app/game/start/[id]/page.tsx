@@ -15,8 +15,9 @@ const GameStart = () => {
 
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   const SockJS = require('sockjs-client');
-  
+
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
+  const username = useSelector((state: { user: { username: string } }) => state.user.username)
 
   const [players, setPlayers] = useState<User[]>([]);
   const [isTeamMode, setIsTeamMode] = useState(false);
@@ -127,7 +128,7 @@ const GameStart = () => {
 
       <div className={styles.buttonGroup}>
         {!isTeamNameSaved && isTeamMode && <button className={styles.button} onClick={() => { setTeamName(teamName); setIsTeamNameSaved(true); }}>Save</button>}
-        <button className={styles.button}>Begin</button>
+        {username === players[0].username && <button className={styles.button}>Begin</button>}
         <button className={styles.button} onClick={handleExitGame}>Exit</button>
       </div>
     </div>
