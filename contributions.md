@@ -41,7 +41,7 @@ Note: If a team member fails to show continuous progress after using their Joker
 
 ---
 
-## Contributions Week 2 - [Begin Date] to [End Date]
+## Contributions Week 2 - [31-03-2025] to [06-04-2025]
 
 | **Student**        | **Date** | **Link to Commit** | **Description**           | **Relevance**                 |
 | ------------------------ | -------------- | ------------------------ | ------------------------------- | ----------------------------------- |
@@ -63,11 +63,12 @@ Note: If a team member fails to show continuous progress after using their Joker
 
 ---
 
-## Contributions Week 3 - [Begin Date] to [End Date]
+## Contributions Week 3 - [07-04-2025] to [13-04-2025]
 
 | **Student**        | **Date** | **Link to Commit** | **Description**           | **Relevance**                 |
 | ------------------------ | -------------- | ------------------------ | ------------------------------- | ----------------------------------- |
-| **[@githubUser1]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
+| **@rkoonireddy**   | 12-04-2025     | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/ba290c45119c0cfd1830d65d3a15f5008525a2c5 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/22826c4253a36d41fb6685f59777456228f47f70 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/10e90bc38561875a188addd280bfcdadb7052f1a  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/4dcf7b724f3f7b3d6d34273da0b0c577fe3ef73c| Adding Constants, Changing lot of stuff to follow and expand game flow. | 1. Added constants. 2. Created additional types - Player, Team  (Entities and Repositories)  |
+| **@rkoonireddy**   | 13-04-2025     |  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/9b8bbef2a11ee468178ebee964b50917f36ce76d https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/10e90bc38561875a188addd280bfcdadb7052f1a | Creating Web Socket Configuration for player and team matching along with relevant controllers | 1. Designed controllers and service for player and team matching 2. Created websockets for the matching gervice along with a followup for game start |
 |                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
 | **[@githubUser2]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
 |                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
