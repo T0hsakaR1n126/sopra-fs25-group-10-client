@@ -20,5 +20,6 @@ export interface Game {
     time: string | null;
     playersNumber: string | null;
     realPlayersNumber: string | null;
-    owner: string | null;
+    ownerId: string | null;
+    endTime: string | null;
   }

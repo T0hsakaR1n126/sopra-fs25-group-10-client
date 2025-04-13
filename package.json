@@ -15,6 +15,7 @@
     "@ant-design/nextjs-registry": "^1.0.2",
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
     "@reduxjs/toolkit": "^2.6.1",
+    "@stomp/stompjs": "^7.1.1",
     "next": "^15.2.0",
     "node-localstorage": "^3.0.5",
     "node-polyfill-webpack-plugin": "^4.1.0",
@@ -22,7 +23,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-redux": "^9.2.0",
-    "redux-persist": "^6.0.0"
+    "redux-persist": "^6.0.0",
+    "sockjs-client": "^1.6.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
