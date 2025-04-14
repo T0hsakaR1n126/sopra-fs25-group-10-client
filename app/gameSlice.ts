@@ -32,6 +32,7 @@ interface GameState {
   currentGameMode: string | null; // "solo" or "combat"
   currentTeamId: string | null;
   gameResults: GameResults | null; // Store the last game result
+  hintUsage: number; // Number of hints used
 }
 
 // Initial state setup for each game
@@ -45,6 +46,7 @@ const initialState: GameState = {
   currentGameMode: null,
   currentTeamId: null,
   gameResults: null,
+  hintUsage: 0, // Number of hints used
 };
 
 // Create the game slice
@@ -58,14 +60,17 @@ const gameSlice = createSlice({
     },
     hintUpdate: (state, action: PayloadAction<Map<string, string>[]>) => {
       state.hints = action.payload;
-    }
+    },
+    hintUsageIncrement: (state) => {
+      state.hintUsage += 1;
+    },
     
   },
 });
 
 // Export actions for use in components
 export const { 
-  gameStart,
+  gameStart, hintUsageIncrement
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
