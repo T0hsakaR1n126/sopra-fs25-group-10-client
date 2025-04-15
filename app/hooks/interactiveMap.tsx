@@ -1,10 +1,15 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useApi } from "./useApi";
+import { useSelector } from "react-redux";
 
 const InteractiveMap: React.FC = () => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const isZoomedRef = useRef(false);
+  const apiService = useApi();
+  const gameId = useSelector((state: { game: { gameId: string } }) => state.game.gameId);
+  const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
 
   useEffect(() => {
     fetch("/world_map.svg")
@@ -23,7 +28,10 @@ const InteractiveMap: React.FC = () => {
 
             const countries = svgElement.querySelectorAll("path");
             countries.forEach(country => {
+              if (country.getAttribute("data-type") === "Indeterminate") return;
+              
               const countryName = country.getAttribute("data-name_en") || "unknown";
+              const countryId = country.getAttribute("id") || "";
 
               country.addEventListener("mouseover", () => {
                 country.setAttribute("data-original-fill", "#fff6d5");
@@ -45,7 +53,23 @@ const InteractiveMap: React.FC = () => {
 
               country.addEventListener("click", (event) => {
                 event.stopPropagation();
-                alert(`You clicked on ${countryName}!`);
+                alert(`You clicked on ${countryId}!`);
+                try {
+                    apiService.put(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId })
+                    .then((response: any) => {
+                      alert("you are right!");
+                      alert(response.body.hints);
+                    })
+                    .catch(error => {
+                      if (error.response && error.response.status === 409) {
+                        alert("Your answer is wrong!");
+                      } else {
+                        console.error("Error submitting answer:", error);
+                      }
+                    });
+                } catch (error) {
+                  console.error("Error fetching country data:", error);
+                }
               });
             });
 

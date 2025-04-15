@@ -71,6 +71,7 @@ const GameStart = () => {
               dispatch(gameStart({
                 time: game.time ?? "",
                 hints: game.hints ?? [],
+                gameId: gameId?.toString() ?? "",
               }));
               router.push(`/game/${gameId}`);
             }

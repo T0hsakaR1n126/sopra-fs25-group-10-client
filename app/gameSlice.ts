@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { act } from 'react';
 
 // Define the type for our slice's state
 interface GameHistory {
@@ -54,9 +55,10 @@ const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    gameStart: (state, action: PayloadAction<{ time: string; hints: Map<string, string>[] }>) => {
+    gameStart: (state, action: PayloadAction<{ time: string; hints: Map<string, string>[]; gameId: string }>) => {
       state.time = action.payload.time;
       state.hints = action.payload.hints;
+      state.gameId = action.payload.gameId;
     },
     hintUpdate: (state, action: PayloadAction<Map<string, string>[]>) => {
       state.hints = action.payload;
