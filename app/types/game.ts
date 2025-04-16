@@ -23,4 +23,5 @@ export interface Game {
     ownerId: string | null;
     endTime: string | null;
     hints: Map<string, string>[] | null;
+    scoreBoard: Map<string, number> | null;
   }

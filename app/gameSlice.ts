@@ -34,6 +34,7 @@ interface GameState {
   currentTeamId: string | null;
   gameResults: GameResults | null; // Store the last game result
   hintUsage: number; // Number of hints used
+  scoreBoard: Map<string, number> | null; // Store the score board
 }
 
 // Initial state setup for each game
@@ -47,7 +48,8 @@ const initialState: GameState = {
   currentGameMode: null,
   currentTeamId: null,
   gameResults: null,
-  hintUsage: 0, // Number of hints used
+  hintUsage: 1, // Number of hints used
+  scoreBoard: null, // Store the score board
 };
 
 // Create the game slice
@@ -55,10 +57,12 @@ const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    gameStart: (state, action: PayloadAction<{ time: string; hints: Map<string, string>[]; gameId: string }>) => {
+    gameStart: (state, action: PayloadAction<{ time: string; hints: Map<string, string>[]; gameId: string; scoreBoard: Map<string, number> }>) => {
       state.time = action.payload.time;
       state.hints = action.payload.hints;
       state.gameId = action.payload.gameId;
+      state.scoreBoard = action.payload.scoreBoard;
+      state.hintUsage = 1; // Reset hint usage when a new game starts
     },
     hintUpdate: (state, action: PayloadAction<Map<string, string>[]>) => {
       state.hints = action.payload;
@@ -66,13 +70,16 @@ const gameSlice = createSlice({
     hintUsageIncrement: (state) => {
       state.hintUsage += 1;
     },
+    hintUsageClear: (state) => {
+      state.hintUsage = 1;
+    },
     
   },
 });
 
 // Export actions for use in components
 export const { 
-  gameStart, hintUsageIncrement
+  gameStart, hintUsageIncrement, hintUpdate, hintUsageClear
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

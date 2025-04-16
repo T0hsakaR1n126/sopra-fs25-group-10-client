@@ -72,6 +72,7 @@ const GameStart = () => {
                 time: game.time ?? "",
                 hints: game.hints ?? [],
                 gameId: gameId?.toString() ?? "",
+                scoreBoard: game.scoreBoard ?? new Map<string, number>(),
               }));
               router.push(`/game/${gameId}`);
             }

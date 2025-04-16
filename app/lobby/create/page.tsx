@@ -31,6 +31,7 @@ const CreateForm: React.FC = () => {
       time: duration,
       password: password,
       ownerId: userId,
+      hints: null,
       gameId: null,
       realPlayersNumber: null,
       modeType: "combat", // placeholder

@@ -1,14 +1,18 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useApi } from "./useApi";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { hintUpdate, hintUsageClear } from "@/gameSlice";
 
 const InteractiveMap: React.FC = () => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const isZoomedRef = useRef(false);
   const apiService = useApi();
+  const dispatch = useDispatch(); // Set up dispatch for Redux actions
   const gameId = useSelector((state: { game: { gameId: string } }) => state.game.gameId);
+  const hintUsingNumber = useSelector((state: { game: { hintUsage: number } }) => state.game.hintUsage);
+  const hintUsageRef = useRef(hintUsingNumber);
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
 
   useEffect(() => {
@@ -29,7 +33,7 @@ const InteractiveMap: React.FC = () => {
             const countries = svgElement.querySelectorAll("path");
             countries.forEach(country => {
               if (country.getAttribute("data-type") === "Indeterminate") return;
-              
+
               const countryName = country.getAttribute("data-name_en") || "unknown";
               const countryId = country.getAttribute("id") || "";
 
@@ -53,20 +57,22 @@ const InteractiveMap: React.FC = () => {
 
               country.addEventListener("click", (event) => {
                 event.stopPropagation();
-                alert(`You clicked on ${countryId}!`);
                 try {
-                    apiService.put(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId })
+                  apiService.put(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
                     .then((response: any) => {
-                      alert("you are right!");
-                      alert(response.body.hints);
+                        console.log(response)
+                        if (response.judgement) {
+                          alert("Your answer is correct!");
+                        } else {
+                          alert("Your answer is wrong!");
+                        }
+                        dispatch(hintUpdate(response.hints));
+                        dispatch(hintUsageClear());
                     })
                     .catch(error => {
-                      if (error.response && error.response.status === 409) {
-                        alert("Your answer is wrong!");
-                      } else {
-                        console.error("Error submitting answer:", error);
-                      }
+                      console.error("Error submitting answer:", error);
                     });
+                  dispatch(hintUsageClear());
                 } catch (error) {
                   console.error("Error fetching country data:", error);
                 }
@@ -95,6 +101,10 @@ const InteractiveMap: React.FC = () => {
       })
       .catch(error => console.error("Load failed: ", error));
   }, []);
+
+  useEffect(() => {
+    hintUsageRef.current = hintUsingNumber;
+  }, [hintUsingNumber]);
 
   return (
     <div style={{ width: "100%", height: "100%", position: "relative" }}>
