@@ -7,11 +7,17 @@ import { hintUsageIncrement } from '@/gameSlice';
 import InteractiveMap from '@/hooks/interactiveMap';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { useRouter } from 'next/navigation';
+import { useApi } from '@/hooks/useApi';
 
 const GameBoard: React.FC = () => {
   const dispatch = useDispatch(); // Set up dispatch for Redux actions
+  const router = useRouter();
+  const apiService = useApi();
   const [hintIndex, setHintIndex] = useState(1);
+  const [unlockedHints, setUnlockedHints] = useState(1);
   const [showScoreBoard, setShowScoreBoard] = useState(false);
+  const [showExitWindow, setShowExitWindow] = useState(false);
   const [scoreBoard, setScoreBoard] = useState<Map<string, number>>();
   const rawHints = useSelector(
     (state: { game: { hints: { difficulty: string; text: string }[] } }) =>
@@ -23,14 +29,23 @@ const GameBoard: React.FC = () => {
 
   const currentHint = hints[hintIndex - 1];
   const handleHintClick = (index: number) => {
-    if (index === hintIndex && hintIndex < hints.length) {
-      setHintIndex(prev => prev + 1);
+    const target = index + 1;
+    
+    if (target == unlockedHints + 1 && target <= hints.length) {
+      setUnlockedHints(target);
+      setHintIndex(target);
       dispatch(hintUsageIncrement());
+      return;
     }
+
+    if (target <= unlockedHints) {
+      setHintIndex(target);
+    } 
   };
 
   useEffect(() => {
     setHintIndex(1);
+    setUnlockedHints(1);
   }, [rawHints]);
 
   useEffect(() => {
@@ -40,7 +55,7 @@ const GameBoard: React.FC = () => {
     }
 
     const client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws'), // TODO: replace with your WebSocket URL
+      webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected');
@@ -70,7 +85,38 @@ const GameBoard: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.topBar}>
-        <button className={styles.userBoxGreen}>Exit</button>
+        <div className={styles.scoreboardWrapper}>
+          <button className={styles.userBoxGreen} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
+        </div>
+        {showExitWindow && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.exitModal}>
+              <p>The game is still ongoing.<br />Are you sure you want to exit?</p>
+              <div className={styles.exitButtons}>
+                <button
+                  className={styles.exitButton}
+                  onClick={async () => {
+                    try {
+                      await apiService.put(`/giveup/${userId}`, {});
+                      router.push('/lobby');
+                    } catch (error) {
+                      console.error('Error leaving game:', error);
+                    }
+                  }}
+                >
+                  give up with score lost
+                </button>
+                <button
+                  className={styles.exitButton}
+                  onClick={() => setShowExitWindow(false)}
+                >
+                  misoperating, back...
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className={styles.scoreboardWrapper}>
           <button
             className={styles.userBoxBlue}
@@ -117,7 +163,7 @@ const GameBoard: React.FC = () => {
           <div className={styles.hintIcons}>
             Hint Usage:<br />
             {hints.map((_, index) => {
-              const isUsed = index < hintIndex;
+              const isUsed = index < unlockedHints;
 
               return (
                 <span
