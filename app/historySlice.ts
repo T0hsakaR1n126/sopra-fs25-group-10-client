@@ -1,4 +1,3 @@
-// features/history/historySlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface GameHistory {

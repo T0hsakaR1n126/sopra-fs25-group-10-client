@@ -1,4 +1,3 @@
-// features/player/playerSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface PlayerState {

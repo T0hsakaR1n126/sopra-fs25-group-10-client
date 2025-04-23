@@ -1,17 +1,16 @@
-// features/game/gameSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CurrentGame {
   gameId: string | null;
-  ownerId: number | null; // Assuming ownerId is a number
+  ownerId: number | null;
   gameName: string | null;
   maxPlayersNumber: number | null;
   currentPlayersNumber: number | null;
   password?: string | null;
   startTime: string | null;
-  gameStatus: string | null; // e.g., "CREATED", "STARTED", "FINISHED"
+  gameStatus: string | null;
   modeType: 'SOLO' | 'ONE_VS_ONE' | 'TEAM_VS_TEAM' | null;
-  accessType?: string | null; // e.g., "public", "private"
+  accessType?: string | null;
   endTime: string | null;
   gameCreationDate: string | null;
   maxHints: number | null;
