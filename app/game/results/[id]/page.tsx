@@ -5,15 +5,41 @@ import Head from "next/head";
 import Image from "next/image";
 import { Layout, Typography, Row, Col, Card } from "antd";
 import { useApi } from "@/hooks/useApi";
-// import { useSelector } from "react-redux";
-// import { RootState } from "../../";
-import styles from "../../styles/results.module.css";
+import styles from "@/styles/results.module.css";
 import { useSelector } from "react-redux";
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
+
+interface Game1v1CardProps {
+  players?: Map<string, number>;
+  bgColor: string;
+  isWinner?: boolean;
+}
+
+const Game1v1Card: React.FC<Game1v1CardProps> = ({
+  players = new Map(),
+  bgColor,
+  isWinner = false,
+}) => (
+  <Card
+    className={`${styles.teamCard} ${isWinner ? styles.winnerCard : ""}`}
+    style={{ backgroundColor: bgColor }}
+    bodyStyle={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+    }}
+  >
+    {Array.from(players.entries()).map(([player, score]) => (
+      <div key={player}>
+        <Text>{player}: {score} points</Text>
+      </div>
+    ))}
+  </Card>
+);
 
 interface TeamCardProps {
   teamName: string;
@@ -50,7 +76,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
 );
 
 interface GameData {
-  mode: "solo" | "combat";
+  mode: "SOLO" | "ONE_VS_ONE" | "TEAM_V_TEAM";
   combatType?: "1v1" | "team";
   userScore: number;
   opponentScore?: number;
@@ -70,6 +96,19 @@ const Results = () => {
   const [loading, setLoading] = useState(true);
   const [isWinner, setIsWinner] = useState(false);
   const [scoreBoard, setScoreBoard] = useState<Map<string, number> | null>(null);
+  const [winnerMap, setWinnerMap] = useState<Map<string, number> | null>(null);
+  const [loserMap, setLoserMap] = useState<Map<string, number> | null>(null);
+
+  useEffect(() => {
+    if (scoreBoard) {
+      const entries = Array.from(scoreBoard.entries());
+      if (entries.length > 0) {
+        const [firstEntry, ...remainingEntries] = entries;
+        setWinnerMap(new Map([firstEntry]));
+        setLoserMap(new Map(remainingEntries));
+      }
+    }
+  }, [scoreBoard]);
 
   const gameId = useSelector((state: { game: { gameId: string | null } }) => state.game.gameId);
   const username = useSelector((state: { user: { username: string } }) => state.user.username);
@@ -119,7 +158,30 @@ const Results = () => {
     if (gameId) {
       fetchGameResults(gameId);
     }
-  }, [gameId]);
+  }, []);
+
+  const renderContent = () => {
+    if (!scoreBoard) return null;
+
+    // TODO: Replace with actual game data fetching logic
+    // if (mode === "solo") {
+    //   return (
+    //     <Row justify="center" align="middle">
+    //       <Col>
+    //         <Title level={3} className={styles.title}>
+    //           You scored {userScore} points!
+    //         </Title>
+    //         <Image
+    //           src="/solo.gif"
+    //           alt="Solo game"
+    //           width={280}
+    //           height={280}
+    //           priority
+    //         />
+    //       </Col>
+    //     </Row>
+    //   );
+    // }
 
     return (
       <>
@@ -127,22 +189,20 @@ const Results = () => {
           <Col span={24} className={styles.headerCol}>
             <Title
               level={2}
-              className={`${styles.title} ${username === scoreBoard?.get(0) ? styles.winTitle : styles.loseTitle
+              className={`${styles.title} ${isWinner ? styles.winTitle : styles.loseTitle
                 }`}
             >
               {isWinner
-                ? `🎉 ${userLabel} wins! 🎉`
-                : `${opponentLabel} takes the win — better luck next time!`}
+                ? `🎉 You win! 🎉`
+                : `${scoreBoard?.keys().next().value} takes the win — better luck next time!`}
             </Title>
           </Col>
         </Row>
 
         <Row gutter={[24, 24]} justify="center" align="top">
           <Col xs={24} sm={12} md={8}>
-            <TeamCard
-              teamName={userLabel || "You"}
-              score={userScore}
-              players={combatType === "team" ? userTeamPlayers : undefined}
+            <Game1v1Card
+              players={winnerMap || undefined}
               bgColor="#f0f0f0"
               isWinner={isWinner}
             />
@@ -160,10 +220,8 @@ const Results = () => {
           </Col>
 
           <Col xs={24} sm={12} md={8}>
-            <TeamCard
-              teamName={opponentLabel || "Opponent"}
-              score={opponentScore ?? 0}
-              players={combatType === "team" ? opponentTeamPlayers : undefined}
+            <Game1v1Card
+              players={loserMap || undefined}
               bgColor="#e6f7ff"
               isWinner={!isWinner}
             />

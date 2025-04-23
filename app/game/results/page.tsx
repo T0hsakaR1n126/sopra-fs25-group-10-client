@@ -47,7 +47,7 @@ const TeamCard: React.FC<TeamCardProps> = ({
 );
 
 interface GameData {
-  mode: "solo" | "combat";
+  mode: "SOLO" | "ONE_VS_ONE" | "TEAM_V_TEAM";
   combatType?: "1v1" | "team";
   userScore: number;
   opponentScore?: number;

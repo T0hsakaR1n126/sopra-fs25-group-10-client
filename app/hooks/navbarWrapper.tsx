@@ -7,7 +7,9 @@ const excludeNavbar = ["/", "/users/login", "/users/register"];
 
 export default function NavbarWrapper({ children }: { children: React.ReactNode }) {
   const path = usePathname();
-  const hideNavbar = excludeNavbar.includes(path) || /^\/game\/[^\/]+$/.test(path);
+  const hideNavbar = excludeNavbar.includes(path) ||
+   /^\/game\/[^\/]+$/.test(path) ||
+   /^\/game\/result\/.+$/.test(path);
 
   return (
     <>

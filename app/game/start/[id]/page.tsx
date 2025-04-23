@@ -9,7 +9,7 @@ import { useApi } from '@/hooks/useApi';
 import { useSelector } from 'react-redux';
 import { Game } from '@/types/game';
 import { useDispatch } from "react-redux"; // Import useDispatch
-import { gameStart } from '@/gameSlice';
+import { gameStart, gameTimeInitialize } from '@/gameSlice';
 
 
 const GameStart = () => {
@@ -29,6 +29,7 @@ const GameStart = () => {
   const [teamName, setTeamName] = useState("");
   const [isTeamNameSaved, setIsTeamNameSaved] = useState(false);
   const [ownerName, setOwnerName] = useState("");
+  const [countDown, setCountDown] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -52,7 +53,7 @@ const GameStart = () => {
       webSocketFactory: () => new SockJS('http://localhost:8080/ws'), // TODO: replace with your WebSocket URL
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log('STOMP connected');
+        console.log('STOMP connected', gameId);
 
         client.subscribe(`/topic/ready/${gameId}/players`, (message) => {
           try {
@@ -64,17 +65,36 @@ const GameStart = () => {
           }
         });
 
+        client.subscribe(`/topic/start/${gameId}/ready-time`, (message) => {
+          try {
+            console.log('RAW message body:', message.body);
+            const data: string = message.body;
+            setCountDown(data);
+          } catch (err) {
+            console.error('Invalid message:', err);
+          }
+        });
+
+        client.subscribe(`/topic/start/${gameId}/formatted-time`, (message) => {
+          try {
+            console.log('RAW message body:', message.body);
+            const data: string = message.body;
+            dispatch(gameTimeInitialize(data));
+            router.push(`/game/${gameId}`);
+          } catch (err) {
+            console.error('Invalid message:', err);
+          }
+        });
+
         client.subscribe(`/topic/start/${gameId}/hints`, (message) => {
           try {
             const game: Game = JSON.parse(message.body);
-            if (game.time && game.hints) {
+            if (game.hints) {
               dispatch(gameStart({
-                time: game.time ?? "",
                 hints: game.hints ?? [],
                 gameId: gameId?.toString() ?? "",
                 scoreBoard: game.scoreBoard ?? new Map<string, number>(),
               }));
-              router.push(`/game/${gameId}`);
             }
           } catch (err) {
             console.error('Invalid message:', err);
@@ -93,6 +113,14 @@ const GameStart = () => {
       client.deactivate();
     };
   }, [gameId]);
+
+  useEffect(() => {
+    if (countDown === null) return;
+    if (countDown === "0") {
+      setCountDown(null);
+      return;
+    }
+  }, [countDown]);
 
   const handleExitGame = async () => {
     try {
@@ -163,6 +191,12 @@ const GameStart = () => {
         {username === ownerName && <button className={styles.button} onClick={handleBegin}>Begin</button>}
         <button className={styles.button} onClick={handleExitGame}>Exit</button>
       </div>
+
+      {countDown !== null && (
+        <div className={styles.overlay}>
+          <div className={styles.countdown}>{countDown === "0" ? "GO!" : countDown}</div>
+        </div>
+      )}
     </div>
   );
 };

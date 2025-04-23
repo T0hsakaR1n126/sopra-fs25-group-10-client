@@ -17,7 +17,7 @@ interface LearningProgress {
 }
 
 interface GameResults {
-  mode: "solo" | "combat";
+  mode: "SOLO" | "ONE_VS_ONE" | "TEAM_V_TEAM";
   winningTeam: string | null;
   team1: { name: string; players?: string[]; score: number };
   team2: { name: string; players?: string[]; score: number };
@@ -57,13 +57,17 @@ const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    gameStart: (state, action: PayloadAction<{ time: string; hints: Map<string, string>[]; gameId: string; scoreBoard: Map<string, number> }>) => {
-      state.time = action.payload.time;
+    gameStart: (state, action: PayloadAction<{ hints: Map<string, string>[]; gameId: string; scoreBoard: Map<string, number> }>) => {
       state.hints = action.payload.hints;
       state.gameId = action.payload.gameId;
       state.scoreBoard = action.payload.scoreBoard;
       state.hintUsage = 1; // Reset hint usage when a new game starts
     },
+
+    gameTimeInitialize: (state, action: PayloadAction<string>) => {
+      state.time = action.payload;
+    },
+
     hintUpdate: (state, action: PayloadAction<Map<string, string>[]>) => {
       state.hints = action.payload;
     },
@@ -79,7 +83,7 @@ const gameSlice = createSlice({
 
 // Export actions for use in components
 export const { 
-  gameStart, hintUsageIncrement, hintUpdate, hintUsageClear
+  gameStart, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

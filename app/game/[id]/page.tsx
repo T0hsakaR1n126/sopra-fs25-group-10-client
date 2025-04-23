@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/gameBoard.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { hintUsageIncrement } from '@/gameSlice';
+import { hintUsageIncrement, gameTimeInitialize } from '@/gameSlice';
 import InteractiveMap from '@/hooks/interactiveMap';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
@@ -25,12 +25,15 @@ const GameBoard: React.FC = () => {
   );
   const hints = [...rawHints].sort((a, b) => parseInt(b.difficulty) - parseInt(a.difficulty));
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
+  const gameId = useSelector((state: { game: { gameId: string } }) => state.game.gameId);
   const initialScoreBoard = useSelector((state: { game: { scoreBoard: Map<string, number> } }) => state.game.scoreBoard);
+  const restTime = useSelector((state: { game: { currentTime: string } }) => state.game.currentTime);
+  const [currentTime, setCurrentTime] = useState<string | null>(restTime);
 
   const currentHint = hints[hintIndex - 1];
   const handleHintClick = (index: number) => {
     const target = index + 1;
-    
+
     if (target == unlockedHints + 1 && target <= hints.length) {
       setUnlockedHints(target);
       setHintIndex(target);
@@ -40,7 +43,7 @@ const GameBoard: React.FC = () => {
 
     if (target <= unlockedHints) {
       setHintIndex(target);
-    } 
+    }
   };
 
   useEffect(() => {
@@ -65,6 +68,16 @@ const GameBoard: React.FC = () => {
             console.log('RAW message body:', message.body);
             const data: Map<string, number> = JSON.parse(message.body);
             setScoreBoard(new Map(Object.entries(data)));
+          } catch (err) {
+            console.error('Invalid message:', err);
+          }
+        });
+
+        client.subscribe(`/topic/game/${gameId}/formatted-time`, (message) => {
+          try {
+            console.log('RAW message body:', message.body);
+            const data: string = message.body;
+            setCurrentTime(data);
           } catch (err) {
             console.error('Invalid message:', err);
           }
@@ -145,7 +158,7 @@ const GameBoard: React.FC = () => {
         </div>
         <div className={styles.timer}>
           <div>Time left:</div>
-          <div className={styles.red}>04:00</div>
+          <div className={styles.red}>{currentTime}</div>
         </div>
       </div>
 

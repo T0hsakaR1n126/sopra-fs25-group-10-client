@@ -58,6 +58,7 @@ const InteractiveMap: React.FC = () => {
               country.addEventListener("click", (event) => {
                 event.stopPropagation();
                 try {
+                  console.log(gameId, countryId, hintUsageRef.current)
                   apiService.put(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
                     .then((response: any) => {
                         console.log(response)

@@ -14,6 +14,7 @@ const Lobby: React.FC = () => {
   const router = useRouter();
   const [showSidebar, setShowSidebar] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
+  const [paginatedGames, setPaginatedGames] = useState<Game[]>([]);
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
 
   // only for mock, remove when backend is ready
@@ -21,7 +22,6 @@ const Lobby: React.FC = () => {
   const itemsPerPage = 5;
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
-  const paginatedGames = games.slice(start, start + itemsPerPage);
   // useEffect(() => {
   //   setGames([
   //     { gameName: "Map genies", playersNumber: "1 / 5", owner: "RocketMan", password: "password", gameId: "1", modeType: "normal", time: "5" },
@@ -41,6 +41,7 @@ const Lobby: React.FC = () => {
       try {
         const response: Game[] = await apiService.get("/lobby");
         setGames(response);
+        setPaginatedGames(games.slice(start, start + itemsPerPage));
         console.log(JSON.stringify(response, null, 2));
       } catch (error) {
         if (error instanceof Error) {
