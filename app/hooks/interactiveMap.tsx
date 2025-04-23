@@ -15,6 +15,11 @@ const InteractiveMap: React.FC = () => {
   const hintUsageRef = useRef(hintUsingNumber);
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
 
+  interface submitResponse {
+    judgement: boolean;
+    hints: any[];
+  }
+
   useEffect(() => {
     fetch("/world_map.svg")
       .then(response => response.text())
@@ -59,8 +64,8 @@ const InteractiveMap: React.FC = () => {
                 event.stopPropagation();
                 try {
                   console.log(gameId, countryId, hintUsageRef.current)
-                  apiService.put(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
-                    .then((response: any) => {
+                  apiService.put<submitResponse>(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
+                    .then((response) => {
                         console.log(response)
                         if (response.judgement) {
                           alert("Your answer is correct!");
