@@ -17,7 +17,7 @@ const InteractiveMap: React.FC = () => {
 
   interface submitResponse {
     judgement: boolean;
-    hints: any[];
+    hints: Map<string, string>[];
   }
 
   useEffect(() => {
