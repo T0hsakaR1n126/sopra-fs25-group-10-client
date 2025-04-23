@@ -58,7 +58,7 @@ const GameBoard: React.FC = () => {
     }
 
     const client = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+      webSocketFactory: () => new SockJS('https://sopra-fs25-group-10-server.oa.r.appspot.com/ws'),
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected');
