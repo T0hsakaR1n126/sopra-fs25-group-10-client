@@ -31,8 +31,8 @@ const playerSlice = createSlice({
   name: 'player',
   initialState,
   reducers: {
-    setCurrentPlayer(state, action: PayloadAction<PlayerState>) {
-      return action.payload;
+    setCurrentPlayer(state, action: PayloadAction<Partial<PlayerState>>) {
+      return { ...state, ...action.payload };
     },
     updatePlayerScore(state, action: PayloadAction<number>) {
       if (state.playerId !== null) {

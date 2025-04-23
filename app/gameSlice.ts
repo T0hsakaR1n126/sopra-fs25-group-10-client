@@ -3,21 +3,19 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CurrentGame {
   gameId: string | null;
-  ownerId: string | null;
+  ownerId: number | null; // Assuming ownerId is a number
   gameName: string | null;
   maxPlayersNumber: number | null;
   currentPlayersNumber: number | null;
-  password?: string;
+  password?: string | null;
   startTime: string | null;
   gameStatus: string | null; // e.g., "CREATED", "STARTED", "FINISHED"
   modeType: 'SOLO' | 'ONE_VS_ONE' | 'TEAM_VS_TEAM' | null;
-  accessType: string | null; // e.g., "public", "private"
+  accessType?: string | null; // e.g., "public", "private"
   endTime: string | null;
   gameCreationDate: string | null;
   maxHints: number | null;
-  time: string | null; // Game timer value
-  // hints: Map<string, string>[] | null;
-  hintUsage: number;
+  time: number | null;
 }
 
 interface GameState {
@@ -40,20 +38,28 @@ const gameSlice = createSlice({
         state.currentGame.gameStatus = action.payload;
       }
     },
-    gameStart(state, action: PayloadAction<{ time: string; hints: Map<string, string>[] }>) {
+    setGameStartTime(state, action: PayloadAction<string | null>) {
       if (state.currentGame) {
-        state.currentGame.time = action.payload.time;
-        // state.currentGame.hints = action.payload.hints;
-        state.currentGame.hintUsage = 0;
+        state.currentGame.startTime = action.payload;
+      }
+    },
+    setGameEndTime(state, action: PayloadAction<string | null>) {
+      if (state.currentGame) {
+        state.currentGame.endTime = action.payload;
+      }
+    },
+    setGameTime(state, action: PayloadAction<number | null>) { // Updated type to number | null
+      if (state.currentGame) {
+        state.currentGame.time = action.payload;
+      }
+    },
+    updateCurrentPlayersNumber(state, action: PayloadAction<number>) {
+      if (state.currentGame && state.currentGame.currentPlayersNumber !== null) {
+        state.currentGame.currentPlayersNumber = action.payload;
       }
     },
     resetCurrentGame(state) {
       state.currentGame = null;
-    },
-    setGameMode(state, action: PayloadAction<'SOLO' | 'ONE_VS_ONE' | 'TEAM_VS_TEAM' | null>) {
-      if (state.currentGame) {
-        state.currentGame.modeType = action.payload;
-      }
     },
   },
 });
@@ -61,9 +67,11 @@ const gameSlice = createSlice({
 export const {
   setCurrentGame,
   updateGameStatus,
-  gameStart,
+  setGameStartTime,
+  setGameEndTime,
+  setGameTime,
+  updateCurrentPlayersNumber,
   resetCurrentGame,
-  setGameMode,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

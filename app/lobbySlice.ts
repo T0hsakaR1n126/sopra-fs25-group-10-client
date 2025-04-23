@@ -1,15 +1,24 @@
-// features/lobby/lobbySlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface LobbyGame {
-  gameId: string;
-  gameName: string;
-  ownerName: string; // You might need to fetch this
-  maxPlayersNumber: number;
-  currentPlayersNumber: number;
-  modeType: 'SOLO' | 'ONE_VS_ONE' | 'TEAM_VS_TEAM';
-  accessType: string;
-  // ... other relevant lobby info
+  ownerName: string | null;
+  ownerId: number | null;
+  totalScore: number | null;
+  startTime: string | null;
+  gameId: number;
+  gameStatus: string;
+  gameName: string | null;
+  time: number | null;
+  accessType: 'PRIVATE' | 'PUBLIC' | null;
+  maxPlayersNumber: number | null;
+  currentPlayersNumber: number | null;
+  password?: string | null;
+  modeType: 'SOLO' | 'ONE_VS_ONE' | 'TEAM_VS_TEAM' | null;
+  endTime: string | null;
+  maxHints: number | null;
+  gameCreationDate: string | null;
+  resultSummary: string | null;
+  starTime: string | null;
 }
 
 interface LobbyState {
