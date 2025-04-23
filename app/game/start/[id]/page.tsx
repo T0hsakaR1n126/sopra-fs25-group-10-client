@@ -51,7 +51,9 @@ const GameStart = () => {
     fetchPlayers();
 
     const client = new Client({
-      webSocketFactory: () => new SockJS('https://sopra-fs25-group-10-server.oa.r.appspot.com/ws'), // TODO: replace with your WebSocket URL
+      webSocketFactory: () => new SockJS('https://sopra-fs25-group-10-server.oa.r.appspot.com/ws', null, {
+        transports: ['xhr-streaming', 'xhr-polling'],
+      }), // TODO: replace with your WebSocket URL
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected', gameId);
