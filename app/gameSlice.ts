@@ -17,7 +17,7 @@ interface LearningProgress {
 }
 
 interface GameResults {
-  mode: "SOLO" | "ONE_VS_ONE" | "TEAM_V_TEAM";
+  mode: "solo" | "combat";
   winningTeam: string | null;
   team1: { name: string; players?: string[]; score: number };
   team2: { name: string; players?: string[]; score: number };

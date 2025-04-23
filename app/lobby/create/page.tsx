@@ -34,7 +34,7 @@ const CreateForm: React.FC = () => {
       hints: null,
       gameId: null,
       realPlayersNumber: null,
-      modeType: "ONE_VS_ONE", // placeholder
+      modeType: "solo", // placeholder
       endTime: null
     };
 
