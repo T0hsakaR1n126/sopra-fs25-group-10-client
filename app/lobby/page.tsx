@@ -74,7 +74,7 @@ const Lobby: React.FC = () => {
         });
 
         apiService.put("/lobby", {}).catch((err) => {
-          alert("Error fetching lobby data");
+          console.error('Error fetching lobby data: ', err);
         });
       },
       onDisconnect: () => {

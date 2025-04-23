@@ -26,9 +26,9 @@ const GameStart = () => {
 
   const [players, setPlayers] = useState<User[]>([]);
   const [playersNumber, setPlayersNumber] = useState<number>(0);
-  const [isTeamMode, setIsTeamMode] = useState(false);
-  const [teamName, setTeamName] = useState("");
-  const [isTeamNameSaved, setIsTeamNameSaved] = useState(false);
+  // const [isTeamMode, setIsTeamMode] = useState(false);
+  // const [teamName, setTeamName] = useState("");
+  // const [isTeamNameSaved, setIsTeamNameSaved] = useState(false);
   const [ownerName, setOwnerName] = useState("");
   const [countDown, setCountDown] = useState<string | null>(null);
 
