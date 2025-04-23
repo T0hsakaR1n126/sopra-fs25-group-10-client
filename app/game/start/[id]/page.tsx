@@ -25,6 +25,7 @@ const GameStart = () => {
   const username = useSelector((state: { user: { username: string } }) => state.user.username)
 
   const [players, setPlayers] = useState<User[]>([]);
+  const [playersNumber, setPlayersNumber] = useState<number>(0);
   const [isTeamMode, setIsTeamMode] = useState(false);
   const [teamName, setTeamName] = useState("");
   const [isTeamNameSaved, setIsTeamNameSaved] = useState(false);
@@ -60,6 +61,9 @@ const GameStart = () => {
             console.log('RAW message body:', message.body);
             const data: User[] = JSON.parse(message.body);
             setPlayers(data);
+            if (data[0].username === username) {
+              setOwnerName(data[0].username);
+            }
           } catch (err) {
             console.error('Invalid message:', err);
           }
@@ -69,18 +73,12 @@ const GameStart = () => {
           try {
             console.log('RAW message body:', message.body);
             const data: string = message.body;
-            setCountDown(data);
-          } catch (err) {
-            console.error('Invalid message:', err);
-          }
-        });
-
-        client.subscribe(`/topic/start/${gameId}/formatted-time`, (message) => {
-          try {
-            console.log('RAW message body:', message.body);
-            const data: string = message.body;
-            dispatch(gameTimeInitialize(data));
-            router.push(`/game/${gameId}`);
+            if (!["1", "2", "3", "4", "5"].includes(data)) {
+              dispatch(gameTimeInitialize(data));
+              router.push(`/game/${gameId}`);
+            } else {
+              setCountDown(data);
+            }
           } catch (err) {
             console.error('Invalid message:', err);
           }
@@ -96,6 +94,15 @@ const GameStart = () => {
                 scoreBoard: game.scoreBoard ?? new Map<string, number>(),
               }));
             }
+          } catch (err) {
+            console.error('Invalid message:', err);
+          }
+        });
+
+        client.subscribe(`/topic/playersNumber`, (message) => {
+          try {
+            const data: string = message.body;
+            setPlayersNumber(parseInt(data));
           } catch (err) {
             console.error('Invalid message:', err);
           }
@@ -151,7 +158,7 @@ const GameStart = () => {
         ))}
       </div>
 
-      {username === ownerName && <div className={styles.inlineField}>
+      {/* {username === ownerName && <div className={styles.inlineField}>
         <span className={styles.labelText}>Team Mode</span>
 
         <label className={styles.switch}>
@@ -166,9 +173,9 @@ const GameStart = () => {
           />
           <span className={styles.slider}></span>
         </label>
-      </div>}
+      </div>} */}
 
-      {isTeamMode && (
+      {/* {isTeamMode && (
         <>
           {isTeamNameSaved ? (
             <p className={styles.teamName}>Team Name: {teamName}</p>
@@ -184,11 +191,11 @@ const GameStart = () => {
             </label>
           )}
         </>
-      )}
+      )} */}
 
       <div className={styles.buttonGroup}>
-        {!isTeamNameSaved && isTeamMode && <button className={styles.button} onClick={() => { setTeamName(teamName); setIsTeamNameSaved(true); }}>Save</button>}
-        {username === ownerName && <button className={styles.button} onClick={handleBegin}>Begin</button>}
+        {/* {!isTeamNameSaved && isTeamMode && <button className={styles.button} onClick={() => { setTeamName(teamName); setIsTeamNameSaved(true); }}>Save</button>} */}
+        {username === ownerName && <button className={styles.button} onClick={handleBegin} disabled={players.length !== playersNumber}>Begin</button>}
         <button className={styles.button} onClick={handleExitGame}>Exit</button>
       </div>
 

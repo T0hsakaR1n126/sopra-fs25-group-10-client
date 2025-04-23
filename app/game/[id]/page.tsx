@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/gameBoard.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { hintUsageIncrement, gameTimeInitialize } from '@/gameSlice';
+import { hintUsageIncrement, gameTimeInitialize, scoreBoardResultSet } from '@/gameSlice';
 import InteractiveMap from '@/hooks/interactiveMap';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
@@ -27,7 +27,7 @@ const GameBoard: React.FC = () => {
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const gameId = useSelector((state: { game: { gameId: string } }) => state.game.gameId);
   const initialScoreBoard = useSelector((state: { game: { scoreBoard: Map<string, number> } }) => state.game.scoreBoard);
-  const restTime = useSelector((state: { game: { currentTime: string } }) => state.game.currentTime);
+  const restTime = useSelector((state: { game: { time: string } }) => state.game.time);
   const [currentTime, setCurrentTime] = useState<string | null>(restTime);
 
   const currentHint = hints[hintIndex - 1];
@@ -78,6 +78,17 @@ const GameBoard: React.FC = () => {
             console.log('RAW message body:', message.body);
             const data: string = message.body;
             setCurrentTime(data);
+          } catch (err) {
+            console.error('Invalid message:', err);
+          }
+        });
+
+        client.subscribe(`/topic/end/scoreBoard`, (message) => {
+          try {
+            console.log('RAW message body:', message.body);
+            const data: Map<string, number> = JSON.parse(message.body);
+            dispatch(scoreBoardResultSet(data));
+            router.push(`/game/results/${gameId}`);
           } catch (err) {
             console.error('Invalid message:', err);
           }
@@ -149,7 +160,7 @@ const GameBoard: React.FC = () => {
                   .sort(([, a], [, b]) => b - a)
                   .map(([player, score]) => (
                     <li key={player}>
-                      {player}: {score}
+                      {player}: {score === -1 ? "give up" : score}
                     </li>
                   ))
                 : <li>Loading...</li>}

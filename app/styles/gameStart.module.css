@@ -60,6 +60,13 @@
   background-color: #0284c7;
 }
 
+.button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .buttonGroup {
   display: flex;
   flex-direction: column;

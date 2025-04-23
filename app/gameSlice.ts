@@ -77,13 +77,16 @@ const gameSlice = createSlice({
     hintUsageClear: (state) => {
       state.hintUsage = 1;
     },
+    scoreBoardResultSet: (state, action: PayloadAction<Map<string, number>>) => {
+      state.scoreBoard = action.payload;
+    }
     
   },
 });
 
 // Export actions for use in components
 export const { 
-  gameStart, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear
+  gameStart, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

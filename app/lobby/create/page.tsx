@@ -15,7 +15,7 @@ const CreateForm: React.FC = () => {
   const [gameName, setGameName] = useState("");
   const [password, setPassword] = useState("");
   const [maxPlayers, setMaxPlayers] = useState("2");
-  const [duration, setDuration] = useState("2");
+  const [duration, setDuration] = useState("1");
 
   const handleCreateGame = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
@@ -80,9 +80,9 @@ const CreateForm: React.FC = () => {
       <label>
         Duration:
         <select className={styles.input} onChange={(e) => setDuration(e.target.value)}>
+          <option value="1">1 Minutes</option>
           <option value="2">2 Minutes</option>
           <option value="5">5 Minutes</option>
-          <option value="10">10 Minutes</option>
         </select>
       </label>
 
