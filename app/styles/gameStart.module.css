@@ -1,152 +1,233 @@
 .card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  
-    background-color: #4CAF50;
-    color: white;
-    border-radius: 25px;
-    width: 320px;
-    padding: 24px;
-    text-align: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-  }
-  
-  .title {
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 4px;
-  }
-  
-  .subtitle {
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 16px;
-  }
-  
-  .players {
-    margin-bottom: 24px;
-  }
-  
-  .teamName {
-    font-size: 16px;
-    margin-bottom: 24px;
-  }
-  
-  .teamText {
-    font-weight: 500;
-    margin-left: 5px;
-  }
-  
-  .passcode {
-    font-size: 12px;
-    margin-bottom: 16px;
-    color: #ddd;
-  }
-  
-  .button {
-    background-color: #0ea5e9;
-    color: white;
-    padding: 8px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 10px;
-  }
-  
-  .button:hover {
-    background-color: #0284c7;
-  }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 
-  .buttonGroup {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 12px;
-  }
-  
-  .link {
-    font-size: 12px;
-    margin-top: 20px;
-  }
-  
-  .linkText {
-    text-decoration: underline;
-    color: #bae6fd;
-    cursor: pointer;
-  }
-  
-  .container {
-    height: 100vh;
-    background-color: #111827;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  background-color: #4CAF50;
+  color: white;
+  border-radius: 25px;
+  width: 320px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
 
-  .input {
-    width: 100%;
-    padding: 8px 12px;
-    font-size: 0.95rem;
-    border-radius: 6px;
-    border: none;
-    background-color: #2a2a2a;
-    color: white;
-  }
+.title {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
 
-  .inlineField {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 0.9rem;
-    justify-content: center;
-    margin-bottom: 10px;
-  }
-  
-  .labelText {
-    min-width: 80px; 
-  }
+.subtitle {
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 16px;
+}
 
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 24px;
-  }
-  
-  .switch input {
+.players {
+  margin-bottom: 24px;
+}
+
+.teamName {
+  font-size: 16px;
+  margin-bottom: 24px;
+}
+
+.teamText {
+  font-weight: 500;
+  margin-left: 5px;
+}
+
+.passcode {
+  font-size: 12px;
+  margin-bottom: 16px;
+  color: #ddd;
+}
+
+.button {
+  background-color: #0ea5e9;
+  color: white;
+  padding: 8px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.button:hover {
+  background-color: #0284c7;
+}
+
+.button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.link {
+  font-size: 12px;
+  margin-top: 20px;
+}
+
+.linkText {
+  text-decoration: underline;
+  color: #bae6fd;
+  cursor: pointer;
+}
+
+.container {
+  height: 100vh;
+  background-color: #111827;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  border-radius: 6px;
+  border: none;
+  background-color: #2a2a2a;
+  color: white;
+}
+
+.inlineField {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.labelText {
+  min-width: 80px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #555;
+  border-radius: 34px;
+  transition: 0.4s;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  top: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+.switch input:checked+.slider {
+  background-color: #0ea5e9;
+}
+
+.switch input:checked+.slider::before {
+  transform: translateX(20px);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.countdown {
+  color: white;
+  font-size: 80px;
+  font-weight: bold;
+  animation: scaleFade 1s ease-out;
+}
+
+@keyframes scaleFade {
+  0% {
+    transform: scale(2);
     opacity: 0;
-    width: 0;
-    height: 0;
   }
-  
-  .slider {
-    position: absolute;
-    cursor: pointer;
-    inset: 0;
-    background-color: #555;
-    border-radius: 34px;
-    transition: 0.4s;
+
+  50% {
+    transform: scale(1);
+    opacity: 1;
   }
-  
-  .slider::before {
-    content: "";
-    position: absolute;
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    top: 3px;
-    background-color: white;
-    border-radius: 50%;
-    transition: 0.4s;
+
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
   }
-  
-  .switch input:checked + .slider {
-    background-color: #0ea5e9;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);         
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;                         
+}
+
+.countdown {
+  color: white;
+  font-size: 80px;
+  font-weight: bold;
+  animation: scaleFade 1s ease-out;
+}
+
+@keyframes scaleFade {
+  0% {
+    transform: scale(2);
+    opacity: 0;
   }
-  
-  .switch input:checked + .slider::before {
-    transform: translateX(20px);
+  50% {
+    transform: scale(1);
+    opacity: 1;
   }
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}

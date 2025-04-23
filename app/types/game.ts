@@ -22,4 +22,6 @@ export interface Game {
     realPlayersNumber: string | null;
     ownerId: string | null;
     endTime: string | null;
+    hints: Map<string, string>[] | null;
+    scoreBoard: Map<string, number> | null;
   }

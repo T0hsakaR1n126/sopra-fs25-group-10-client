@@ -8,12 +8,15 @@ import styles from "@/styles/lobby.module.css";
 import CreateForm from './create/page';
 import { handleJoinGame } from './join/handleJoinGame';
 import { useSelector } from 'react-redux';
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 
 const Lobby: React.FC = () => {
   const apiService = useApi();
   const router = useRouter();
   const [showSidebar, setShowSidebar] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
+  const [paginatedGames, setPaginatedGames] = useState<Game[]>([]);
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
 
   // only for mock, remove when backend is ready
@@ -21,7 +24,6 @@ const Lobby: React.FC = () => {
   const itemsPerPage = 5;
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
-  const paginatedGames = games.slice(start, start + itemsPerPage);
   // useEffect(() => {
   //   setGames([
   //     { gameName: "Map genies", playersNumber: "1 / 5", owner: "RocketMan", password: "password", gameId: "1", modeType: "normal", time: "5" },
@@ -36,24 +38,57 @@ const Lobby: React.FC = () => {
   //   ])
   // }, []);
 
-  useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        const response: Game[] = await apiService.get("/lobby");
-        setGames(response);
-        console.log(JSON.stringify(response, null, 2));
-      } catch (error) {
-        if (error instanceof Error) {
-          alert(`Something went wrong while fetching user:\n${error.message}`);
-          router.push("/game");
-        } else {
-          console.error("An unknown error occurred while fetching user.");
-        }
-      }
-    };
+  // useEffect(() => {
+  //   const fetchGames = async () => {
+  //     try {
+  //       await apiService.put("/lobby", {});
+  //     } catch (error) {
+  //       if (error instanceof Error) {
+  //         alert(`Something went wrong while fetching user:\n${error.message}`);
+  //         router.push("/game");
+  //       } else {
+  //         console.error("An unknown error occurred while fetching user.");
+  //       }
+  //     }
+  //   };
 
-    fetchGames();
-  }, [apiService]);
+  //   fetchGames();
+  // }, [apiService]);
+
+  useEffect(() => {
+    const client = new Client({
+      webSocketFactory: () => new SockJS('http://localhost:8080/ws'), // TODO: replace with your WebSocket URL
+      reconnectDelay: 5000,
+      onConnect: () => {
+        console.log('STOMP connected');
+
+        client.subscribe(`/topic/lobby`, (message) => {
+          try {
+            console.log('RAW message body:', message.body);
+            const data: Game[] = JSON.parse(message.body);
+            setGames(data);
+            setPaginatedGames(data.slice(start, start + itemsPerPage));
+          } catch (err) {
+            console.error('Invalid message:', err);
+          }
+        });
+
+        apiService.put("/lobby", {}).catch((err) => {
+          console.error('Error fetching lobby data: ', err);
+        });
+      },
+      onDisconnect: () => {
+        console.log('STOMP disconnected');
+      }
+    });
+
+    client.activate();
+
+    
+    return () => {
+      client.deactivate();
+    };
+  }, []);
 
   return (
     <div className={styles.page}>

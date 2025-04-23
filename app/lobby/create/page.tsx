@@ -15,7 +15,7 @@ const CreateForm: React.FC = () => {
   const [gameName, setGameName] = useState("");
   const [password, setPassword] = useState("");
   const [maxPlayers, setMaxPlayers] = useState("2");
-  const [duration, setDuration] = useState("5");
+  const [duration, setDuration] = useState("1");
 
   const handleCreateGame = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
@@ -31,10 +31,12 @@ const CreateForm: React.FC = () => {
       time: duration,
       password: password,
       ownerId: userId,
+      hints: null,
       gameId: null,
       realPlayersNumber: null,
-      modeType: "combat", // placeholder
-      endTime: null
+      modeType: "solo", // placeholder
+      endTime: null,
+      scoreBoard: null
     };
 
     try {
@@ -79,10 +81,9 @@ const CreateForm: React.FC = () => {
       <label>
         Duration:
         <select className={styles.input} onChange={(e) => setDuration(e.target.value)}>
+          <option value="1">1 Minutes</option>
+          <option value="2">2 Minutes</option>
           <option value="5">5 Minutes</option>
-          <option value="10">10 Minutes</option>
-          <option value="15">15 Minutes</option>
-          <option value="30">30 Minutes</option>
         </select>
       </label>
 
