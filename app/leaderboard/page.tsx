@@ -75,7 +75,7 @@ export default function LeaderboardPage() {
           {/* Leaderboard list */}
           <div className="leftPanel">
             {paginatedEntries.map((entry, index) => (
-              <div className={getRankClass(index)} key={entry.userId ?? `fallback-${index}`} style={{ display: "grid", gridTemplateColumns: "480px 1fr 0px 30px", alignItems: "center", gap: "12px" }}>
+              <div className={getRankClass(index)} key={entry.userId ?? `fallback-${index}`} style={{ display: "grid", gridTemplateColumns: "200px 1fr 0px 0px", alignItems: "center", gap: "12px" }}>
                 <div>{index + 1}. {entry.username}</div>
                 <div>{parseInt(entry.level ?? "0") < 5000 ? "MapAmateur" : (parseInt(entry.level ?? "0") < 10000 ? "MapExpert" : "MapMaster")}</div>
                 <div>{parseInt(entry.level ?? "0")}</div>
