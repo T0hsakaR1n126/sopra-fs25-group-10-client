@@ -18,22 +18,26 @@ const Results = () => {
   const gameId = useSelector(
     (state: { game: { gameId: string } }) => state.game.gameId
   );
+  const ownerId = useSelector(
+    (state: { game: { ownerId: string } }) => state.game.ownerId
+  );
+  const userId = useSelector(
+    (state: { user: { userId: string } }) => state.user.userId
+  );
 
   const entries = Object.entries(scoreBoard);
-  const hasSentSaveRequest = useRef(false);
 
-  useEffect(() => {
-    if (hasSentSaveRequest.current) return;
-    hasSentSaveRequest.current = true;
-
-    // Save the game results
-    apiService.put(`/save/${gameId}`, {})
-      .then()
-      .catch((error) => {
-        alert(`Error saving game: ${error.message}`);
-        router.push("/game");
-      });
-  }, [apiService]);
+  const handleBackToLobby = async () => {
+    if (String(userId) === String(ownerId)) {
+      apiService.put(`/save/${gameId}`, {})
+        .then(() => alert("Game saved successfully!"))
+        .catch((error) => {
+          alert(`Error saving game: ${error.message}`);
+          router.push("/game");
+        });
+    }
+    router.push("/lobby");
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -67,7 +71,7 @@ const Results = () => {
           )}
         </ul>
         <div className={styles.belowBox}>
-          <button className={styles.backButton} onClick={() => router.push("/lobby")}>
+          <button className={styles.backButton} onClick={handleBackToLobby}>
             Back to Lobby
           </button>
         </div>

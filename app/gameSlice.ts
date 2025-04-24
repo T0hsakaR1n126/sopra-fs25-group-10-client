@@ -25,6 +25,7 @@ interface GameResults {
 interface GameState {
   gameId: string | null;
   gamename: string | null;
+  ownerId: string | null;
   time: string | null;
   hints: Map<string, string>[] | null;
   gameHistory: GameHistory[];
@@ -42,6 +43,7 @@ const initialState: GameState = {
   gamename: null,
   time: null,
   hints: null,
+  ownerId: null,
   gameHistory: [],
   learningProgress: [],
   currentGameMode: null,
@@ -78,14 +80,19 @@ const gameSlice = createSlice({
     },
     scoreBoardResultSet: (state, action: PayloadAction<Map<string, number>>) => {
       state.scoreBoard = action.payload;
-    }
-    
+    },
+    gameIdUpdate: (state, action: PayloadAction<string>) => {
+      state.gameId = action.payload;
+    },
+    ownerUpdate: (state, action: PayloadAction<string>) => {
+      state.ownerId = action.payload;
+    },
   },
 });
 
 // Export actions for use in components
 export const { 
-  gameStart, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet
+  gameStart, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, ownerUpdate
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

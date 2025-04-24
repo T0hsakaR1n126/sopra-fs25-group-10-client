@@ -59,8 +59,8 @@ const Register: React.FC = () => {
           <Image
             src="/mapmaster-logo.png"
             alt="MapMaster Logo"
-            width={350}
-            height={300}
+            width={300}
+            height={250}
           />
           <div className="login-container">
             <Form

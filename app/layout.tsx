@@ -5,7 +5,6 @@ import { ConfigProvider, theme } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
 import "@/styles/globals.css";
 import ReduxProvider from "./ReduxProvider";
-// import { metadata } from "@/utils/metadata";
 import NavbarWrapper from "./hooks/navbarWrapper";
 
 const geistSans = Geist({

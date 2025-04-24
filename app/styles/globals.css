@@ -12,10 +12,12 @@
 
 html,
 body {
+  width: 100%;
   max-width: 100vw;
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
   /* overflow: hidden; */
 }
 
@@ -119,10 +121,11 @@ a {
   z-index: 1000; /* Ensures it stays above other elements */
 }
 
-/* Push the body content down to prevent overlap */
+/* Push the body content down to prevent overlap 
 body {
-  padding-top: 80px; /* Adjust based on navbar height */
+  padding-top: 80px; /* Adjust based on navbar height 
 }
+*/
 
 /* Container for the right-side icons */
 .nav-icons {
@@ -141,4 +144,9 @@ body {
 .nav-icon:hover {
   color: #1e90ff; /* Change color on hover */
   transform: scale(1.1); /* Slightly enlarge icon */
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #bbb !important;
 }

@@ -38,7 +38,7 @@ export default function Navbar() {
                         </Tooltip>
 
                         <Tooltip title="Game History">
-                            <Link href="/history">
+                            <Link href="/users/history">
                                 <HistoryOutlined
                                     style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }}
                                     aria-label="Game History"
@@ -56,7 +56,7 @@ export default function Navbar() {
                         </Tooltip>
 
                         <Tooltip title="Learning">
-                            <Link href="/learning">
+                            <Link href="/users/learning">
                                 <BookOutlined
                                     style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }}
                                     aria-label="Learning"

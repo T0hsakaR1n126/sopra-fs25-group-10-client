@@ -12,16 +12,16 @@ const HomePage = () => {
   const router = useRouter();
 
   return (
-    <Content style={{ minHeight: "100vh", padding: "50px" }}>
-      <Row justify="center" align="middle" style={{ textAlign: "center" }}>
+    <Content style={{ height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", padding: "30px", boxSizing: "border-box" }}>
+      <Row justify="center" align="middle" style={{ width: "100%", textAlign: "center" }}>
         <Col xs={24} md={16}>
           {/* Logo */}
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '0px' }}>
             <Image
               src="/mapmaster-logo.png"
               alt="MapMaster Logo"
-              width={350}
-              height={300}
+              width={300}
+              height={250}
             />
           </div>
 
@@ -54,7 +54,6 @@ const HomePage = () => {
                   <li>Each game starts with <Text strong>100 points</Text>.</li>
                   <li>Using a hint deducts <Text strong>20 points</Text>.</li>
                   <li>5 hints max—using all results in <Text strong>0 points</Text>.</li>
-                  <li>Closer guesses earn <Text strong>bonus points</Text>.</li>
                 </ul>
               </li>
             </ol>

@@ -4,12 +4,14 @@ import React, { useState } from 'react';
 import styles from "@/styles/lobby.module.css";
 import { useApi } from '@/hooks/useApi';
 import { useRouter } from 'next/navigation';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Game } from '@/types/game';
+import { gameIdUpdate } from '@/gameSlice';
 
 const CreateForm: React.FC = () => {
   const apiService = useApi();
   const router = useRouter();
+  const dispatch = useDispatch(); // Set up dispatch for Redux actions
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
   const [isPrivate, setIsPrivate] = useState(false);
   const [gameName, setGameName] = useState("");
@@ -45,6 +47,7 @@ const CreateForm: React.FC = () => {
       console.log(JSON.stringify(response, null, 2));
       if (response.gameId)  {
         alert("Game created successfully!");
+        dispatch(gameIdUpdate(response.gameId));
         router.push(`/game/start/${response.gameId}`);
       }
     } catch (error) {

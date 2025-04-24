@@ -3,10 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/gameBoard.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { hintUsageIncrement, scoreBoardResultSet } from '@/gameSlice';
+import { hintUsageIncrement, ownerUpdate, scoreBoardResultSet } from '@/gameSlice';
 import InteractiveMap from '@/hooks/interactiveMap';
 import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 import { useRouter } from 'next/navigation';
 import { useApi } from '@/hooks/useApi';
 
@@ -28,7 +27,7 @@ const GameBoard: React.FC = () => {
   const gameId = useSelector((state: { game: { gameId: string } }) => state.game.gameId);
   const initialScoreBoard = useSelector((state: { game: { scoreBoard: Map<string, number> } }) => state.game.scoreBoard);
   const restTime = useSelector((state: { game: { time: string } }) => state.game.time);
-  const [currentTime, setCurrentTime] = useState<string | null>(restTime);
+  const [currentTime, setCurrentTime] = useState<string | null>(null);
 
   const currentHint = hints[hintIndex - 1];
   const handleHintClick = (index: number) => {
@@ -52,20 +51,24 @@ const GameBoard: React.FC = () => {
   }, [rawHints]);
 
   useEffect(() => {
+    if (restTime != null) {
+      setCurrentTime(restTime);
+    }
+  }, [restTime]);
+
+  useEffect(() => {
     if (initialScoreBoard) {
       const map = new Map(Object.entries(initialScoreBoard));
       setScoreBoard(map);
     }
 
     const client = new Client({
-      webSocketFactory: () => new SockJS('https://sopra-fs25-group-10-server.oa.r.appspot.com/ws', null, {
-        transports: ['xhr-streaming', 'xhr-polling'],
-      }), // TODO: replace with your WebSocket URL
+      brokerURL: 'http://localhost:8080/ws', // TODO: replace with your WebSocket URL
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected');
 
-        client.subscribe(`/topic/user/scoreBoard`, (message) => {
+        client.subscribe(`/topic/user/${gameId}/scoreBoard`, (message) => {
           try {
             console.log('RAW message body:', message.body);
             const data: Map<string, number> = JSON.parse(message.body);
@@ -85,12 +88,22 @@ const GameBoard: React.FC = () => {
           }
         });
 
-        client.subscribe(`/topic/end/scoreBoard`, (message) => {
+        client.subscribe(`/topic/end/${gameId}/scoreBoard`, (message) => {
           try {
             console.log('RAW message body:', message.body);
             const data: Map<string, number> = JSON.parse(message.body);
             dispatch(scoreBoardResultSet(data));
             router.push(`/game/results/${gameId}`);
+          } catch (err) {
+            console.error('Invalid message:', err);
+          }
+        });
+
+        client.subscribe(`/topic/game/${gameId}/owner`, (message) => {
+          try {
+            console.log('RAW message body:', message.body);
+            const data: string = message.body;
+            dispatch(ownerUpdate(data));
           } catch (err) {
             console.error('Invalid message:', err);
           }
