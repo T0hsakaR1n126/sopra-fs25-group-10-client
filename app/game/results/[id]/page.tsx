@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from 'next/navigation';
 import styles from "@/styles/results.module.css";
 import { useApi } from "@/hooks/useApi";
+import { clearGameState } from "@/gameSlice";
 
 const Results = () => {
   const router = useRouter();
   const apiService = useApi();
+  const dispatch = useDispatch(); // Set up dispatch for Redux actions
   const scoreBoard = useSelector(
-    (state: { game: { scoreBoard: Record<string, number> } }) => state.game.scoreBoard
+    (state: { game: { scoreBoard?: Map<string, number> } }) => state.game.scoreBoard ?? {}
   );
   const username = useSelector(
     (state: { user: { username: string } }) => state.user.username
@@ -25,7 +27,7 @@ const Results = () => {
     (state: { user: { userId: string } }) => state.user.userId
   );
 
-  const entries = Object.entries(scoreBoard);
+  const entries = Object.entries(scoreBoard) as [string, number][];
 
   const handleBackToLobby = async () => {
     if (String(userId) === String(ownerId)) {

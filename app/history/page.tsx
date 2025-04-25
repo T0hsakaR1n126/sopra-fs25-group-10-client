@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
-import "./gamehistory.css";
+import styles from "@/styles/gameHistory.module.css";
 import { useSelector } from "react-redux";
 
 type MatchHistoryItem = {
@@ -15,6 +15,8 @@ type MatchHistoryItem = {
   score: number;
   correctAnswers: number;
   totalQuestions: number;
+  gameTime: number;
+  gameCreationDate: string;
 };
 
 // const fallbackHistory: MatchHistoryItem[] = [
@@ -30,12 +32,11 @@ type MatchHistoryItem = {
 //   { id: 10, name: "Beginner", date: "09.01.2025", result: "3 of 10 correct", duration: "60 mins", mode: "Own Play", score: 170 },
 // ];
 
-export default function GameHistoryPage() {
+const GameHistoryPage: React.FC = () => {
   const apiService = useApi();
   const [history, setHistory] = useState<Map<string, MatchHistoryItem>>(new Map());
   const [filter, setFilter] = useState<"All" | "Single" | "Team">("All");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
 
@@ -58,7 +59,9 @@ export default function GameHistoryPage() {
               typeof item === "object" &&
               "score" in item &&
               "correctAnswers" in item &&
-              "totalQuestions" in item
+              "totalQuestions" in item &&
+              "gameTime" in item &&
+              "gameCreationDate" in item
           )
         ) {
           setHistory(new Map(Object.entries(gameHistory)));
@@ -93,9 +96,10 @@ export default function GameHistoryPage() {
   };
 
   return (
-    <div style={{ marginTop: "20px" }}>
-      <div className="container page">
-        <h2 className="title">Game History</h2>
+    <div style={{ paddingTop: "80px" }}>
+      <div className={styles.container}>
+        <h2 className={styles.title}>Game History</h2>
+        <h2 className={styles.subtitle}>Record all your performance!</h2>
         {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
         {loading ? (
           <p>Loading...</p>
@@ -124,39 +128,54 @@ export default function GameHistoryPage() {
               ))}
             </div>
 
-            <div className="leftPanel">
-              <div className="headerRow">
-                <div className="cell index">#</div>
-                <div className="cell name">Game Name</div>
-                <div className="cell accuracy">Accuracy</div>
-                <div className="cell score">Score</div>
+            <div className={styles.leftPanel}>
+              <div className={styles.headerRow}>
+                <div className={`${styles.cell} ${styles.cellIndex}`}>Index</div>
+                <div className={`${styles.cell} ${styles.cellName}`}>Name</div>
+                <div className={`${styles.cell} ${styles.cellDate}`}>Date</div>
+                <div className={`${styles.cell} ${styles.cellAccuracy}`}>Accuracy</div>
+                <div className={`${styles.cell} ${styles.cellDuration}`}>Duration</div>
+                <div className={`${styles.cell} ${styles.cellScore}`}>Score</div>
               </div>
 
-              {paginated.map(([key, item], index) => (
-                <div className="lobbyCard" key={key}>
-                  <div className="cell index">{index + 1}</div>
-                  <div className="cell name">{key}</div>
-                  <div className="cell accuracy">
-                    {item.correctAnswers} of {item.totalQuestions} correct
-                  </div>
-                  <div className="cell score">{item.score}</div>
-                </div>
-              ))}
+              {paginated.length === 0 ? (
+                <div className={styles.emptyMessage}>No Available History</div>
+              ) : (
+                <>
+                  {paginated.map(([key, item], index) => (
+                    <div className={styles.lobbyCard} key={key}>
+                      <div className={`${styles.cell} ${styles.cellIndex}`}>{index + 1}</div>
+                      <div className={`${styles.cell} ${styles.cellName}`}>{key}</div>
+                      <div className={`${styles.cell} ${styles.cellDate} ${styles.cellCenter}`}>{item.gameCreationDate}</div>
+                      <div className={`${styles.cell} ${styles.cellAccuracy}`}>
+                        {item.correctAnswers} of {item.totalQuestions} correct
+                      </div>
+                      <div className={`${styles.cell} ${styles.cellDuration}`}>
+                        {item.gameTime} {item.gameTime === 1 ? "min" : "mins"}
+                      </div>
+                      <div className={`${styles.cell} ${styles.cellScore}`}>
+                        {item.score === -1 ? "give up" : item.score}
+                      </div>
+                    </div>
+                  ))}
 
-              {/* Placeholder cards to align layout */}
-              {[...Array(Math.max(0, 7 - paginated.length))].map((_, idx) => (
-                <div className="lobbyCard" key={`empty-${idx}`} style={{ opacity: 0.2 }}>
-                  <div className="cell index">&nbsp;</div>
-                  <div className="cell name">&nbsp;</div>
-                  <div className="cell accuracy">&nbsp;</div>
-                  <div className="cell score">&nbsp;</div>
-                </div>
-              ))}
+                  {[...Array(Math.max(0, 7 - paginated.length))].map((_, idx) => (
+                    <div className={styles.lobbyCard} key={`empty-${idx}`} style={{ opacity: 0.2 }}>
+                      <div className={`${styles.cell} ${styles.cellIndex}`}>&nbsp;</div>
+                      <div className={`${styles.cell} ${styles.cellName}`}>&nbsp;</div>
+                      <div className={`${styles.cell} ${styles.cellDate} ${styles.cellCenter}`}>&nbsp;</div>
+                      <div className={`${styles.cell} ${styles.cellAccuracy}`}>&nbsp;</div>
+                      <div className={`${styles.cell} ${styles.cellDuration}`}>&nbsp;</div>
+                      <div className={`${styles.cell} ${styles.cellScore}`}>&nbsp;</div>
+                    </div>
+                  ))}
+                </>
+              )}
             </div>
 
             {hasMore && (
               <div
-                className="scrollDownBtn"
+                className={styles.scrollDownBtn}
                 onClick={handleLoadMore}
                 title="Load more"
               >
@@ -168,4 +187,6 @@ export default function GameHistoryPage() {
       </div>
     </div>
   );
-}
+};
+
+export default GameHistoryPage;

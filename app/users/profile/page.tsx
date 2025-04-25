@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Input, Button, Form, Typography } from "antd";
+import { Input, Button, Form } from "antd";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user"
 import { useRouter } from "next/navigation";
@@ -74,11 +74,11 @@ const ProfilePage = () => {
     // <Authenticator>
     <div style={{ minHeight: "100vh", paddingTop: "80px", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ width: "500px", maxWidth: "90vw", height: "auto", margin: "auto", padding: "20px", background: "#333", color: "#fff", borderRadius: "8px" }}>
+        <h2 style={{ textAlign: "center" }}>User Profile</h2>
         {/* Profile Form */}
         {/* {!user && ( // only for test */}
         {user && (
-          <>
-            <h2 style={{ textAlign: "center" }}>User Profile</h2>
+          <>    
             <Form
               form={form}
               layout="vertical"
@@ -86,45 +86,89 @@ const ProfilePage = () => {
               initialValues={user} // only for test
               style={{ marginTop: "20px", color: "#fff" }}
             >
-              <Form.Item label="Avatar">
-                <Form.Item name="avatar" noStyle>
-                  {isEditing ? (
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      {avatar.map((url) => {
-                        const selected = currentAvatar === url;
-                        return (
-                          <div
-                            key={url}
-                            onClick={() => form.setFieldsValue({ avatar: url })}
-                            style={{
-                              border: selected ? "2px solid #1890ff" : "2px solid transparent",
-                              borderRadius: "50%",
-                              cursor: "pointer",
-                              transition: "transform 0.2s, border 0.2s",
-                              transform: selected ? "scale(1.2)" : "scale(1)",
-                              width: 48,
-                              height: 48,
-                              boxSizing: "border-box",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                            }}
-                          >
-                            <img src={url} alt="avatar" style={{ width: 48, height: 48, borderRadius: "50%" }} />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  ) : (
-                    <img
-                      src={form.getFieldValue("avatar")}
-                      alt="avatar"
-                      style={{ width: 48, height: 48, borderRadius: "50%", display: "block" }}
-                    />
-                  )}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+                <Form.Item>
+                  <Form.Item name="avatar" noStyle>
+                    {isEditing ? (
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "10px",
+                          justifyContent: "center",
+                          flexWrap: "wrap",
+                        }}
+                      >
+                        {avatar.map((url) => {
+                          const selected = currentAvatar === url;
+                          return (
+                            <div
+                              key={url}
+                              onClick={() => form.setFieldsValue({ avatar: url })}
+                              style={{
+                                border: selected ? "2px solid #1890ff" : "2px solid transparent",
+                                borderRadius: "50%",
+                                cursor: "pointer",
+                                transition: "transform 0.2s, border 0.2s",
+                                transform: selected ? "scale(1.2)" : "scale(1)",
+                                width: 64,
+                                height: 64,
+                                boxSizing: "border-box",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                              }}
+                            >
+                              <img src={url} alt="avatar" style={{ width: 64, height: 64, borderRadius: "50%" }} />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div style={{ display: "flex", justifyContent: "center" }}>
+                        <img
+                          src={form.getFieldValue("avatar")}
+                          alt="avatar"
+                          style={{ width: 64, height: 64, borderRadius: "50%", display: "block" }}
+                        />
+                      </div>
+                    )}
+                  </Form.Item>
                 </Form.Item>
-              </Form.Item>
+                <Form.Item>
+                  {(() => {
+                    const level = form.getFieldValue("level");
 
+                    let label = "No Level";
+                    if (level != null) {
+                      if (level < 5000) label = "MapAmateur";
+                      else if (level < 10000) label = "MapExpert";
+                      else label = "MapMaster";
+                    }
+
+                    return (
+                      <div
+                        style={{
+                          padding: "6px 16px",
+                          backgroundColor:
+                            label === "MapMaster"
+                              ? "#d4af37" 
+                              : label === "MapExpert"
+                                ? "#40a9ff" 
+                                : "#73d13d", 
+                          color: "#000",
+                          fontWeight: "bold",
+                          borderRadius: "999px", 
+                          fontSize: "14px",
+                          textAlign: "center",
+                          boxShadow: "0 0 6px rgba(0,0,0,0.2)",
+                        }}
+                      >
+                        {label}
+                      </div>
+                    );
+                  })()}
+                </Form.Item>
+              </div>
               <Form.Item label="Username">
                 {isEditing ? (
                   <Form.Item name="username" noStyle rules={[
@@ -171,6 +215,27 @@ const ProfilePage = () => {
                   </div>
                 )}
               </Form.Item>
+              {isEditing ? (
+                <Form.Item label="Password">
+                  <Form.Item name="password" noStyle>
+                    <Input.Password visibilityToggle={true} placeholder="input your new password" />
+                  </Form.Item>
+                  {/* <div
+                    style={{
+                      padding: "6px 11px",
+                      minHeight: 32,
+                      border: "1px solid #666",
+                      borderRadius: 6,
+                      color: form.getFieldValue("email") ? "#fff" : "#888",
+                      backgroundColor: "#444",
+                    }}
+                  >
+                    {form.getFieldValue("email") || "Not Set"}
+                  </div> */}
+                </Form.Item>
+              ) : (
+                <></>
+              )}
               <Form.Item label="Email">
                 {isEditing ? (
                   <Form.Item name="email" noStyle>

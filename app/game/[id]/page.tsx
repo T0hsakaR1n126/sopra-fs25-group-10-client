@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/gameBoard.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { hintUsageIncrement, ownerUpdate, scoreBoardResultSet } from '@/gameSlice';
+import { clearGameState, hintUsageIncrement, ownerUpdate, scoreBoardResultSet } from '@/gameSlice';
 import InteractiveMap from '@/hooks/interactiveMap';
 import { Client } from '@stomp/stompjs';
 import { useRouter } from 'next/navigation';

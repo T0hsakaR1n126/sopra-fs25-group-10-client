@@ -9,7 +9,6 @@ import CreateForm from './create/page';
 import { handleJoinGame } from './join/handleJoinGame';
 import { useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 
 const Lobby: React.FC = () => {
   const apiService = useApi();

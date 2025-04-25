@@ -9,7 +9,7 @@
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 48px;
   font-weight: bold;
   margin-bottom: 10px;
   text-align: center;
@@ -21,102 +21,64 @@
   text-align: center;
 }
 
-.headerRow {
-  width: 100%;
-  max-width: 600px;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 20px;
-  font-weight: bold;
-  color: #cccccc;
-  margin-bottom: 10px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.lobbyCard {
-  background-color: #0ea5e9;
-  color: white;
-  border-radius: 10px;
-  padding: 15px 20px;
-  margin-bottom: 15px;
-  width: 100%;
-  max-width: 600px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background-color 0.3s ease;
-  cursor: pointer;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.lobbyCard:hover {
-  background-color: #0284c7;
-}
-
-.teamName {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  gap: 5px;
-  font-weight: bold;
-  text-align: left;
-}
-
-.playerCount {
-  flex: 1;
-  text-align: center;
-}
-
-.ownerLink {
-  text-decoration: underline;
-  color: white;
-  cursor: pointer;
-  flex: 1;
-  text-align: right;
-}
-
-.ownerLink span {
-  text-decoration: none;
-  display: inline-block;
-  line-height: 1;
-  font-size: 18px;
-}
-
-.ownerLink:hover {
-  color: #d1e9ff;
-}
-
-.passcodeBox {
-  margin-top: 40px;
-  text-align: center;
-}
-
-.input {
-  padding: 10px 15px;
-  border-radius: 6px;
-  border: none;
-  font-size: 1rem;
-}
-
 .page {
   min-height: 100vh;
   background-color: black;
   color: white;
   padding: 40px 20px;
   position: relative;
-  padding-top: 120px;
 }
 
+.headerRow,
+.lobbyCard {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 20px;
+  max-width: 1500px;
+  margin: 0 auto 10px;
+}
+
+.headerRow {
+  font-weight: bold;
+  color: #cccccc;
+}
+
+.lobbyCard {
+  background-color: #0ea5e9;
+  color: white;
+  border-radius: 10px;
+  padding: 12px 20px;
+  margin: 0 auto 10px;
+  width: 100%;
+  max-width: 1500px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* 
+.lobbyCard:hover {
+  background-color: #0284c7;
+} */
 
 .leftPanel {
   width: 100%;
-  max-width: 700px;
+  max-width: 1000px;
   height: 80vh;
   overflow-y: auto;
   margin: 0 auto;
   padding-right: 6px;
+}
+
+.emptyMessage {
+  text-align: center;
+  color: #ccc;
+  font-size: 1.1rem;
+  margin-top: 40px;
+}
+
+.cellCenter {
+  text-align: center;
 }
 
 .rightPanel {
@@ -125,7 +87,7 @@
   right: -320px;
   transform: translateY(-50%);
   width: 300px;
-  height: 490px;
+  height: 350px;
   background-color: #1e1e1e;
   border-radius: 12px 0 0 12px;
   padding: 20px;
@@ -159,7 +121,6 @@
   gap: 5px;
 }
 
-
 .input {
   margin-top: 4px;
   padding: 6px 10px;
@@ -169,7 +130,6 @@
   background-color: #2a2a2a;
   color: white;
 }
-
 
 .createButton {
   margin-top: 10px;
@@ -188,7 +148,7 @@
 
 .sidebarToggle {
   position: fixed;
-  top: 85px;
+  top: 120px;
   right: 0;
   background-color: #0ea5e9;
   color: white;
@@ -226,63 +186,50 @@
   cursor: not-allowed;
 }
 
-.emptyMessage {
-  text-align: center;
-  color: #ccc;
-  font-size: 1.1rem;
-  margin-top: 40px;
-}
-
-.inlineField {
+.scrollDownBtn {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 30px auto 60 auto;
+  width: 50px;
+  height: 50px;
+  background-color: #0ea5e9;
+  border-radius: 50%;
+  color: white;
+  font-size: 28px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-}
-
-.labelText {
-  min-width: 80px;
-}
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 44px;
-  height: 24px;
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: absolute;
+  justify-content: center;
   cursor: pointer;
-  inset: 0;
-  background-color: #555;
-  border-radius: 34px;
-  transition: 0.4s;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.slider::before {
-  content: "";
-  position: absolute;
-  height: 18px;
-  width: 18px;
-  left: 3px;
-  top: 3px;
-  background-color: white;
-  border-radius: 50%;
-  transition: 0.4s;
+.scrollDownBtn:hover {
+  background-color: #0284c7;
+  transform: translateY(3px) scale(1.05);
 }
 
-.switch input:checked+.slider {
-  background-color: #0ea5e9;
+.cell {
+  text-align: left;
+  font-size: 1rem;
 }
 
-.switch input:checked+.slider::before {
-  transform: translateX(20px);
+.cellIndex {
+  flex: 1;
+}
+.cellName {
+  flex: 2;
+}
+.cellDate {
+  flex: 2;
+}
+.cellAccuracy {
+  flex: 2;
+}
+.cellDuration {
+  flex: 1;
+}
+.cellScore {
+  flex: 1;
 }

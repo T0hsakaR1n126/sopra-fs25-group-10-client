@@ -55,14 +55,14 @@ export default function Navbar() {
               </Link>
             </Tooltip>
 
-            <Tooltip title="Statistics">
+            {/* <Tooltip title="Statistics">
               <Link href="/statistics">
                 <BookOutlined
                   style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }}
                   aria-label="Statistics"
                 />
               </Link>
-            </Tooltip>
+            </Tooltip> */}
 
             <Tooltip title="Logout">
               <Button

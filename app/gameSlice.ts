@@ -25,6 +25,7 @@ interface GameResults {
 interface GameState {
   gameId: string | null;
   gamename: string | null;
+  gameStarted: boolean;
   ownerId: string | null;
   time: string | null;
   hints: Map<string, string>[] | null;
@@ -41,8 +42,9 @@ interface GameState {
 const initialState: GameState = {
   gameId: null,
   gamename: null,
+  gameStarted: false,
   time: null,
-  hints: null,
+  hints: [],
   ownerId: null,
   gameHistory: [],
   learningProgress: [],
@@ -63,6 +65,7 @@ const gameSlice = createSlice({
       state.gameId = action.payload.gameId;
       state.scoreBoard = action.payload.scoreBoard;
       state.hintUsage = 1; // Reset hint usage when a new game starts
+      state.gameStarted = true; // Set gameStarted to true when the game starts
     },
 
     gameTimeInitialize: (state, action: PayloadAction<string>) => {
@@ -87,12 +90,26 @@ const gameSlice = createSlice({
     ownerUpdate: (state, action: PayloadAction<string>) => {
       state.ownerId = action.payload;
     },
+    clearGameState: (state) => {
+      state.gameId = null;
+      state.gamename = null;
+      state.time = null;
+      state.hints = null;
+      state.ownerId = null;
+      state.gameHistory = [];
+      state.learningProgress = [];
+      state.currentGameMode = null;
+      state.currentTeamId = null;
+      state.gameResults = null;
+      state.hintUsage = 1; // Reset hint usage when a new game starts
+      state.scoreBoard = null; // Reset score board
+    },
   },
 });
 
 // Export actions for use in components
 export const { 
-  gameStart, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, ownerUpdate
+  gameStart, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, ownerUpdate, clearGameState
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
