@@ -97,6 +97,7 @@ const GameStart = () => {
                 hints: game.hints ?? [],
                 gameId: gameId?.toString() ?? "",
                 scoreBoard: game.scoreBoard ?? new Map<string, number>(),
+                modeType: game.modeType ?? "combat",
               }));
             }
           } catch (err) {

@@ -8,6 +8,7 @@ import { Layout, Row, Col, Form, Input, Button } from "antd";
 import Image from "next/image";
 import { useDispatch } from "react-redux"; // Import useDispatch
 import { login } from "@/userSlice";  // Import login action from your userSlice
+import { clearGameState } from "@/gameSlice";
 
 const { Content } = Layout;
 
@@ -35,7 +36,7 @@ const Login: React.FC = () => {
             userId: response.userId.toString(),
             token: response.token
           }));
-
+        dispatch(clearGameState()); // Clear game state on login
   
         // Navigate to the user overview
         router.push("/game");

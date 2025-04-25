@@ -26,19 +26,26 @@ const Results = () => {
   const userId = useSelector(
     (state: { user: { userId: string } }) => state.user.userId
   );
+  const gameMode = useSelector(
+    (state: { game: { modeType: string } }) => state.game.modeType
+  );
 
   const entries = Object.entries(scoreBoard) as [string, number][];
 
   const handleBackToLobby = async () => {
     if (String(userId) === String(ownerId)) {
       apiService.put(`/save/${gameId}`, {})
-        .then(() => alert("Game saved successfully!"))
+        .then()
         .catch((error) => {
           alert(`Error saving game: ${error.message}`);
           router.push("/game");
         });
     }
-    router.push("/lobby");
+    if (gameMode === "combat") {
+      router.push("/lobby");
+    } else {
+      router.push("/game");
+    }
   };
 
   return (
@@ -58,7 +65,7 @@ const Results = () => {
                 <span className={styles.user}>Username</span>
                 <span className={styles.score}>Score</span>
               </li>
-              {entries.map(([user, score], index) => (
+              {entries.sort((a, b) => b[1] - a[1]).map(([user, score], index) => (
                 <li
                   key={user}
                   className={`${styles.resultsItem} ${user === username ? styles.currentUser : ""
@@ -74,7 +81,7 @@ const Results = () => {
         </ul>
         <div className={styles.belowBox}>
           <button className={styles.backButton} onClick={handleBackToLobby}>
-            Back to Lobby
+            {gameMode === "solo" ? "Back to Hall" : "Back to Lobby"}
           </button>
         </div>
       </div>

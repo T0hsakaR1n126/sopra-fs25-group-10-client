@@ -72,19 +72,19 @@ const ProfilePage = () => {
 
   return (
     // <Authenticator>
-    <div style={{ minHeight: "100vh", paddingTop: "80px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ width: "500px", maxWidth: "90vw", height: "auto", margin: "auto", padding: "20px", background: "#333", color: "#fff", borderRadius: "8px" }}>
+    <div style={{ minHeight: "100vh", paddingTop: "80px", padding: "80px 16px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}>
+      <div style={{ width: "100%", maxWidth: "500px", margin: "auto", padding: "20px", background: "#333", color: "#fff", borderRadius: "8px", boxSizing: "border-box" }}>
         <h2 style={{ textAlign: "center" }}>User Profile</h2>
         {/* Profile Form */}
         {/* {!user && ( // only for test */}
         {user && (
-          <>    
+          <>
             <Form
               form={form}
               layout="vertical"
               onFinish={handleSave}
               initialValues={user} // only for test
-              style={{ marginTop: "20px", color: "#fff" }}
+              style={{ marginTop: "20px", color: "#fff", width: "100%" }}
             >
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                 <Form.Item>
@@ -118,7 +118,17 @@ const ProfilePage = () => {
                                 justifyContent: "center",
                               }}
                             >
-                              <img src={url} alt="avatar" style={{ width: 64, height: 64, borderRadius: "50%" }} />
+                              <img
+                                src={url}
+                                alt="avatar"
+                                style={{
+                                  width: "20vw",
+                                  maxWidth: "64px",
+                                  height: "20vw",
+                                  maxHeight: "64px",
+                                  borderRadius: "50%",
+                                }}
+                              />
                             </div>
                           );
                         })}
@@ -151,13 +161,13 @@ const ProfilePage = () => {
                           padding: "6px 16px",
                           backgroundColor:
                             label === "MapMaster"
-                              ? "#d4af37" 
+                              ? "#d4af37"
                               : label === "MapExpert"
-                                ? "#40a9ff" 
-                                : "#73d13d", 
+                                ? "#40a9ff"
+                                : "#73d13d",
                           color: "#000",
                           fontWeight: "bold",
-                          borderRadius: "999px", 
+                          borderRadius: "999px",
                           fontSize: "14px",
                           textAlign: "center",
                           boxShadow: "0 0 6px rgba(0,0,0,0.2)",

@@ -25,9 +25,12 @@ const GameBoard: React.FC = () => {
   const hints = [...rawHints].sort((a, b) => parseInt(b.difficulty) - parseInt(a.difficulty));
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const gameId = useSelector((state: { game: { gameId: string } }) => state.game.gameId);
+  const gameMode = useSelector((state: { game: { modeType: string } }) => state.game.modeType);
   const initialScoreBoard = useSelector((state: { game: { scoreBoard: Map<string, number> } }) => state.game.scoreBoard);
   const restTime = useSelector((state: { game: { time: string } }) => state.game.time);
   const [currentTime, setCurrentTime] = useState<string | null>(null);
+  const [gameEnded, setGameEnded] = useState(false);
+  const [endMessage, setEndMessage] = useState('');
 
   const currentHint = hints[hintIndex - 1];
   const handleHintClick = (index: number) => {
@@ -73,6 +76,7 @@ const GameBoard: React.FC = () => {
             console.log('RAW message body:', message.body);
             const data: Map<string, number> = JSON.parse(message.body);
             setScoreBoard(new Map(Object.entries(data)));
+            dispatch(scoreBoardResultSet(data));
           } catch (err) {
             console.error('Invalid message:', err);
           }
@@ -88,12 +92,15 @@ const GameBoard: React.FC = () => {
           }
         });
 
-        client.subscribe(`/topic/end/${gameId}/scoreBoard`, (message) => {
+        client.subscribe(`/topic/end/${gameId}`, (message) => {
           try {
             console.log('RAW message body:', message.body);
-            const data: Map<string, number> = JSON.parse(message.body);
-            dispatch(scoreBoardResultSet(data));
-            router.push(`/game/results/${gameId}`);
+            const data: string = message.body;
+            setGameEnded(true); 
+            setEndMessage(data);
+            setTimeout(() => {
+              router.push(`/game/results/${gameId}`);
+            }, 1000);
           } catch (err) {
             console.error('Invalid message:', err);
           }
@@ -137,7 +144,11 @@ const GameBoard: React.FC = () => {
                   onClick={async () => {
                     try {
                       await apiService.put(`/giveup/${userId}`, {});
-                      router.push('/lobby');
+                      if (gameMode === "combat") {
+                        router.push('/lobby');
+                      } else {
+                        router.push('/game');
+                      }
                     } catch (error) {
                       console.error('Error leaving game:', error);
                     }
@@ -220,6 +231,13 @@ const GameBoard: React.FC = () => {
           <InteractiveMap />
         </div>
       </div>
+      {gameEnded && (
+        <div className={styles.endOverlay}>
+          <div className={styles.endMessage}>
+            {endMessage}
+          </div>
+        </div>
+      )}
     </div>
   );
 

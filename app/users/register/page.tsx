@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { login } from "@/userSlice";
 import { useDispatch } from "react-redux"; // Import useDispatch
 import Link from "next/link";
+import { clearGameState } from "@/gameSlice";
 
 const { Content } = Layout;
 
@@ -38,6 +39,7 @@ const Register: React.FC = () => {
             token: response.token,
           })
         );
+        dispatch(clearGameState()); // Clear game state on login
 
         // Navigate to the user overview (or wherever the user should go after registration)
         router.push("/game");

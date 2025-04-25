@@ -226,3 +226,24 @@
     background-color: #e0e0e0;
   }
   
+  .endOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; 
+    backdrop-filter: blur(5px);
+  }
+  
+  .endMessage {
+    color: white;
+    font-size: 48px;
+    font-weight: bold;
+    text-align: center;
+  }
+  

@@ -26,6 +26,7 @@ interface GameState {
   gameId: string | null;
   gamename: string | null;
   gameStarted: boolean;
+  modeType: string | null; // "solo" or "combat"
   ownerId: string | null;
   time: string | null;
   hints: Map<string, string>[] | null;
@@ -43,6 +44,7 @@ const initialState: GameState = {
   gameId: null,
   gamename: null,
   gameStarted: false,
+  modeType: null,
   time: null,
   hints: [],
   ownerId: null,
@@ -60,12 +62,13 @@ const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    gameStart: (state, action: PayloadAction<{ hints: Map<string, string>[]; gameId: string; scoreBoard: Map<string, number> }>) => {
+    gameStart: (state, action: PayloadAction<{ hints: Map<string, string>[]; gameId: string; scoreBoard: Map<string, number>, modeType: string }>) => {
       state.hints = action.payload.hints;
       state.gameId = action.payload.gameId;
       state.scoreBoard = action.payload.scoreBoard;
       state.hintUsage = 1; // Reset hint usage when a new game starts
       state.gameStarted = true; // Set gameStarted to true when the game starts
+      state.modeType = action.payload.modeType; // Set the game mode type
     },
 
     gameTimeInitialize: (state, action: PayloadAction<string>) => {
@@ -93,8 +96,10 @@ const gameSlice = createSlice({
     clearGameState: (state) => {
       state.gameId = null;
       state.gamename = null;
+      state.gameStarted = false;
+      state.modeType = null;
       state.time = null;
-      state.hints = null;
+      state.hints = [];
       state.ownerId = null;
       state.gameHistory = [];
       state.learningProgress = [];
