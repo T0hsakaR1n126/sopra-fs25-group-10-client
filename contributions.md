@@ -105,9 +105,9 @@ Note: If a team member fails to show continuous progress after using their Joker
 | **@rkoonireddy**   | 14-04-2025     |  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/80bef31b6da6a0d7f11e605a59e2477d800d9edf https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/997cf407750ed22a375bf59b4c44bcb236ee5fc3 | Player entity to match the game play as desired. | 1. Player now maps to users, games, and teams which allows for all the anticipated game plays. |
 
 
-|                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
-| **[@githubUser2]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
-|                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
+| **@JaveyBae** |  23-04-2025        | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/b0b6c3c83ae8049ae8ea3be5a1c2f434ea7580ea     | Test game creation module | to prove that game creation function works perfectly. |
+
+|    **@JaveyBae**   |  24-04-2025   | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/7002b05b08c7bd80ff2daaa2e9cb83deadf7f8c8     | Test game join module |  to prove that game join function works perfectly . |
 | **[@githubUser3]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
 |                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
 | **[@githubUser4]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
