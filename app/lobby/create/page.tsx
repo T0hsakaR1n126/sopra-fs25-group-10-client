@@ -45,8 +45,7 @@ const CreateForm: React.FC = () => {
       console.log(newGame)
       const response = await apiService.post<Game>("/games", newGame);
       console.log(JSON.stringify(response, null, 2));
-      if (response.gameId)  {
-        alert("Game created successfully!");
+      if (response.gameId) {
         dispatch(gameIdUpdate(response.gameId));
         router.push(`/game/start/${response.gameId}`);
       }
