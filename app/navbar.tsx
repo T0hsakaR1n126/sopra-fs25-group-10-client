@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux"; // Import Redux hooks
-import { UserOutlined, HistoryOutlined, TrophyOutlined, LoginOutlined, UserAddOutlined, LogoutOutlined, BookOutlined } from "@ant-design/icons";
+import { UserOutlined, HistoryOutlined, TrophyOutlined, LoginOutlined, UserAddOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Button, Tooltip } from "antd";
 import { RootState } from "./"; // Import RootState to type the useSelector hook
 import { useLogout } from "@/utils/useLogout"; // Import the logout function

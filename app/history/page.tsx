@@ -82,7 +82,7 @@ const GameHistoryPage: React.FC = () => {
   }, []);
 
 
-  const filtered = Array.from(history.entries()).filter(([_, entry]) => {
+  const filtered = Array.from(history.entries()).filter(() => {
     // if (filter === "All") return true;
     // return filter === "Team" ? entry.mode === "Team Play" : entry.mode === "Own Play";
     return true;

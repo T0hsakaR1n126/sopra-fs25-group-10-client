@@ -5,12 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from 'next/navigation';
 import styles from "@/styles/results.module.css";
 import { useApi } from "@/hooks/useApi";
-import { clearGameState } from "@/gameSlice";
 
 const Results = () => {
   const router = useRouter();
   const apiService = useApi();
-  const dispatch = useDispatch(); // Set up dispatch for Redux actions
   const scoreBoard = useSelector(
     (state: { game: { scoreBoard?: Map<string, number> } }) => state.game.scoreBoard ?? {}
   );
