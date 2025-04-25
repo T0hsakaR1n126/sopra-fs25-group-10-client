@@ -89,6 +89,10 @@ const Lobby: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    setPaginatedGames(games.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
+  }, [games, currentPage]);
+
   return (
     <div className={styles.page}>
       <div className={styles.leftPanel}>

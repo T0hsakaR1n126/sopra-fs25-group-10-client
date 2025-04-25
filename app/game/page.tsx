@@ -7,7 +7,7 @@ import { Game } from "@/types/game";
 import { useDispatch, useSelector } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import { Client } from "@stomp/stompjs";
-import { gameIdUpdate, gameStart } from "@/gameSlice";
+import { gameIdUpdate, gameStart, ownerUpdate } from "@/gameSlice";
 
 const Dashboard: React.FC = () => {
   const router = useRouter();
@@ -67,6 +67,7 @@ const Dashboard: React.FC = () => {
                 scoreBoard: game.scoreBoard ?? new Map<string, number>(),
                 modeType: game.modeType ?? "solo",
               }));
+              dispatch(ownerUpdate(userId));
             }
           } catch (err) {
             console.error('Invalid message:', err);
