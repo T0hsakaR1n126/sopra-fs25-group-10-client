@@ -1,47 +1,27 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useApi } from "@/hooks/useApi"; // ✅ 引入 API Hook
-import "./leaderboard.css";
+import { useApi } from "@/hooks/useApi";
+import styles from "@/styles/leaderboard.module.css";
+import { User } from "@/types/user";
 
-type LeaderboardEntry = {
-  id: number;
-  name: string;
-  score: number;
-  type: "Team" | "Single";
-};
-
-const fallbackLeaderboard: LeaderboardEntry[] = [
-  { id: 1, name: "Map Genies", score: 1500, type: "Team" },
-  { id: 2, name: "Map Maniacs", score: 1499, type: "Team" },
-  { id: 3, name: "Map Mangoes", score: 1492, type: "Team" },
-  { id: 4, name: "Map Gooses", score: 1450, type: "Team" },
-  { id: 5, name: "Map Maniacs", score: 1430, type: "Team" },
-  { id: 6, name: "Map Dragons", score: 1400, type: "Team" },
-  { id: 7, name: "Solo Stars", score: 1390, type: "Single" },
-  { id: 8, name: "Solo Beast", score: 1375, type: "Single" },
-  { id: 9, name: "Solo X", score: 1350, type: "Single" },
-];
-
-export default function LeaderboardPage() {
-  const apiService = useApi(); // ✅ 获取 API 客户端
-
-  const [entries, setEntries] = useState<LeaderboardEntry[]>(fallbackLeaderboard);
-  const [filter, setFilter] = useState<"Team" | "Single">("Team");
+const LeaderboardPage: React.FC = () => {
+  const apiService = useApi();
+  // const [entries, setEntries] = useState<User[]>([]);
+  const [paginatedEntries, setPaginatedEntries] = useState<User[]>([]);
+  // const [filter, setFilter] = useState<"Team" | "Solo">("Team");
+  const [filter, setFilter] = useState<"All" | "Solo">("All");
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 10;
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const data = await apiService.get("/leaderboard") as LeaderboardEntry[];
-        setEntries(data);
+        const data = await apiService.get("/leaderboard") as User[];
+        // setEntries(data);
+        setPaginatedEntries(data.slice(0, itemsPerPage));
       } catch (e) {
         console.error(e);
-        setError("Failed to load leaderboard. Showing fallback data.");
-        setEntries(fallbackLeaderboard);
       } finally {
         setLoading(false);
       }
@@ -50,24 +30,20 @@ export default function LeaderboardPage() {
     fetchLeaderboard();
   }, []);
 
-  const filtered = entries
-    .filter((entry) => entry.type === filter)
-    .sort((a, b) => b.score - a.score);
-
-  const paginated = filtered.slice(0, currentPage * itemsPerPage);
-  const hasMore = paginated.length < filtered.length;
+  // const paginated = filtered.slice(0, currentPage * itemsPerPage);
+  // const hasMore = paginatedEntries.length < entries.length;
 
   const getRankClass = (index: number): string => {
-    if (index === 0) return "lobbyCard first";
-    if (index === 1) return "lobbyCard second";
-    if (index === 2) return "lobbyCard third";
-    return "lobbyCard";
+    if (index === 0) return `${styles.lobbyCard} ${styles.first}`;
+    if (index === 1) return `${styles.lobbyCard} ${styles.second}`;
+    if (index === 2) return `${styles.lobbyCard} ${styles.third}`;
+    return styles.lobbyCard;
   };
 
   return (
-    <div className="container page">
-      <h2 className="title">Global Leaderboard</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className={styles.containerPage}>
+      <h2 className={styles.title}>Global Leaderboard</h2>
+      <h2 className={styles.subtitle}>Top 10 players are shown here!</h2>
 
       {loading ? (
         <p>Loading...</p>
@@ -75,10 +51,10 @@ export default function LeaderboardPage() {
         <>
           {/* Filter buttons */}
           <div style={{ display: "flex", gap: "12px", marginBottom: "20px", justifyContent: "center" }}>
-            {["Team", "Single"].map((type) => (
+            {["All"].map((type) => (
               <button
                 key={type}
-                onClick={() => setFilter(type as "Team" | "Single")}
+                onClick={() => setFilter(type as "All")}
                 style={{
                   padding: "6px 14px",
                   borderRadius: "20px",
@@ -95,32 +71,45 @@ export default function LeaderboardPage() {
           </div>
 
           {/* Leaderboard list */}
-          <div className="leftPanel">
-            {paginated.map((entry, index) => (
-              <div className={getRankClass(index)} key={entry.id}>
-                <div>{index + 1}. {entry.name}</div>
-                <div>{entry.score}</div>
+          <div className={styles.leftPanel}>
+            <div className={styles.headerRow}>
+              <div className={styles.cell}>Rank</div>
+              <div className={styles.cell}>Name</div>
+              <div className={`${styles.cell} ${styles.cellLevel}`}>Level</div>
+              <div className={`${styles.cell} ${styles.cellScore}`}>Score</div>
+            </div>
+
+            {paginatedEntries.map((entry, index) => (
+              <div className={getRankClass(index)} key={entry.userId ?? `fallback-${index}`}>
+                <div className={styles.cell}>{index + 1}</div>
+                <div className={styles.cell}>{entry.username}</div>
+                <div className={`${styles.cell} ${styles.cellLevel}`}>
+                  {parseInt(entry.level ?? "0") < 5000
+                    ? "MapAmateur"
+                    : parseInt(entry.level ?? "0") < 10000
+                      ? "MapExpert"
+                      : "MapMaster"}
+                </div>
+                <div className={`${styles.cell} ${styles.cellScore}`}>
+                  {parseInt(entry.level ?? "0")}
+                </div>
               </div>
             ))}
 
-            {[...Array(Math.max(0, 7 - paginated.length))].map((_, idx) => (
-              <div className="lobbyCard" key={`empty-${idx}`} style={{ opacity: 0.2 }} />
+            {[...Array(Math.max(0, 10 - paginatedEntries.length))].map((_, idx) => (
+              <div className={styles.lobbyCard} key={`empty-${idx}`} style={{ opacity: 0.2 }}>
+                <div className={styles.cell}>&nbsp;</div>
+                <div className={styles.cell}>&nbsp;</div>
+                <div className={styles.cell}>&nbsp;</div>
+                <div className={styles.cell}>&nbsp;</div>
+              </div>
             ))}
           </div>
 
-          {/* Load more */}
-          {hasMore && (
-            <div
-              className="scrollDownBtn"
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              title="Load more"
-            >
-              ⬇️
-            </div>
-          )}
         </>
       )}
     </div>
   );
-}
+};
 
+export default LeaderboardPage;

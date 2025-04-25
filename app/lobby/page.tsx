@@ -9,7 +9,6 @@ import CreateForm from './create/page';
 import { handleJoinGame } from './join/handleJoinGame';
 import { useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
 
 const Lobby: React.FC = () => {
   const apiService = useApi();
@@ -57,7 +56,7 @@ const Lobby: React.FC = () => {
 
   useEffect(() => {
     const client = new Client({
-      webSocketFactory: () => new SockJS('https://sopra-fs25-group-10-server.oa.r.appspot.com/ws'), // TODO: replace with your WebSocket URL
+      brokerURL: 'wss://sopra-fs25-group-10-server-246820907268.europe-west6.run.app/ws', // TODO: replace with your WebSocket URL // TODO: replace with your WebSocket URL
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected');

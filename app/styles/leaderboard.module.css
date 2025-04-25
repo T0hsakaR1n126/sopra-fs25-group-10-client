@@ -1,0 +1,85 @@
+.title {
+  font-size: 48px;
+  color: white;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  text-align: center;
+  align-items: center;
+}
+
+.containerPage {
+  background-color: black;
+  min-height: 100vh;
+  padding: 20px;
+  padding-top: 120px;
+}
+
+
+.leftPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+}
+
+.lobbyCard {
+  width: 80%;
+  display: grid;
+  grid-template-columns: 0.8fr 1.6fr 1.2fr 1fr;
+  align-items: center;
+  padding: 14px 20px;
+  border-radius: 8px;
+  background-color: #1f2937;
+  color: white;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.lobbyCard.first {
+  background-color: #166534;
+}
+
+.lobbyCard.second {
+  background-color: #0284c7;
+}
+
+.lobbyCard.third {
+  background-color: #ea580c;
+}
+
+.scrollDownBtn {
+  font-size: 24px;
+  cursor: pointer;
+  color: #22c55e;
+  margin-top: 10px;
+}
+
+.headerRow {
+  width: 80%;
+  display: grid;
+  grid-template-columns: 0.8fr 1.6fr 1.2fr 1fr;
+  font-weight: bold;
+  color: #cccccc;
+  margin: 0 auto 10px;
+  padding: 8px 20px;
+}
+
+.cell {
+  font-size: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cellRank, .cellName {
+  text-align: left;
+}
+
+.cellLevel, .cellScore {
+  text-align: right;
+}

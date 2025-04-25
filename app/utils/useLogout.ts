@@ -6,6 +6,7 @@ import { useApi } from "@/hooks/useApi";
 import { useDispatch, useSelector } from "react-redux"; // Import useDispatch and useSelector
 import { logout } from "@/userSlice"; // Import the logout action from userSlice
 import { RootState } from "../"; // Import RootState to type the useSelector hook
+import { User } from "@/types/user";
 
 export const useLogout = () => {
   const router = useRouter();
@@ -29,15 +30,13 @@ export const useLogout = () => {
 
       // Call the API to log out the user
       // await apiService.put(`/logout/${currentUserId}`, {}, {
-      await apiService.post(`/logout`, {}, {
-        headers: { userToken: userToken || "" },
-      });
+      await apiService.post<User>(`/logout`, { token: userToken });
 
       // Dispatch the logout action to reset Redux state
       dispatch(logout());
 
       console.log("Logged out successfully!");
-      router.push("/users/login");
+      router.push("/");
     } catch (error) {
       messageApi.error(`Error logging out: ${String(error)}`);
     }

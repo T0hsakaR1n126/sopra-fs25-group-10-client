@@ -6,5 +6,6 @@ export interface User {
   email: string | null;
   bio: string | null;
   avatar: string | null;
+  level: string | null;
 }
     

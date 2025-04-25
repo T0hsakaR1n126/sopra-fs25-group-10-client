@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from 'next/navigation';
 import styles from "@/styles/results.module.css";
@@ -10,7 +10,7 @@ const Results = () => {
   const router = useRouter();
   const apiService = useApi();
   const scoreBoard = useSelector(
-    (state: { game: { scoreBoard: Record<string, number> } }) => state.game.scoreBoard
+    (state: { game: { scoreBoard?: Map<string, number> } }) => state.game.scoreBoard ?? {}
   );
   const username = useSelector(
     (state: { user: { username: string } }) => state.user.username
@@ -18,22 +18,33 @@ const Results = () => {
   const gameId = useSelector(
     (state: { game: { gameId: string } }) => state.game.gameId
   );
+  const ownerId = useSelector(
+    (state: { game: { ownerId: string } }) => state.game.ownerId
+  );
+  const userId = useSelector(
+    (state: { user: { userId: string } }) => state.user.userId
+  );
+  const gameMode = useSelector(
+    (state: { game: { modeType: string } }) => state.game.modeType
+  );
 
-  const entries = Object.entries(scoreBoard);
-  const hasSentSaveRequest = useRef(false);
+  const entries = Object.entries(scoreBoard) as [string, number][];
 
-  useEffect(() => {
-    if (hasSentSaveRequest.current) return;
-    hasSentSaveRequest.current = true;
-
-    // Save the game results
-    apiService.put(`/save/${gameId}`, {})
-      .then()
-      .catch((error) => {
-        alert(`Error saving game: ${error.message}`);
-        router.push("/game");
-      });
-  }, [apiService]);
+  const handleBackToLobby = async () => {
+    if (String(userId) === String(ownerId)) {
+      apiService.put(`/save/${gameId}`, {})
+        .then()
+        .catch((error) => {
+          alert(`Error saving game: ${error.message}`);
+          router.push("/game");
+        });
+    }
+    if (gameMode === "combat") {
+      router.push("/lobby");
+    } else {
+      router.push("/game");
+    }
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -52,7 +63,7 @@ const Results = () => {
                 <span className={styles.user}>Username</span>
                 <span className={styles.score}>Score</span>
               </li>
-              {entries.map(([user, score], index) => (
+              {entries.sort((a, b) => b[1] - a[1]).map(([user, score], index) => (
                 <li
                   key={user}
                   className={`${styles.resultsItem} ${user === username ? styles.currentUser : ""
@@ -67,8 +78,8 @@ const Results = () => {
           )}
         </ul>
         <div className={styles.belowBox}>
-          <button className={styles.backButton} onClick={() => router.push("/lobby")}>
-            Back to Lobby
+          <button className={styles.backButton} onClick={handleBackToLobby}>
+            {gameMode === "solo" ? "Back to Hall" : "Back to Lobby"}
           </button>
         </div>
       </div>
