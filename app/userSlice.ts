@@ -125,13 +125,27 @@ const userSlice = createSlice({
     setGameResults(state, action: PayloadAction<GameResults>) {
       state.gameResults = action.payload; // Store the game results
     },
+    clearUserState(state) {
+      state.isLoggedIn = false;
+      state.username = null;
+      state.userId = null;
+      state.token = null;
+      state.status = "OFFLINE";
+      state.gameHistory = [];
+      state.learningProgress = [];
+      state.gameResults = null; // Clear the game results
+      state.isGuest = true;
+      state.currentGameMode = null;
+      state.currentTeamId = null;
+    },
   },
 });
 
 // Export actions for use in components
 export const { 
   login, logout, guestLogin, updateUsername, setCurrentGameMode, 
-  addGameHistory, updateLearningProgress, setTeamId, setGameResults 
+  addGameHistory, updateLearningProgress, setTeamId, setGameResults,
+  clearUserState
 } = userSlice.actions;
 
 export default userSlice.reducer;
