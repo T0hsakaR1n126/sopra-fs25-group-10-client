@@ -38,7 +38,9 @@ const GameHistoryPage: React.FC = () => {
   const [filter, setFilter] = useState<"All" | "Single" | "Team">("All");
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 6;
+  const start = (currentPage - 1) * itemsPerPage;
+  const end = start + itemsPerPage;
 
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
 
@@ -88,12 +90,7 @@ const GameHistoryPage: React.FC = () => {
     return true;
   });
 
-  const paginated = filtered.slice(0, currentPage * itemsPerPage);
-  const hasMore = paginated.length < filtered.length;
-
-  const handleLoadMore = () => {
-    setCurrentPage((prev) => prev + 1);
-  };
+  const paginated = filtered.slice(start, end);
 
   return (
     <div style={{ paddingTop: "80px" }}>
@@ -159,29 +156,26 @@ const GameHistoryPage: React.FC = () => {
                     </div>
                   ))}
 
-                  {[...Array(Math.max(0, 7 - paginated.length))].map((_, idx) => (
-                    <div className={styles.lobbyCard} key={`empty-${idx}`} style={{ opacity: 0.2 }}>
-                      <div className={`${styles.cell} ${styles.cellIndex}`}>&nbsp;</div>
-                      <div className={`${styles.cell} ${styles.cellName}`}>&nbsp;</div>
-                      <div className={`${styles.cell} ${styles.cellDate} ${styles.cellCenter}`}>&nbsp;</div>
-                      <div className={`${styles.cell} ${styles.cellAccuracy}`}>&nbsp;</div>
-                      <div className={`${styles.cell} ${styles.cellDuration}`}>&nbsp;</div>
-                      <div className={`${styles.cell} ${styles.cellScore}`}>&nbsp;</div>
-                    </div>
-                  ))}
+                  <div className={styles.pagination}>
+                    <button
+                      onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                      disabled={currentPage === 1}
+                    >
+                      Prev
+                    </button>
+
+                    <span>Page {currentPage}</span>
+
+                    <button
+                      onClick={() => setCurrentPage((p) => p + 1)}
+                      disabled={end >= history.size}
+                    >
+                      Next
+                    </button>
+                  </div>
                 </>
               )}
             </div>
-
-            {hasMore && (
-              <div
-                className={styles.scrollDownBtn}
-                onClick={handleLoadMore}
-                title="Load more"
-              >
-                ⬇️
-              </div>
-            )}
           </>
         )}
       </div>
