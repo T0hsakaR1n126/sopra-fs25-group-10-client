@@ -83,11 +83,28 @@ Note: If a team member fails to show continuous progress after using their Joker
 
 ---
 
-## Contributions Week 4 - [Begin Date] to [End Date]
+## Contributions Week 4 - [14-04-2025] to [25-04-2025]
 
 | **Student**        | **Date** | **Link to Commit** | **Description**           | **Relevance**                 |
 | ------------------------ | -------------- | ------------------------ | ------------------------------- | ----------------------------------- |
-| **[@githubUser1]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
+| **@rkoonireddy**   | 14-04-2025     | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/218366ebb0763cc3ecada6f9f244fecd91556786 | Moidifying some stuff in the game constants and DTOs  | This is with the ongoing effort to ensure that the final game play works with the guests and logged in users. Also to ensure that same DTOs are not used eveywhere making gameflow complex and slow. |
+
+| **@rkoonireddy**   | 14-04-2025     |  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/80bef31b6da6a0d7f11e605a59e2477d800d9edf https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/997cf407750ed22a375bf59b4c44bcb236ee5fc3 | Player entity to match the game play as desired. | 1. Player now maps to users, games, and teams which allows for all the anticipated game plays. |
+
+| **@rkoonireddy**   | 15-04-2025     |  hhttps://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/tree/1ec94efed73190c5420c839a98d5e5571ddee3f1 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/tree/6fcd42eb856c15e41b51b2beb2c8915fdc9d973f | Swagger to communicate endpoints reasonably, finishing cleanup on clutter for certain backend logic.| 1. Configured swagger to allow frontend to coordinate well with the backend expectations. Pruned some unnecessary logic. |
+
+| **@rkoonireddy**   | 16-04-2025     | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/tree/ca58344422ed43a4a009fad3a560512b11ca710d https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/tree/3316c3563695a7cabc8c2a5b5e3882fe0c523081 | Game play to enable hint and socket to enable socreboard. | Hints are provided using websocket and this changed to slug based provision. Game start and end are regulated using timer and status updates. Restricts the operations when game status is changed. |
+
+| **@rkoonireddy**   | 17-04-2025     |  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/tree/d2151364712c3c5c56f6cf68564f7de559764dae https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/tree/ca0ab870b52dc56bad31e33112ea0259fd7304a7 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/tree/1391e677b79a1069f9662b88d4b6d59c8be99a9a
+| Dynamic scoreboard logic added to calculate using player entities instead of game based ones. | 1. Dynamic score board is calculated and sent via websocket to enable updating scorboard. 2. Hints are stored as two tables one with asnwers and other with count so that score can be calculated easily and player flow works clearly.|
+
+| **@rkoonireddy**   | 18-04-2025     |  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/tree/175de4cd047794bf1dd0fdbd5ed1dd7d63359fb0 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/tree/936f0083a9344ad7a11d86248c606d0c9dbb094b | Player entity to match the game play as desired. | 1. Player now maps to users, games, and teams which allows for all the anticipated game plays. |
+
+| **@rkoonireddy**   | 14-04-2025     |  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/80bef31b6da6a0d7f11e605a59e2477d800d9edf https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/997cf407750ed22a375bf59b4c44bcb236ee5fc3 | Player skip and Forefeit | 1. Players can skip a question which will keep the score intact. Player can forfeit game enabling other players to stay in the game. |
+
+| **@rkoonireddy**   | 14-04-2025     |  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/80bef31b6da6a0d7f11e605a59e2477d800d9edf https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/997cf407750ed22a375bf59b4c44bcb236ee5fc3 | Player entity to match the game play as desired. | 1. Player now maps to users, games, and teams which allows for all the anticipated game plays. |
+
+
 |                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
 | **[@githubUser2]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
 |                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
