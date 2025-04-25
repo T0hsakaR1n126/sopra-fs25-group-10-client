@@ -102,10 +102,9 @@ Note: If a team member fails to show continuous progress after using their Joker
 |**@T0hsakaR1n126**| 17-04-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/3302d55821f112ef3790c22cf9735bc588da24a0  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/897b32b98e56ca402cf7061037e87aab6b9eb184 |implement timing counter and send time to frontend by websocket|synchronized the time in frontend.|
 |**@T0hsakaR1n126**| 24-04-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/62544ab0680f46150724efc4a9cbc306f909a204|implement test to test gamestart|to ensure that gamestart can work correctly.|
 |**@T0hsakaR1n126**| 23-04-2025- 25-04-2025|https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/b235c9ca9c54589ad8fe4f0d254791b4c43e9990  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/b322ed33f63b37079429ea363370f5ae9f24f7f2  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/506a634d40df139d68231050f7ff6944bae2d720|fix bugs when running app.|make sure the app can run correctly.|
-| **[@githubUser4]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
-|                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
-| **[@githubUser5]** | [date]         | [Link to Commit 1]       | [Brief description of the task] | [Why this contribution is relevant] |
-|                          | [date]         | [Link to Commit 2]       | [Brief description of the task] | [Why this contribution is relevant] |
+| **@yzq0325** | 16-04-2025        | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/22130b947330eb8c9532a161d4179e7e70c6436f       | User can operate the map and submit their answer by clicking on the country and use another hint which will be considered during score calculating. | This function is the main structure of the game. |
+| **@yzq0325** | 23-04-2025        | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/91f354f2f9f53144016d9ac60c1a60b246a18c33     | Users can finish the game when time is out and check the final score board. | This function is the last step for the game flow. Some features related like game history saving are relied on this. |
+| **@yzq0325** | 25-04-2025       | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/5f9a103c05e6ee46e8e17a3d64d3d3becd92b793       | Users can play in solo mode as the game is in combat mode. | Solo mode is one of the two main playway of the game. |
 
 ---
 
