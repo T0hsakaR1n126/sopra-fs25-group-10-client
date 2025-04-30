@@ -55,7 +55,8 @@ const GameBoard: React.FC = () => {
 
   useEffect(() => {
     if (restTime != null) {
-      setCurrentTime(restTime);
+      const minutes = Math.floor(parseInt(restTime));
+      setCurrentTime(`${String(minutes).padStart(2, '0')}:00`);
     }
   }, [restTime]);
 
@@ -96,7 +97,7 @@ const GameBoard: React.FC = () => {
           try {
             console.log('RAW message body:', message.body);
             const data: string = message.body;
-            setGameEnded(true); 
+            setGameEnded(true);
             setEndMessage(data);
             setTimeout(() => {
               router.push(`/game/results/${gameId}`);
@@ -127,6 +128,15 @@ const GameBoard: React.FC = () => {
       client.deactivate();
     };
   }, []);
+
+  const handleFinishGame = async () => {
+    try {
+      await apiService.put(`/infinite/${gameId}`, {});
+      router.push(`/game/results/${gameId}`);
+    } catch (error) {
+      console.error('Error finishing game:', error);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -193,9 +203,16 @@ const GameBoard: React.FC = () => {
             </ul>
           </div>
         </div>
-        <div className={styles.timer}>
-          <div>Time left:</div>
-          <div className={styles.red}>{currentTime}</div>
+
+        <div className={styles.scoreboardWrapper}>
+          {String(restTime) !== "-1" ? (
+            <div className={styles.timer}>
+              <div>Time left:</div>
+              <div className={styles.red}>{currentTime}</div>
+            </div>
+          ) : (
+            <button className={styles.userBoxGreen} onClick={handleFinishGame}>Finish</button>
+          )}
         </div>
       </div>
 

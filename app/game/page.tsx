@@ -7,7 +7,7 @@ import { Game } from "@/types/game";
 import { useDispatch, useSelector } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import { Client } from "@stomp/stompjs";
-import { gameIdUpdate, gameStart, ownerUpdate } from "@/gameSlice";
+import { gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from "@/gameSlice";
 
 const Dashboard: React.FC = () => {
   const router = useRouter();
@@ -68,6 +68,7 @@ const Dashboard: React.FC = () => {
                 modeType: game.modeType ?? "solo",
               }));
               dispatch(ownerUpdate(userId));
+              dispatch(gameTimeInitialize(game.time ?? ""));
             }
           } catch (err) {
             console.error('Invalid message:', err);
@@ -162,6 +163,7 @@ const Dashboard: React.FC = () => {
                 <option value="1">1 minutes</option>
                 <option value="2">2 minutes</option>
                 <option value="5">5 minutes</option>
+                <option value="-1">Infinite</option>
               </select>
 
               <button className="start-btn" onClick={handleStart}>Start</button>
