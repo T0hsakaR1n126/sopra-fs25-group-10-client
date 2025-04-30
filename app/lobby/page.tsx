@@ -6,16 +6,19 @@ import { Game } from "@/types/game";
 import { useRouter } from "next/navigation";
 import styles from "@/styles/lobby.module.css";
 import CreateForm from './create/page';
-import { handleJoinGame } from './join/handleJoinGame';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
+import { gameInitialize } from '@/gameSlice';
 
 const Lobby: React.FC = () => {
   const apiService = useApi();
   const router = useRouter();
+  const dispatch = useDispatch(); // Set up dispatch for Redux actions
   const [showSidebar, setShowSidebar] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
   const [paginatedGames, setPaginatedGames] = useState<Game[]>([]);
+  const [joinCode, setJoinCode] = useState("");
+
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
 
   // only for mock, remove when backend is ready
@@ -56,7 +59,7 @@ const Lobby: React.FC = () => {
 
   useEffect(() => {
     const client = new Client({
-      brokerURL: 'wss://sopra-fs25-group-10-server-246820907268.europe-west6.run.app/ws', // TODO: replace with your WebSocket URL // TODO: replace with your WebSocket URL
+      brokerURL: 'ws://localhost:8080/ws', // TODO: replace with your WebSocket URL // TODO: replace with your WebSocket URL
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected');
@@ -83,7 +86,7 @@ const Lobby: React.FC = () => {
 
     client.activate();
 
-    
+
     return () => {
       client.deactivate();
     };
@@ -92,6 +95,63 @@ const Lobby: React.FC = () => {
   useEffect(() => {
     setPaginatedGames(games.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));
   }, [games, currentPage]);
+
+  const handleJoinGame = async (game: Game, userId: string): Promise<void> => {
+    if (game.password) {
+      const password = prompt("Enter the game password:");
+      if (password === null || password.trim() === "") {
+        return;
+      }
+      game.password = password;
+    } else {
+      game.password = "";
+    }
+    console.log(JSON.stringify(game, null, 2));
+    try {
+      await apiService.put<Game>(`/lobbyIn/${userId}`, game);
+      dispatch(gameInitialize(
+        {
+          gameId: game.gameId,
+          gamename: game.gameName,
+          gameCode: game.gameCode,
+          gameStarted: false,
+          modeType: game.modeType,
+          time: game.time,
+          ownerId: null,
+          hints: null,
+          gameHistory: [],
+          learningProgress: [],
+          currentGameMode: null,
+          currentTeamId: null,
+          gameResults: null,
+          hintUsage: 0,
+          scoreBoard: null
+        }
+      ));
+      router.push(`/game/start/${game.gameId}`);
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(`Something went wrong during game joining:\n${error.message}`);
+      } else {
+        console.error("An unknown error occurred during game joining.");
+      }
+    }
+  };
+
+  const handleJoinWithCode = async () => {
+    if (!joinCode.trim()) {
+      alert("Please enter a valid game code.");
+      return;
+    }
+
+    try {
+      const res: Game = await apiService.post<Game>(`/codejoin`, { gameCode: joinCode });
+      await handleJoinGame(res, userId);
+    } catch (error) {
+      alert("Invalid code or game not found.");
+      console.error(error);
+    }
+  };
 
   return (
     <div className={styles.page}>
@@ -109,7 +169,7 @@ const Lobby: React.FC = () => {
           <div className={styles.emptyMessage}>No Available Game</div>
         ) : (
           paginatedGames.map((game, idx) => (
-            <div key={idx} className={styles.lobbyCard} onClick={() => handleJoinGame(game, userId, apiService, router)}>
+            <div key={idx} className={styles.lobbyCard} onClick={() => handleJoinGame(game, userId)}>
               <div className={styles.teamName}>
                 {game.gameName}
               </div>
@@ -135,11 +195,28 @@ const Lobby: React.FC = () => {
             Next
           </button>
         </div>
+
+
       </div>
 
       {/* Toggle Button */}
       <div className={styles.sidebarToggle} onClick={() => setShowSidebar(!showSidebar)}>
         {showSidebar ? ">" : "+ Create New Game"}
+      </div>
+      <div className={styles.joinCodeBox}>
+        <h3>Join with Code?</h3>
+        <div style={{ display: "flex", gap: "8px", width: "100%" }}>
+          <input
+            type="text"
+            className={styles.input}
+            placeholder="Enter code..."
+            value={joinCode}
+            onChange={(e) => setJoinCode(e.target.value)}
+          />
+          <button className={styles.createButton} onClick={handleJoinWithCode}>
+            Join
+          </button>
+        </div>
       </div>
 
       {/* Sidebar */}

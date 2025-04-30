@@ -33,7 +33,7 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const client = new Client({
-      brokerURL: 'wss://sopra-fs25-group-10-server-246820907268.europe-west6.run.app/ws', // TODO: replace with your WebSocket URL
+      brokerURL: 'ws://localhost:8080/ws', // TODO: replace with your WebSocket URL
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected', gameId);
@@ -115,6 +115,7 @@ const Dashboard: React.FC = () => {
   const handleStart = async () => {
     const newGame: Game = {
       gameName: username + "Exercise",
+      gameCode: null,
       playersNumber: "1",
       time: selectedSoloTime,
       password: "",

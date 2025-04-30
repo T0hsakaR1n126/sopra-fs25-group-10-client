@@ -24,6 +24,7 @@ interface GameResults {
 
 interface GameState {
   gameId: string | null;
+  gameCode: string | null;
   gamename: string | null;
   gameStarted: boolean;
   modeType: string | null; // "solo" or "combat"
@@ -42,6 +43,7 @@ interface GameState {
 // Initial state setup for each game
 const initialState: GameState = {
   gameId: null,
+  gameCode: null,
   gamename: null,
   gameStarted: false,
   modeType: null,
@@ -62,6 +64,15 @@ const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
+    gameInitialize: (state, action: PayloadAction<GameState>) => {
+      state.gameId = action.payload.gameId;
+      state.gameCode = action.payload.gameCode;
+      state.gamename = action.payload.gamename;
+      state.gameStarted = action.payload.gameStarted;
+      state.modeType = action.payload.modeType;
+      state.time = action.payload.time;
+    },
+    
     gameStart: (state, action: PayloadAction<{ hints: Map<string, string>[]; gameId: string; scoreBoard: Map<string, number>, modeType: string }>) => {
       state.hints = action.payload.hints;
       state.gameId = action.payload.gameId;
@@ -95,6 +106,7 @@ const gameSlice = createSlice({
     },
     clearGameState: (state) => {
       state.gameId = null;
+      state.gameCode = null;
       state.gamename = null;
       state.gameStarted = false;
       state.modeType = null;
@@ -114,7 +126,7 @@ const gameSlice = createSlice({
 
 // Export actions for use in components
 export const { 
-  gameStart, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, ownerUpdate, clearGameState
+  gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, ownerUpdate, clearGameState
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

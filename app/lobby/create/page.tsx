@@ -6,7 +6,7 @@ import { useApi } from '@/hooks/useApi';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { Game } from '@/types/game';
-import { gameIdUpdate } from '@/gameSlice';
+import { gameIdUpdate, gameInitialize } from '@/gameSlice';
 
 const CreateForm: React.FC = () => {
   const apiService = useApi();
@@ -29,6 +29,7 @@ const CreateForm: React.FC = () => {
 
     const newGame: Game = {
       gameName: gameName,
+      gameCode: null,
       playersNumber: maxPlayers,
       time: duration,
       password: password,
@@ -46,7 +47,25 @@ const CreateForm: React.FC = () => {
       const response = await apiService.post<Game>("/games", newGame);
       console.log(JSON.stringify(response, null, 2));
       if (response.gameId) {
-        dispatch(gameIdUpdate(response.gameId));
+        dispatch(gameInitialize(
+          {
+            gameId: response.gameId,
+            gamename: response.gameName,
+            gameCode: response.gameCode,
+            gameStarted: false,
+            modeType: response.modeType,
+            time: response.time,
+            ownerId: null,
+            hints: null,
+            gameHistory: [],
+            learningProgress: [],
+            currentGameMode: null,
+            currentTeamId: null,
+            gameResults: null,
+            hintUsage: 0,
+            scoreBoard: null
+          }
+        ));
         router.push(`/game/start/${response.gameId}`);
       }
     } catch (error) {
