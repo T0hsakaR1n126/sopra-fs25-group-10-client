@@ -86,10 +86,10 @@ const GameHistoryPage: React.FC = () => {
   }, []);
 
 
-  const filtered = Array.from(history.entries()).filter(([_, entry]) => {
+  const filtered = Array.from(history.entries()).filter(([, entry]) => {
     if (filter === "All") return true;
     return filter === "Solo" ? entry.modeType === "solo" : entry.modeType === "combat";
-  });
+  });  
 
   const paginated = filtered.slice(start, end);
 

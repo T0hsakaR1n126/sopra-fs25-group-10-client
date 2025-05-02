@@ -9,7 +9,7 @@ import { useApi } from '@/hooks/useApi';
 import { useSelector } from 'react-redux';
 import { Game } from '@/types/game';
 import { useDispatch } from "react-redux"; // Import useDispatch
-import { clearGameState, gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
+import { clearGameState, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
 
 
 const GameStart = () => {
