@@ -19,47 +19,17 @@ const Lobby: React.FC = () => {
   const [paginatedGames, setPaginatedGames] = useState<Game[]>([]);
   const [joinCode, setJoinCode] = useState("");
 
-  const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
+  const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
 
   // only for mock, remove when backend is ready
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
-  // useEffect(() => {
-  //   setGames([
-  //     { gameName: "Map genies", playersNumber: "1 / 5", owner: "RocketMan", password: "password", gameId: "1", modeType: "normal", time: "5" },
-  //     { gameName: "Map Dragons", playersNumber: "4 / 5", owner: "RocketWo", password: "password", gameId: "1", modeType: "normal", time: "5" },
-  //     { gameName: "Map xx", playersNumber: "1 / 5", owner: "RocketNN", password: "password", gameId: "1", modeType: "normal", time: "5" },
-  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
-  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
-  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
-  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
-  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
-  //     { gameName: "Map yy", playersNumber: "1 / 5", owner: "RocketMM", password: "password", gameId: "1", modeType: "normal", time: "5" },
-  //   ])
-  // }, []);
-
-  // useEffect(() => {
-  //   const fetchGames = async () => {
-  //     try {
-  //       await apiService.put("/lobby", {});
-  //     } catch (error) {
-  //       if (error instanceof Error) {
-  //         alert(`Something went wrong while fetching user:\n${error.message}`);
-  //         router.push("/game");
-  //       } else {
-  //         console.error("An unknown error occurred while fetching user.");
-  //       }
-  //     }
-  //   };
-
-  //   fetchGames();
-  // }, [apiService]);
 
   useEffect(() => {
     const client = new Client({
-      brokerURL: 'ws://localhost:8080/ws', // TODO: replace with your WebSocket URL // TODO: replace with your WebSocket URL
+      brokerURL: 'ws://localhost:8080/ws', // TODO: replace with your WebSocket URL
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected');
@@ -68,8 +38,9 @@ const Lobby: React.FC = () => {
           try {
             console.log('RAW message body:', message.body);
             const data: Game[] = JSON.parse(message.body);
-            setGames(data);
-            setPaginatedGames(data.slice(start, start + itemsPerPage));
+            const filteredData = data.filter((game) => String(game.ownerId) !== String(userId));
+            setGames(filteredData);
+            setPaginatedGames(filteredData.slice(start, start + itemsPerPage));
           } catch (err) {
             console.error('Invalid message:', err);
           }

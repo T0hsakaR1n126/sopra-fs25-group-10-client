@@ -9,7 +9,7 @@ import { useApi } from '@/hooks/useApi';
 import { useSelector } from 'react-redux';
 import { Game } from '@/types/game';
 import { useDispatch } from "react-redux"; // Import useDispatch
-import { gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
+import { clearGameState, gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
 
 
 const GameStart = () => {
@@ -33,7 +33,7 @@ const GameStart = () => {
   const [countDownStart, setCountDownStart] = useState<number | null>(null);
 
   useEffect(() => {
-    dispatch(gameIdUpdate(gameId?.toString() ?? ""));
+    // dispatch(gameIdUpdate(gameId?.toString() ?? ""));
     setGameCodeShown(gameCode);
 
     const fetchPlayers = async () => {
@@ -169,6 +169,7 @@ const GameStart = () => {
   const handleExitGame = async () => {
     try {
       await apiService.put(`/lobbyOut/${userId}`, {});
+      dispatch(clearGameState());
       router.push('/lobby');
     } catch (error) {
       console.error('Error leaving game:', error);

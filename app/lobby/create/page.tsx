@@ -6,7 +6,7 @@ import { useApi } from '@/hooks/useApi';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { Game } from '@/types/game';
-import { gameIdUpdate, gameInitialize } from '@/gameSlice';
+import { gameInitialize } from '@/gameSlice';
 
 const CreateForm: React.FC = () => {
   const apiService = useApi();
