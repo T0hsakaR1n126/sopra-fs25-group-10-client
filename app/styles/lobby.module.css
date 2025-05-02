@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  background-color: black;
+  background-color: transparent;
   color: white;
   padding: 40px 20px;
   display: flex;
@@ -102,7 +102,7 @@
 
 .page {
   min-height: 100vh;
-  background-color: black;
+  background-color: transparent;
   color: white;
   padding: 40px 20px;
   position: relative;
