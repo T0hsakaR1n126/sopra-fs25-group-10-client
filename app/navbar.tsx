@@ -20,7 +20,7 @@ export default function Navbar() {
       {/* Logo */}
       <Tooltip title="Home">
         <Link href="/game">
-          <Image src="/mapmaster-logo.png" alt="Home" width={60} height={50} />
+          <Image src="/mapmaster-logo.png" alt="Home" width={70} height={60} />
         </Link>
       </Tooltip>
 

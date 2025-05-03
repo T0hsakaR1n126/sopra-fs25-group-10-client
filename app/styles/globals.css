@@ -18,7 +18,8 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-  /* overflow: hidden; */
+  position: relative;
+  z-index: 0;
 }
 
 body {
@@ -116,9 +117,10 @@ a {
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-  background: #000;
-  color: #fff;
-  z-index: 1000; /* Ensures it stays above other elements */
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px); 
+  color: white;
+  z-index: 1000;
 }
 
 /* Push the body content down to prevent overlap 
@@ -150,3 +152,51 @@ input::placeholder,
 textarea::placeholder {
   color: #bbb !important;
 }
+
+#scrolling-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 200vw;
+  height: 100vh;
+  overflow: hidden;
+  z-index: -1;
+  animation: scroll-background 50s linear infinite;
+}
+
+#scrolling-bg::before,
+#scrolling-bg::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url("/world.png");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+#scrolling-bg::after {
+  left: 100vw;
+}
+
+/* 动画：从 translateX(0) 到 translateX(-100vw) */
+@keyframes scroll-background {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100vw);
+  }
+}
+
+#__next,
+main,
+.ant-layout,
+.ant-layout-content {
+  background: transparent !important;
+  position: relative;
+  z-index:1 !important;
+}
+

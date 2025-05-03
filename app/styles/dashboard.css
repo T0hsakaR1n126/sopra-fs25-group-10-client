@@ -1,5 +1,5 @@
 .game-body {
-    background-color: #000;
+    background-color: transparent;
     height: 100vh;
     display: flex;
     justify-content: center;

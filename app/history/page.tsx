@@ -17,6 +17,7 @@ type MatchHistoryItem = {
   totalQuestions: number;
   gameTime: number;
   gameCreationDate: string;
+  modeType: string; 
 };
 
 // const fallbackHistory: MatchHistoryItem[] = [
@@ -35,7 +36,7 @@ type MatchHistoryItem = {
 const GameHistoryPage: React.FC = () => {
   const apiService = useApi();
   const [history, setHistory] = useState<Map<string, MatchHistoryItem>>(new Map());
-  const [filter, setFilter] = useState<"All" | "Single" | "Team">("All");
+  const [filter, setFilter] = useState<"All" | "Solo" | "Combat">("All");
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
@@ -63,7 +64,8 @@ const GameHistoryPage: React.FC = () => {
               "correctAnswers" in item &&
               "totalQuestions" in item &&
               "gameTime" in item &&
-              "gameCreationDate" in item
+              "gameCreationDate" in item && 
+              "modeType" in item
           )
         ) {
           setHistory(new Map(Object.entries(gameHistory)));
@@ -84,11 +86,10 @@ const GameHistoryPage: React.FC = () => {
   }, []);
 
 
-  const filtered = Array.from(history.entries()).filter(() => {
-    // if (filter === "All") return true;
-    // return filter === "Team" ? entry.mode === "Team Play" : entry.mode === "Own Play";
-    return true;
-  });
+  const filtered = Array.from(history.entries()).filter(([, entry]) => {
+    if (filter === "All") return true;
+    return filter === "Solo" ? entry.modeType === "solo" : entry.modeType === "combat";
+  });  
 
   const paginated = filtered.slice(start, end);
 
@@ -104,12 +105,12 @@ const GameHistoryPage: React.FC = () => {
           <>
             {/* ✅ Filter buttons */}
             <div style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
-              {/* {["All", "Single", "Team"].map((type) => ( */}
-              {["All"].map((type) => (
+              {["All", "Solo", "Combat"].map((type) => (
+              // {["All"].map((type) => (
                 <button
                   key={type}
-                  // onClick={() => setFilter(type as "All" | "Single" | "Team")}
-                  onClick={() => setFilter(type as "All")}
+                  onClick={() => setFilter(type as "All" | "Solo" | "Combat")}
+                  // onClick={() => setFilter(type as "All")}
                   style={{
                     padding: "6px 14px",
                     borderRadius: "20px",
@@ -148,7 +149,7 @@ const GameHistoryPage: React.FC = () => {
                         {item.correctAnswers} of {item.totalQuestions} correct
                       </div>
                       <div className={`${styles.cell} ${styles.cellDuration}`}>
-                        {item.gameTime} {item.gameTime === 1 ? "min" : "mins"}
+                        {item.gameTime !== -1 ? item.gameTime : ""} {item.gameTime === -1 ? "infinite" : (item.gameTime === 1 ? "min" : "mins")}
                       </div>
                       <div className={`${styles.cell} ${styles.cellScore}`}>
                         {item.score === -1 ? "give up" : item.score}
