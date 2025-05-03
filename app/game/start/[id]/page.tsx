@@ -9,7 +9,7 @@ import { useApi } from '@/hooks/useApi';
 import { useSelector } from 'react-redux';
 import { Game } from '@/types/game';
 import { useDispatch } from "react-redux"; // Import useDispatch
-import { gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
+import { clearGameState, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
 
 
 const GameStart = () => {
@@ -20,9 +20,11 @@ const GameStart = () => {
 
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
   const username = useSelector((state: { user: { username: string } }) => state.user.username)
+  const gameCode = useSelector((state: { game: { gameCode: string } }) => state.game.gameCode)
 
   const [players, setPlayers] = useState<User[]>([]);
   const [playersNumber, setPlayersNumber] = useState<number>(0);
+  const [gameCodeShown, setGameCodeShown] = useState<string | null>(null);
   // const [isTeamMode, setIsTeamMode] = useState(false);
   // const [teamName, setTeamName] = useState("");
   // const [isTeamNameSaved, setIsTeamNameSaved] = useState(false);
@@ -31,8 +33,9 @@ const GameStart = () => {
   const [countDownStart, setCountDownStart] = useState<number | null>(null);
 
   useEffect(() => {
-    dispatch(gameIdUpdate(gameId?.toString() ?? ""));
-    
+    // dispatch(gameIdUpdate(gameId?.toString() ?? ""));
+    setGameCodeShown(gameCode);
+
     const fetchPlayers = async () => {
       try {
         const response: User[] = await apiService.get<User[]>(`/ready/${gameId}`);
@@ -52,7 +55,7 @@ const GameStart = () => {
     fetchPlayers();
 
     const client = new Client({
-      brokerURL: 'wss://sopra-fs25-group-10-server-246820907268.europe-west6.run.app/ws', // TODO: replace with your WebSocket URL
+      brokerURL: 'ws://localhost:8080/ws', // TODO: replace with your WebSocket URL
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected', gameId);
@@ -69,7 +72,7 @@ const GameStart = () => {
           }
         });
 
-        client.subscribe(`/topic/gametime`, (message) => {
+        client.subscribe(`/topic/${gameId}/gametime`, (message) => {
           try {
             console.log('RAW message body:', message.body);
             const data: string = message.body;
@@ -105,10 +108,20 @@ const GameStart = () => {
           }
         });
 
-        client.subscribe(`/topic/playersNumber`, (message) => {
+        client.subscribe(`/topic/${gameId}/playersNumber`, (message) => {
           try {
             const data: string = message.body;
             setPlayersNumber(parseInt(data));
+          } catch (err) {
+            console.error('Invalid message:', err);
+          }
+        });
+
+        client.subscribe(`/topic/${gameId}/gameCode`, (message) => {
+          try {
+            const data: string = message.body;
+            setGameCodeShown(data);
+            console.log('gameCode:', data);
           } catch (err) {
             console.error('Invalid message:', err);
           }
@@ -129,33 +142,34 @@ const GameStart = () => {
 
   useEffect(() => {
     if (countDownStart === null) return;
-  
+
     let current = countDownStart;
     setCountDown(current.toString());
-  
+
     const interval = setInterval(() => {
       current -= 1;
-  
+
       if (current > 0) {
         setCountDown(current.toString());
       } else if (current === 0) {
         setCountDown("GO!");
-  
+
         setTimeout(() => {
-          setCountDown(null); 
+          setCountDown(null);
           requestAnimationFrame(() => {
             router.push(`/game/${gameId}`);
           });
-        }, 1000); 
+        }, 1000);
       }
     }, 1000);
-  
+
     return () => clearInterval(interval);
   }, [countDownStart]);
 
   const handleExitGame = async () => {
     try {
       await apiService.put(`/lobbyOut/${userId}`, {});
+      dispatch(clearGameState());
       router.push('/lobby');
     } catch (error) {
       console.error('Error leaving game:', error);
@@ -182,40 +196,9 @@ const GameStart = () => {
         ))}
       </div>
 
-      {/* {username === ownerName && <div className={styles.inlineField}>
-        <span className={styles.labelText}>Team Mode</span>
-
-        <label className={styles.switch}>
-          <input
-            type="checkbox"
-            checked={isTeamMode}
-            onChange={(e) => {
-              setIsTeamMode(e.target.checked);
-              setTeamName("");
-              setIsTeamNameSaved(false);
-            }}
-          />
-          <span className={styles.slider}></span>
-        </label>
-      </div>} */}
-
-      {/* {isTeamMode && (
-        <>
-          {isTeamNameSaved ? (
-            <p className={styles.teamName}>Team Name: {teamName}</p>
-          ) : (
-            <label>
-              <input
-                type="text"
-                className={styles.input}
-                value={teamName}
-                placeholder='Enter your team name'
-                onChange={(e) => setTeamName(e.target.value)}
-              />
-            </label>
-          )}
-        </>
-      )} */}
+      <div className={styles.gameCode}>
+        <p>Game Code: {gameCodeShown}</p>
+      </div>
 
       <div className={styles.buttonGroup}>
         {/* {!isTeamNameSaved && isTeamMode && <button className={styles.button} onClick={() => { setTeamName(teamName); setIsTeamNameSaved(true); }}>Save</button>} */}

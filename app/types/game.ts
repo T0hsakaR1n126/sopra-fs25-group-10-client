@@ -14,6 +14,7 @@ export interface GameScoreResponse {
 
 export interface Game {
     gameId: string | null;
+    gameCode: string | null;
     gameName: string | null;
     password: string | null;
     modeType: string | null;
