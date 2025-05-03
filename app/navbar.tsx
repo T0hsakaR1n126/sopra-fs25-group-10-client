@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux"; // Import Redux hooks
-import { UserOutlined, HistoryOutlined, TrophyOutlined, LoginOutlined, UserAddOutlined, LogoutOutlined } from "@ant-design/icons";
+import { UserOutlined, HistoryOutlined, TrophyOutlined, LoginOutlined, UserAddOutlined, LogoutOutlined ,BarChartOutlined} from "@ant-design/icons";
 import { Button, Tooltip } from "antd";
 import { RootState } from "./"; // Import RootState to type the useSelector hook
 import { useLogout } from "@/utils/useLogout"; // Import the logout function
@@ -55,14 +55,14 @@ export default function Navbar() {
               </Link>
             </Tooltip>
 
-            {/* <Tooltip title="Statistics">
-              <Link href="/statistics">
-                <BookOutlined
+            <Tooltip title="Learning">
+              <Link href="/learning">
+                <BarChartOutlined
                   style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }}
-                  aria-label="Statistics"
+                  aria-label="Learning"
                 />
               </Link>
-            </Tooltip> */}
+            </Tooltip>
 
             <Tooltip title="Logout">
               <Button
