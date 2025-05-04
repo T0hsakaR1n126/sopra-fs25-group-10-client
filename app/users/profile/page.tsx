@@ -4,12 +4,14 @@ import { Input, Button, Form } from "antd";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user"
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUserInfo } from "@/userSlice";
 // import Authenticator from "@/auth/authenticator";
 
 const ProfilePage = () => {
   const router = useRouter();
   const apiService = useApi();
+  const dispatch = useDispatch();
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const token = useSelector((state: { user: { token: string } }) => state.user.token);
 
@@ -35,7 +37,7 @@ const ProfilePage = () => {
     };
 
     fetchUser();
-  }, [apiService]);
+  }, [apiService, userId, router]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -60,7 +62,11 @@ const ProfilePage = () => {
         }
       }
       setUser(updatedUser);
-      alert("Saved!");
+      dispatch(updateUserInfo({ 
+        username: updatedUser.username ?? "",
+        avatar: updatedUser.avatar ?? "",
+        level: Number(updatedUser.level) / 100,
+      }));
       setIsEditing(false);
     } catch (error) {
       if (error instanceof Error) {
@@ -144,7 +150,7 @@ const ProfilePage = () => {
                     )}
                   </Form.Item>
                 </Form.Item>
-                <Form.Item>
+                {/* <Form.Item>
                   {(() => {
                     const level = form.getFieldValue("level");
 
@@ -177,7 +183,7 @@ const ProfilePage = () => {
                       </div>
                     );
                   })()}
-                </Form.Item>
+                </Form.Item> */}
               </div>
               <Form.Item label="Username">
                 {isEditing ? (

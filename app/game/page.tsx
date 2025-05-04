@@ -85,7 +85,7 @@ const Dashboard: React.FC = () => {
     return () => {
       client.deactivate();
     };
-  }, [gameId]);
+  }, [gameId, userId, dispatch]);
 
   useEffect(() => {
     if (countDownStart === null) return;
@@ -111,7 +111,7 @@ const Dashboard: React.FC = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [countDownStart]);
+  }, [countDownStart, gameId, router]);
 
   const handleStart = async () => {
     const newGame: Game = {

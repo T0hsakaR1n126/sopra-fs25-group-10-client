@@ -61,7 +61,7 @@ const Lobby: React.FC = () => {
     return () => {
       client.deactivate();
     };
-  }, []);
+  }, [apiService, userId, start]);
 
   useEffect(() => {
     setPaginatedGames(games.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage));

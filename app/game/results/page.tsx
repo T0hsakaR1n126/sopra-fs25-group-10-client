@@ -69,10 +69,6 @@ const Results = () => {
 
   const gameId = "dummy-123"; // Replace with actual router param in production
 
-  useEffect(() => {
-    fetchGameResults(gameId);
-  }, [gameId]);
-
   const fetchGameResults = async (id: string) => {
     setLoading(true);
     try {
@@ -99,6 +95,10 @@ const Results = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchGameResults(gameId);
+  }, [gameId, fetchGameResults]);
 
   const renderContent = () => {
     if (!gameData) return null;

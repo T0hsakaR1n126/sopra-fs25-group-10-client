@@ -28,7 +28,7 @@ const LeaderboardPage: React.FC = () => {
     };
 
     fetchLeaderboard();
-  }, []);
+  }, [apiService]);
 
   // const paginated = filtered.slice(0, currentPage * itemsPerPage);
   // const hasMore = paginatedEntries.length < entries.length;
