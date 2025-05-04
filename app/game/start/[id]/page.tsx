@@ -47,7 +47,9 @@ const GameStart = () => {
 
         const initialReady: Record<string, boolean> = {};
         response.forEach(player => {
-          initialReady[player.userId.toString()] = player.isReady ?? false;
+          if (player.userId != null) {
+            initialReady[player.userId.toString()] = player.isReady ?? false;
+          }
         });
         setReadyStatus(initialReady);
       } catch (error) {
@@ -194,12 +196,12 @@ const GameStart = () => {
       <h3 className={styles.title}>Game</h3>
 
       <div className={styles.players}>
-        {players.map((player, idx) => (
-          <p key={idx}>
-            {idx === 0 ? `Owner: ${player.username}` : player.username}
-            {readyStatus[player.userId?.toString()] && " ✅"}
-          </p>
-        ))}
+            {players.map((player, idx) => (
+        <p key={idx}>
+          {idx === 0 ? `Owner: ${player.username}` : player.username}
+          {player.userId != null && readyStatus[player.userId.toString()] && " ✅"}
+        </p>
+      ))}
       </div>
 
       <div className={styles.gameCode}>
