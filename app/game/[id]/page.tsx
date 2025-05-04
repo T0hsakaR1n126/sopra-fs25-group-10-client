@@ -25,6 +25,7 @@ const GameBoard: React.FC = () => {
   const hints = [...rawHints].sort((a, b) => parseInt(b.difficulty) - parseInt(a.difficulty));
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const gameId = useSelector((state: { game: { gameId: string } }) => state.game.gameId);
+  const ownerId = useSelector((state: { game: { ownerId: string } }) => state.game.ownerId);
   const gameMode = useSelector((state: { game: { modeType: string } }) => state.game.modeType);
   const initialScoreBoard = useSelector((state: { game: { scoreBoard: Map<string, number> } }) => state.game.scoreBoard);
   const restTime = useSelector((state: { game: { time: string } }) => state.game.time);
@@ -100,6 +101,14 @@ const GameBoard: React.FC = () => {
             setGameEnded(true);
             setEndMessage(data);
             setTimeout(() => {
+              if (String(userId) === String(ownerId)) {
+                apiService.put(`/save/${gameId}`, {})
+                  .then()
+                  .catch((error) => {
+                    alert(`Error saving game: ${error.message}`);
+                    router.push("/game");
+                  });
+              }
               router.push(`/game/results/${gameId}`);
             }, 1000);
           } catch (err) {

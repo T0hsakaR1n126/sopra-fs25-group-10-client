@@ -34,7 +34,9 @@ const Login: React.FC = () => {
             username: response.username ?? "",
             status: response.status ?? "",
             userId: response.userId.toString(),
-            token: response.token
+            token: response.token,
+            avatar: response.avatar ?? "",
+            level: Number(response.level) ?? 0,
           }));
         dispatch(clearGameState()); // Clear game state on login
   

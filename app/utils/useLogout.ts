@@ -33,7 +33,10 @@ export const useLogout = () => {
       await apiService.post<User>(`/logout`, { token: userToken });
 
       // Dispatch the logout action to reset Redux state
-      dispatch(logout());
+      setTimeout(() => {
+        dispatch(logout());
+      }
+      , 500);
 
       console.log("Logged out successfully!");
       router.push("/");
