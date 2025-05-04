@@ -33,7 +33,8 @@ interface UserState {
   currentGameMode: string | null; // "solo" or "combat"
   currentTeamId: string | null;
   gameResults: GameResults | null; // Store the last game result
-  isGuest: boolean; // To track if the user is a guest
+  avatar: string | null; // Avatar URL or path
+  level: number | null; // User level (e.g., "beginner", "intermediate", "expert")
 }
 
 // Initial state setup for both guest and registered users
@@ -48,7 +49,8 @@ const initialState: UserState = {
   currentGameMode: null,
   currentTeamId: null,
   gameResults: null, // Initially, there are no results
-  isGuest: true, // Initially, user is a guest
+  avatar: null, // Avatar URL or path
+  level: null, // User level (e.g., "beginner", "intermediate", "expert")
 };
 
 // Create the user slice
@@ -57,13 +59,14 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     // Login action for registered users
-    login(state, action: PayloadAction<{ username: string; userId: string; token: string; status: string }>) {
+    login(state, action: PayloadAction<{ username: string; userId: string; token: string; status: string, avatar: string, level: number }>) {
       state.isLoggedIn = true;
       state.username = action.payload.username;
       state.userId = action.payload.userId;
       state.token = action.payload.token;
       state.status = action.payload.status;
-      state.isGuest = false;
+      state.avatar = action.payload.avatar; // Set avatar if provided
+      state.level = action.payload.level; // Set user level if provided
     },
     // Logout action to reset the user state
     logout(state) {
@@ -75,24 +78,16 @@ const userSlice = createSlice({
       state.gameHistory = [];
       state.learningProgress = [];
       state.gameResults = null; // Clear the game results
-      state.isGuest = true;
       state.currentGameMode = null;
       state.currentTeamId = null;
-    },
-    // Guest login (temporary user)
-    guestLogin(state) {
-      state.isLoggedIn = true;
-      state.isGuest = true;
-      state.userId = `guest-${Date.now()}`; // Create a unique guest ID based on timestamp
-      state.username = `Guest ${state.userId}`;
-      state.token = null; // No token for guests
-      state.status = "OFFLINE"; // Default status for guest
-      state.gameHistory = [];
-      state.learningProgress = [];
+      state.avatar = null; // Clear avatar
+      state.level = null; // Clear user level
     },
     // Update the user details (username, etc.)
-    updateUsername(state, action: PayloadAction<string>) {
-      state.username = action.payload;
+    updateUserInfo(state, action: PayloadAction<{ username: string, avatar: string, level: number }>) {
+      state.username = action.payload.username;
+      state.avatar = action.payload.avatar; // Set avatar if provided
+      state.level = action.payload.level; // Set user level if provided
     },
     // Update the user's game mode (solo or combat)
     setCurrentGameMode(state, action: PayloadAction<string | null>) {
@@ -134,16 +129,17 @@ const userSlice = createSlice({
       state.gameHistory = [];
       state.learningProgress = [];
       state.gameResults = null; // Clear the game results
-      state.isGuest = true;
       state.currentGameMode = null;
       state.currentTeamId = null;
+      state.avatar = null; // Clear avatar
+      state.level = null; // Clear user level
     },
   },
 });
 
 // Export actions for use in components
 export const { 
-  login, logout, guestLogin, updateUsername, setCurrentGameMode, 
+  login, logout, updateUserInfo, setCurrentGameMode, 
   addGameHistory, updateLearningProgress, setTeamId, setGameResults,
   clearUserState
 } = userSlice.actions;

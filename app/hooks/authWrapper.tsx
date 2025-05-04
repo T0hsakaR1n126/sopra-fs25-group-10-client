@@ -54,7 +54,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
     };
 
     verifyToken();
-  }, [token, pathname]);
+  }, [token, pathname, shouldAuth, apiService]);
 
   useEffect(() => {
     if (shouldAuth && authChecked && authFailed) {
