@@ -5,6 +5,7 @@ import { countryCodeMap } from "@/utils/countryCodeMap";
 import { useApi } from "@/hooks/useApi";
 import { useParams } from "next/navigation";
 import styles from "@/styles/GuestStatsGrid.module.css";
+import { useSelector } from "react-redux";
 
 interface Country {
   name: string;
@@ -14,26 +15,36 @@ interface Country {
 const GuestPage: React.FC = () => {
   const apiService = useApi();
   const { id } = useParams();
+  const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
 
   const [countryData, setCountryData] = useState<Country[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchCountryStats = async () => {
+    const fetchUserData = async () => {
       try {
         setLoading(true);
 
-        const response: Country[] = await apiService.get(`/users/${id}/statistics`);
+        const response = await apiService.get(`/users/${userId}`);
+        const { learningTracking } = response as { learningTracking: Record<string, number> };
 
-        if (Array.isArray(response) && response.every(item => "name" in item && "answered" in item)) {
-          setCountryData(response);
+        if (
+          learningTracking &&
+          typeof learningTracking === "object" &&
+          Object.entries(learningTracking).every(([k, v]) => typeof k === "string" && typeof v === "number")
+        ) {
+          const formattedData: Country[] = Object.entries(learningTracking).map(([name, answered]) => ({
+            name,
+            answered,
+          }));
+          setCountryData(formattedData);
         } else {
-          throw new Error("Invalid data format from server.");
+          throw new Error("Invalid learningTracking data.");
         }
       } catch (error) {
         if (error instanceof Error) {
-          console.error("Failed to fetch country statistics:", error.message);
+          console.error("Failed to fetch user data:", error.message);
           setError("Failed to load user country statistics. Showing mock data.");
         } else {
           setError("Unknown error occurred.");
@@ -45,27 +56,13 @@ const GuestPage: React.FC = () => {
           { name: "United States", answered: 30 },
           { name: "France", answered: 18 },
           { name: "Germany", answered: 22 },
-          { name: "Japan", answered: 20 },
-          { name: "China", answered: 27 },
-          { name: "India", answered: 24 },
-          { name: "Italy", answered: 19 },
-          { name: "Spain", answered: 21 },
-          { name: "Brazil", answered: 26 },
-          { name: "Canada", answered: 23 },
-          { name: "Russia", answered: 17 },
-          { name: "South Korea", answered: 22 },
-          { name: "Australia", answered: 20 },
-          { name: "Mexico", answered: 18 },
-          { name: "United Kingdom", answered: 29 },
-          { name: "Argentina", answered: 16 },
-          { name: "South Africa", answered: 15 },
         ]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchCountryStats();
+    fetchUserData();
   }, [apiService, id]);
 
   return (
@@ -84,7 +81,7 @@ const GuestPage: React.FC = () => {
           return (
             <div key={index} className={styles.card}>
               <img
-                src={`/flag/${countryCode}.svg`}     // use svg to promise the quality of flags
+                src={`/flag/${countryCode}.svg`}
                 alt={country.name}
                 className={styles.flag}
               />
