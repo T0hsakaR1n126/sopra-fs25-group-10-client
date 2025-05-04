@@ -37,7 +37,7 @@ const ProfilePage = () => {
     };
 
     fetchUser();
-  }, [apiService]);
+  }, [apiService, userId, router]);
 
   const handleEdit = () => {
     setIsEditing(true);

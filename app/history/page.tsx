@@ -83,7 +83,7 @@ const GameHistoryPage: React.FC = () => {
     };
 
     fetchHistory();
-  }, []);
+  }, [apiService, userId]);
 
 
   const filtered = Array.from(history.entries()).filter(([, entry]) => {

@@ -138,7 +138,7 @@ const GameStart = () => {
     return () => {
       client.deactivate();
     };
-  }, [gameId]);
+  }, [gameId, apiService, dispatch, router, gameCode]);
 
   useEffect(() => {
     if (countDownStart === null) return;
@@ -164,7 +164,7 @@ const GameStart = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [countDownStart]);
+  }, [countDownStart, router, gameId]);
 
   const handleExitGame = async () => {
     try {

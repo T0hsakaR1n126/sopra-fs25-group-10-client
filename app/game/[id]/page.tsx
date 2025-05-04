@@ -136,7 +136,7 @@ const GameBoard: React.FC = () => {
     return () => {
       client.deactivate();
     };
-  }, []);
+  }, [apiService, dispatch, gameId, initialScoreBoard, ownerId, router, userId]);
 
   const handleFinishGame = async () => {
     try {

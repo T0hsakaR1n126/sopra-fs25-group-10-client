@@ -18,12 +18,6 @@ const Results = () => {
   const username = useSelector(
     (state: { user: { username: string } }) => state.user.username
   );
-  const gameId = useSelector(
-    (state: { game: { gameId: string } }) => state.game.gameId
-  );
-  const ownerId = useSelector(
-    (state: { game: { ownerId: string } }) => state.game.ownerId
-  );
   const userId = useSelector(
     (state: { user: { userId: string } }) => state.user.userId
   );

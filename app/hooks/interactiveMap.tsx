@@ -189,7 +189,7 @@ const InteractiveMap: React.FC = () => {
         }
       })
       .catch(error => console.error("Load failed: ", error));
-  }, []);
+  }, [apiService, dispatch, gameId, userId]);
 
   useEffect(() => {
     hintUsageRef.current = hintUsingNumber;
