@@ -1,19 +1,19 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import styles from '@/styles/gameStart.module.css';
-import { Client } from '@stomp/stompjs';
-import { useParams, useRouter } from 'next/navigation';
-import { User } from '@/types/user';
-import { useApi } from '@/hooks/useApi';
-import { useSelector, useDispatch } from 'react-redux';
-import { Game } from '@/types/game';
-<<<<<<< HEAD
-import { gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
-=======
-import { useDispatch } from "react-redux"; // Import useDispatch
-import { clearGameState, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
->>>>>>> e6eef6ccd3b4eb8b78847e842fd83da5f1fe55c4
+import React, { useEffect, useState } from "react";
+import styles from "@/styles/gameStart.module.css";
+import { Client } from "@stomp/stompjs";
+import { useParams, useRouter } from "next/navigation";
+import { User } from "@/types/user";
+import { useApi } from "@/hooks/useApi";
+import { useSelector, useDispatch } from "react-redux";
+import { Game } from "@/types/game";
+import {
+  clearGameState,
+  gameStart,
+  gameTimeInitialize,
+  ownerUpdate,
+} from "@/gameSlice";
 
 const GameStart = () => {
   const router = useRouter();
@@ -21,153 +21,107 @@ const GameStart = () => {
   const apiService = useApi();
   const dispatch = useDispatch();
 
-<<<<<<< HEAD
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const username = useSelector((state: { user: { username: string } }) => state.user.username);
-
-  const [players, setPlayers] = useState<User[]>([]);
-  const [playersNumber, setPlayersNumber] = useState<number>(0);
-=======
-  const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
-  const username = useSelector((state: { user: { username: string } }) => state.user.username)
-  const gameCode = useSelector((state: { game: { gameCode: string } }) => state.game.gameCode)
+  const gameCode = useSelector((state: { game: { gameCode: string } }) => state.game.gameCode);
 
   const [players, setPlayers] = useState<User[]>([]);
   const [playersNumber, setPlayersNumber] = useState<number>(0);
   const [gameCodeShown, setGameCodeShown] = useState<string | null>(null);
-  // const [isTeamMode, setIsTeamMode] = useState(false);
-  // const [teamName, setTeamName] = useState("");
-  // const [isTeamNameSaved, setIsTeamNameSaved] = useState(false);
->>>>>>> e6eef6ccd3b4eb8b78847e842fd83da5f1fe55c4
   const [ownerName, setOwnerName] = useState("");
   const [countDown, setCountDown] = useState<string | null>(null);
   const [countDownStart, setCountDownStart] = useState<number | null>(null);
   const [readyStatus, setReadyStatus] = useState<Record<string, boolean>>({});
+  const [canStart, setCanStart] = useState<boolean>(false);
   const [client, setClient] = useState<Client | null>(null);
 
   useEffect(() => {
-<<<<<<< HEAD
-    dispatch(gameIdUpdate(gameId?.toString() ?? ""));
-=======
-    // dispatch(gameIdUpdate(gameId?.toString() ?? ""));
     setGameCodeShown(gameCode);
->>>>>>> e6eef6ccd3b4eb8b78847e842fd83da5f1fe55c4
 
     const fetchPlayers = async () => {
       try {
-        const response: User[] = await apiService.get<User[]>(`/ready/${gameId}`);
+        const response: User[] = await apiService.get(`/ready/${gameId}`);
         setPlayers(response);
         setOwnerName(response[0].username ?? "");
         dispatch(ownerUpdate(response[0].userId ?? ""));
 
         const initialReady: Record<string, boolean> = {};
         response.forEach(player => {
-          initialReady[player.userId] = player.isReady ?? false;
+          initialReady[player.userId.toString()] = player.isReady ?? false;
         });
         setReadyStatus(initialReady);
       } catch (error) {
-        if (error instanceof Error) {
-          alert(`Something went wrong while fetching players:\n${error.message}`);
-          router.push("/lobby");
-        } else {
-          console.error("An unknown error occurred while fetching players.");
-        }
+        console.error("Failed to fetch players:", error);
+        router.push("/lobby");
       }
     };
 
     fetchPlayers();
 
-<<<<<<< HEAD
     const stompClient = new Client({
-      //brokerURL: 'wss://sopra-fs25-group-10-server-246820907268.europe-west6.run.app/ws',
-=======
-    const client = new Client({
->>>>>>> e6eef6ccd3b4eb8b78847e842fd83da5f1fe55c4
-      brokerURL: 'ws://localhost:8080/ws', // TODO: replace with your WebSocket URL
+      brokerURL: "ws://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log('STOMP connected', gameId);
+        console.log("STOMP connected");
 
         stompClient.subscribe(`/topic/ready/${gameId}/players`, (message) => {
-          try {
-            const data: User[] = JSON.parse(message.body);
-            setPlayers(data);
-            setOwnerName(data[0].username ?? "");
-            dispatch(ownerUpdate(data[0].userId ?? ""));
-
-            const newReadyStatus: Record<string, boolean> = {};
-            data.forEach(player => {
-              newReadyStatus[player.userId] = player.isReady ?? false;
-            });
-            setReadyStatus(newReadyStatus);
-          } catch (err) {
-            console.error('Invalid message:', err);
-          }
+          const data: User[] = JSON.parse(message.body);
+          setPlayers(data);
+          setOwnerName(data[0].username ?? "");
+          dispatch(ownerUpdate(data[0].userId ?? ""));
         });
 
-<<<<<<< HEAD
-        stompClient.subscribe(`/topic/gametime`, (message) => {
-=======
-        client.subscribe(`/topic/${gameId}/gametime`, (message) => {
->>>>>>> e6eef6ccd3b4eb8b78847e842fd83da5f1fe55c4
-          try {
-            const data: string = message.body;
-            dispatch(gameTimeInitialize(data));
-          } catch (err) {
-            console.error('Invalid message:', err);
+        stompClient.subscribe(`/topic/ready/${gameId}/status`, (message) => {
+          const map: Record<string, boolean> = JSON.parse(message.body);
+          console.log("[WS] Ready Status Received:", map);  // 添加这个
+          const normalizedMap: Record<string, boolean> = {};
+          for (const [k, v] of Object.entries(map)) {
+            normalizedMap[k.toString()] = v;
           }
+          console.log("[WS] Ready Status Received:", normalizedMap);
+          setReadyStatus(normalizedMap);
+        });
+
+        stompClient.subscribe(`/topic/ready/${gameId}/canStart`, (message) => {
+          const can: boolean = JSON.parse(message.body);
+          console.log("[WS] Can Start Received:", can);
+          setCanStart(can);
+        });
+
+        stompClient.subscribe(`/topic/${gameId}/gametime`, (message) => {
+          const data: string = message.body;
+          dispatch(gameTimeInitialize(data));
         });
 
         stompClient.subscribe(`/topic/start/${gameId}/ready-time`, (message) => {
-          try {
-            const data: string = message.body;
-            setCountDownStart(parseInt(data));
-          } catch (err) {
-            console.error('Invalid message:', err);
-          }
+          const data: string = message.body;
+          setCountDownStart(parseInt(data));
         });
 
         stompClient.subscribe(`/topic/start/${gameId}/hints`, (message) => {
-          try {
-            const game: Game = JSON.parse(message.body);
-            if (game.hints) {
-              dispatch(gameStart({
-                hints: game.hints ?? [],
-                gameId: gameId?.toString() ?? "",
-                scoreBoard: game.scoreBoard ?? new Map<string, number>(),
-                modeType: game.modeType ?? "combat",
-              }));
-            }
-          } catch (err) {
-            console.error('Invalid message:', err);
+          const game: Game = JSON.parse(message.body);
+          if (game.hints) {
+            dispatch(gameStart({
+              hints: game.hints,
+              gameId: gameId?.toString() ?? "",
+              scoreBoard: game.scoreBoard ?? new Map<string, number>(),
+              modeType: game.modeType ?? "combat",
+            }));
           }
         });
 
-<<<<<<< HEAD
-        stompClient.subscribe(`/topic/playersNumber`, (message) => {
-=======
-        client.subscribe(`/topic/${gameId}/playersNumber`, (message) => {
->>>>>>> e6eef6ccd3b4eb8b78847e842fd83da5f1fe55c4
-          try {
-            const data: string = message.body;
-            setPlayersNumber(parseInt(data));
-          } catch (err) {
-            console.error('Invalid message:', err);
-          }
+        stompClient.subscribe(`/topic/${gameId}/playersNumber`, (message) => {
+          const data: string = message.body;
+          setPlayersNumber(parseInt(data));
         });
 
-        client.subscribe(`/topic/${gameId}/gameCode`, (message) => {
-          try {
-            const data: string = message.body;
-            setGameCodeShown(data);
-            console.log('gameCode:', data);
-          } catch (err) {
-            console.error('Invalid message:', err);
-          }
+        stompClient.subscribe(`/topic/${gameId}/gameCode`, (message) => {
+          const data: string = message.body;
+          setGameCodeShown(data);
         });
       },
       onDisconnect: () => {
-        console.log('STOMP disconnected');
+        console.log("STOMP disconnected");
       }
     });
 
@@ -187,12 +141,10 @@ const GameStart = () => {
 
     const interval = setInterval(() => {
       current -= 1;
-
       if (current > 0) {
         setCountDown(current.toString());
       } else if (current === 0) {
         setCountDown("GO!");
-
         setTimeout(() => {
           setCountDown(null);
           requestAnimationFrame(() => {
@@ -209,9 +161,9 @@ const GameStart = () => {
     try {
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
-      router.push('/lobby');
+      router.push("/lobby");
     } catch (error) {
-      console.error('Error leaving game:', error);
+      console.error("Error leaving game:", error);
     }
   };
 
@@ -219,19 +171,21 @@ const GameStart = () => {
     try {
       await apiService.put(`/start/${gameId}`, {});
     } catch (error) {
-      console.error('Error starting game:', error);
+      console.error("Error starting game:", error);
     }
   };
 
   const toggleReady = () => {
-    const newReady = !readyStatus[userId];
-    setReadyStatus(prev => ({ ...prev, [userId]: newReady }));
+    const newReady = !readyStatus[userId.toString()];
+    console.log("[Toggle Ready] Sending:", { userId, ready: newReady });
 
     if (client && client.connected) {
       client.publish({
-        destination: `/app/ready/${gameId}`,
+        destination: `/app/game/${gameId}/ready`,
         body: JSON.stringify({ userId, ready: newReady }),
       });
+    } else {
+      console.warn("[Toggle Ready] STOMP client not connected!");
     }
   };
 
@@ -243,32 +197,26 @@ const GameStart = () => {
         {players.map((player, idx) => (
           <p key={idx}>
             {idx === 0 ? `Owner: ${player.username}` : player.username}
-            {readyStatus[player.userId] && ' ✅'}
+            {readyStatus[player.userId?.toString()] && " ✅"}
           </p>
         ))}
       </div>
 
-<<<<<<< HEAD
-=======
       <div className={styles.gameCode}>
         <p>Game Code: {gameCodeShown}</p>
       </div>
 
->>>>>>> e6eef6ccd3b4eb8b78847e842fd83da5f1fe55c4
       <div className={styles.buttonGroup}>
         {username !== ownerName && (
           <button className={styles.button} onClick={toggleReady}>
-            {readyStatus[userId] ? "Cancel Ready" : "Ready"}
+            {readyStatus[userId.toString()] ? "Cancel Ready" : "Ready"}
           </button>
         )}
         {username === ownerName && (
           <button
             className={styles.button}
             onClick={handleBegin}
-            disabled={
-              players.length !== playersNumber ||
-              !players.slice(1).every(p => readyStatus[p.userId])
-            }
+            disabled={!canStart || players.length !== playersNumber}
           >
             Begin
           </button>
@@ -278,7 +226,7 @@ const GameStart = () => {
 
       {countDown !== null && (
         <div className={styles.overlay}>
-          <div className={styles.countdown} key={countDown}>
+          <div className={styles.countdown}>
             {countDown === "0" ? "GO!" : countDown}
           </div>
         </div>
@@ -288,3 +236,4 @@ const GameStart = () => {
 };
 
 export default GameStart;
+
