@@ -7,5 +7,6 @@ export interface User {
   bio: string | null;
   avatar: string | null;
   level: string | null;
+  isReady?: boolean | null;
 }
     
