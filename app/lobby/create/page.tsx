@@ -39,7 +39,8 @@ const CreateForm: React.FC = () => {
       realPlayersNumber: null,
       modeType: "combat", // placeholder
       endTime: null,
-      scoreBoard: null
+      scoreBoard: null,
+      answer: null,
     };
 
     try {
@@ -63,7 +64,8 @@ const CreateForm: React.FC = () => {
             currentTeamId: null,
             gameResults: null,
             hintUsage: 0,
-            scoreBoard: null
+            scoreBoard: null,
+            answer: null,
           }
         ));
         router.push(`/game/start/${response.gameId}`);
