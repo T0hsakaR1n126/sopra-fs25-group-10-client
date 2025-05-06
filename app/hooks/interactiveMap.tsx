@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useApi } from "./useApi";
 import { useDispatch, useSelector } from "react-redux";
-import { answerUpdate, hintUpdate, hintUsageClear } from "@/gameSlice";
+import { hintUpdate, hintUsageClear } from "@/gameSlice";
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 

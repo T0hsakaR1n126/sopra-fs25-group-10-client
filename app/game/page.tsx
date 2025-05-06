@@ -16,7 +16,6 @@ const Dashboard: React.FC = () => {
   const [selectedSoloTime, setSelectedSoloTime] = useState("1");
   const [selectedSoloDifficulty, setSelectedSoloDifficulty] = useState("0");
   const [showSoloPopup, setSoloShowPopup] = useState(false);
-  const [selectedExerciseDifficulty, setSelectedExerciseDifficulty] = useState("0");
   const [showExercisePopup, setExerciseShowPopup] = useState(false);
   const [countDown, setCountDown] = useState<string | null>(null);
   const [countDownStart, setCountDownStart] = useState<number | null>(null);

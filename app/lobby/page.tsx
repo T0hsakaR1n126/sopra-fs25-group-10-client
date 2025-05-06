@@ -131,8 +131,7 @@ const Lobby: React.FC = () => {
       <div className={styles.chatPanel}>
         <h3 className={styles.chatTitle}>Lobby Chat</h3>
         <div className={styles.chatMessages}>
-          <p><strong>Alice:</strong> Ready to join a game?</p>
-          <p><strong>Bob:</strong> Let's go!</p>
+          
         </div>
         <div className={styles.chatInputBox}>
           <input
