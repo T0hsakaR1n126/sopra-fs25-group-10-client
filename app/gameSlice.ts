@@ -38,6 +38,7 @@ interface GameState {
   gameResults: GameResults | null; // Store the last game result
   hintUsage: number; // Number of hints used
   scoreBoard: Map<string, number> | null; // Store the score board
+  answer: string | null; // Store the answer
 }
 
 // Initial state setup for each game
@@ -57,6 +58,7 @@ const initialState: GameState = {
   gameResults: null,
   hintUsage: 1, // Number of hints used
   scoreBoard: null, // Store the score board
+  answer: null, // Store the answer
 };
 
 // Create the game slice
@@ -73,13 +75,14 @@ const gameSlice = createSlice({
       state.time = action.payload.time;
     },
     
-    gameStart: (state, action: PayloadAction<{ hints: Map<string, string>[]; gameId: string; scoreBoard: Map<string, number>, modeType: string }>) => {
+    gameStart: (state, action: PayloadAction<{ hints: Map<string, string>[]; gameId: string; scoreBoard: Map<string, number>, modeType: string, answer: string }>) => {
       state.hints = action.payload.hints;
       state.gameId = action.payload.gameId;
       state.scoreBoard = action.payload.scoreBoard;
       state.hintUsage = 1; // Reset hint usage when a new game starts
       state.gameStarted = true; // Set gameStarted to true when the game starts
       state.modeType = action.payload.modeType; // Set the game mode type
+      state.answer = action.payload.answer; // Reset the answer when the game starts
     },
 
     gameTimeInitialize: (state, action: PayloadAction<string>) => {
@@ -121,12 +124,15 @@ const gameSlice = createSlice({
       state.hintUsage = 1; // Reset hint usage when a new game starts
       state.scoreBoard = null; // Reset score board
     },
+    answerUpdate: (state, action: PayloadAction<string>) => {
+      state.answer = action.payload;
+    },
   },
 });
 
 // Export actions for use in components
 export const { 
-  gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, ownerUpdate, clearGameState
+  gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, ownerUpdate, clearGameState, answerUpdate
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

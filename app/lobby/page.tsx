@@ -96,7 +96,8 @@ const Lobby: React.FC = () => {
           currentTeamId: null,
           gameResults: null,
           hintUsage: 0,
-          scoreBoard: null
+          scoreBoard: null,
+          answer: null,
         }
       ));
       router.push(`/game/start/${game.gameId}`);
@@ -126,6 +127,23 @@ const Lobby: React.FC = () => {
 
   return (
     <div className={styles.page}>
+      {/* Chat Panel */}
+      <div className={styles.chatPanel}>
+        <h3 className={styles.chatTitle}>Lobby Chat</h3>
+        <div className={styles.chatMessages}>
+          <p><strong>Alice:</strong> Ready to join a game?</p>
+          <p><strong>Bob:</strong> Let's go!</p>
+        </div>
+        <div className={styles.chatInputBox}>
+          <input
+            type="text"
+            placeholder="Type a message..."
+            className={styles.chatInput}
+          />
+          <button className={styles.chatSendButton}>Send</button>
+        </div>
+      </div>
+
       <div className={styles.leftPanel}>
         <h1 className={styles.title}>Game Lobby</h1>
         <p className={styles.subtitle}>Feel free to join!</p>

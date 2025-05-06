@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useApi } from "./useApi";
 import { useDispatch, useSelector } from "react-redux";
-import { hintUpdate, hintUsageClear } from "@/gameSlice";
+import { answerUpdate, hintUpdate, hintUsageClear } from "@/gameSlice";
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
@@ -20,10 +20,12 @@ const InteractiveMap: React.FC = () => {
   const hintUsingNumber = useSelector((state: { game: { hintUsage: number } }) => state.game.hintUsage);
   const hintUsageRef = useRef(hintUsingNumber);
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
+  const modeType = useSelector((state: { game: { modeType: string } }) => state.game.modeType);
 
   interface submitResponse {
     judgement: boolean;
     hints: Map<string, string>[];
+    answer: string;
   }
 
   useEffect(() => {
@@ -52,7 +54,7 @@ const InteractiveMap: React.FC = () => {
               country.addEventListener("mouseover", () => {
                 country.setAttribute("data-original-fill", "#fff6d5");
                 country.style.fill = "blue";
-                country.style.cursor = "pointer"; 
+                country.style.cursor = "pointer";
                 const infoBox = document.getElementById("info-box");
                 if (infoBox) {
                   infoBox.innerText = `Country Info: ${countryName}`;
@@ -83,8 +85,10 @@ const InteractiveMap: React.FC = () => {
                       } else {
                         alert("Your answer is wrong!");
                       }
-                      dispatch(hintUpdate(response.hints));
-                      dispatch(hintUsageClear());
+                      if (modeType !== "exercise") {
+                        dispatch(hintUpdate(response.hints));
+                        dispatch(hintUsageClear());
+                      }
                     })
                     .catch(error => {
                       console.error("Error submitting answer:", error);
@@ -157,7 +161,7 @@ const InteractiveMap: React.FC = () => {
               if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
                 movedRef.current = true;
               }
-              
+
               translateRef.current.x += dx;
               translateRef.current.y += dy;
               dragStartRef.current = { x: event.clientX, y: event.clientY };

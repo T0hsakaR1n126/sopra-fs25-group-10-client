@@ -101,6 +101,7 @@ const GameStart = () => {
                 gameId: gameId?.toString() ?? "",
                 scoreBoard: game.scoreBoard ?? new Map<string, number>(),
                 modeType: game.modeType ?? "combat",
+                answer: game.answer ?? "",
               }));
             }
           } catch (err) {
@@ -138,7 +139,7 @@ const GameStart = () => {
     return () => {
       client.deactivate();
     };
-  }, [gameId, apiService, dispatch, router, gameCode]);
+  }, [gameId]);
 
   useEffect(() => {
     if (countDownStart === null) return;
