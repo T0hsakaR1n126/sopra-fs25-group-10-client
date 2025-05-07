@@ -105,6 +105,8 @@ const GameStart = () => {
           } catch (err) {
             console.error('Invalid message:', err);
           }
+        });
+
         stompClient.subscribe(`/topic/${gameId}/gametime`, (message) => {
           const data: string = message.body;
           dispatch(gameTimeInitialize(data));
@@ -113,18 +115,6 @@ const GameStart = () => {
         stompClient.subscribe(`/topic/start/${gameId}/ready-time`, (message) => {
           const data: string = message.body;
           setCountDownStart(parseInt(data));
-        });
-
-        stompClient.subscribe(`/topic/start/${gameId}/hints`, (message) => {
-          const game: Game = JSON.parse(message.body);
-          if (game.hints) {
-            dispatch(gameStart({
-              hints: game.hints,
-              gameId: gameId?.toString() ?? "",
-              scoreBoard: game.scoreBoard ?? new Map<string, number>(),
-              modeType: game.modeType ?? "combat",
-            }));
-          }
         });
 
         stompClient.subscribe(`/topic/${gameId}/playersNumber`, (message) => {
@@ -211,12 +201,12 @@ const GameStart = () => {
       <h3 className={styles.title}>Game</h3>
 
       <div className={styles.players}>
-            {players.map((player, idx) => (
-        <p key={idx}>
-          {idx === 0 ? `Owner: ${player.username}` : player.username}
-          {player.userId != null && readyStatus[player.userId.toString()] && " ✅"}
-        </p>
-      ))}
+        {players.map((player, idx) => (
+          <p key={idx}>
+            {idx === 0 ? `Owner: ${player.username}` : player.username}
+            {player.userId != null && readyStatus[player.userId.toString()] && " ✅"}
+          </p>
+        ))}
       </div>
 
       <div className={styles.gameCode}>
