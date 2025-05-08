@@ -73,7 +73,7 @@ const Dashboard: React.FC = () => {
                 gameId: gameId?.toString() ?? "",
                 scoreBoard: game.scoreBoard ?? new Map<string, number>(),
                 modeType: game.modeType ?? "solo",
-                answer: game.answer ?? "",
+                answer: game.answer?.replace(/(?<!^)([A-Z])/g, ' $1') ?? "",
               }));
               dispatch(ownerUpdate(userId));
               dispatch(gameTimeInitialize(game.time ?? ""));
@@ -136,6 +136,7 @@ const Dashboard: React.FC = () => {
       endTime: null,
       scoreBoard: null,
       answer: null,
+      difficulty: selectedSoloDifficulty === "0" ? "easy" : "hard",
     };
 
     try {

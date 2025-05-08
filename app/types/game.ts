@@ -26,4 +26,5 @@ export interface Game {
     hints: Map<string, string>[] | null;
     scoreBoard: Map<string, number> | null;
     answer: string | null;
+    difficulty: string | null;
   }

@@ -34,6 +34,7 @@ const GameBoard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState<string | null>(null);
   const [gameEnded, setGameEnded] = useState(false);
   const [endMessage, setEndMessage] = useState('');
+  const [nextLocked, setNextLocked] = useState(false);
 
   const currentHint = hints[hintIndex - 1];
   const handleHintClick = (index: number) => {
@@ -164,15 +165,22 @@ const GameBoard: React.FC = () => {
         ) : (
           <div className={styles.scoreboardWrapper}>
             <button className={styles.userBoxGreen} onClick={async () => {
+              if (nextLocked) return;
+              setNextLocked(true);
+
               try {
                 const response: Game = await apiService.post(`/next/${gameId}`, {});
                 dispatch(hintUpdate(response.hints ?? []));
                 dispatch(hintUsageClear());
-                dispatch(answerUpdate(response.answer ?? ""));
-              } catch (error) {
-                console.error('Error leaving game:', error);
+                dispatch(answerUpdate(response.answer ? response.answer.replace(/(?<!^)([A-Z])/g, ' $1') : ""));
+              } catch (err) {
+                console.error('error', err);
+              } finally {
+                setTimeout(() => setNextLocked(false), 500);
               }
-            }}>Next</button>
+            }}>
+              Next
+            </button>
           </div>
         )}
         {showExitWindow && (

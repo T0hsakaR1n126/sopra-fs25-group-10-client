@@ -1,19 +1,17 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import styles from "@/styles/gameStart.module.css";
-import { Client } from "@stomp/stompjs";
-import { useParams, useRouter } from "next/navigation";
-import { User } from "@/types/user";
-import { useApi } from "@/hooks/useApi";
-import { useSelector, useDispatch } from "react-redux";
-import { Game } from "@/types/game";
-import {
-  clearGameState,
-  gameStart,
-  gameTimeInitialize,
-  ownerUpdate,
-} from "@/gameSlice";
+import React, { useEffect, useState } from 'react';
+import styles from '@/styles/gameStart.module.css';
+import { Client } from '@stomp/stompjs';
+import { useParams, useRouter } from 'next/navigation';
+import { User } from '@/types/user';
+import { useApi } from '@/hooks/useApi';
+import { useSelector } from 'react-redux';
+import { Game } from '@/types/game';
+import { useDispatch } from "react-redux"; // Import useDispatch
+import { clearGameState, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const GameStart = () => {
   const router = useRouter();
@@ -99,7 +97,7 @@ const GameStart = () => {
                 gameId: gameId?.toString() ?? "",
                 scoreBoard: game.scoreBoard ?? new Map<string, number>(),
                 modeType: game.modeType ?? "combat",
-                answer: game.answer ?? "",
+                answer: game.answer?.replace(/(?<!^)([A-Z])/g, ' $1') ?? "",
               }));
             }
           } catch (err) {
@@ -196,49 +194,66 @@ const GameStart = () => {
     }
   };
 
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(gameCode).then(() => {
+      toast.success('Copied!', {
+        position: "top-center",
+        autoClose: 1000,
+        style: {
+          width: '150px',
+          padding: '10px',
+          fontSize: '14px',
+        },
+      });
+    });
+  };
+
   return (
-    <div className={styles.card}>
-      <h3 className={styles.title}>Game</h3>
-
-      <div className={styles.players}>
-        {players.map((player, idx) => (
-          <p key={idx}>
-            {idx === 0 ? `Owner: ${player.username}` : player.username}
-            {player.userId != null && readyStatus[player.userId.toString()] && " ✅"}
-          </p>
-        ))}
-      </div>
-
-      <div className={styles.gameCode}>
-        <p>Game Code: {gameCodeShown}</p>
-      </div>
-
-      <div className={styles.buttonGroup}>
-        {username !== ownerName && (
-          <button className={styles.button} onClick={toggleReady}>
-            {readyStatus[userId.toString()] ? "Cancel Ready" : "Ready"}
-          </button>
-        )}
-        {username === ownerName && (
-          <button
-            className={styles.button}
-            onClick={handleBegin}
-            disabled={!canStart || players.length !== playersNumber}
-          >
-            Begin
-          </button>
-        )}
-        <button className={styles.button} onClick={handleExitGame}>Exit</button>
-      </div>
-
-      {countDown !== null && (
-        <div className={styles.overlay}>
-          <div className={styles.countdown}>
-            {countDown === "0" ? "GO!" : countDown}
-          </div>
+    <>
+      <div className={styles.card}>
+        <h3 className={styles.title}>Game</h3>
+        <div className={styles.players}>
+          {players.map((player, idx) => (
+            <p key={idx}>
+              {idx === 0 ? `Owner: ${player.username}` : player.username}
+              {player.userId != null && readyStatus[player.userId.toString()] && " ✅"}
+            </p>
+          ))}
         </div>
-      )}
-    </div>
+
+        <div className={styles.gameCode} onClick={handleCopyCode}>
+          <p>
+            Game Code: <span style={{ textDecoration: 'underline', cursor: 'pointer' }}>{gameCodeShown}</span>
+          </p>
+        </div>
+
+        <div className={styles.buttonGroup}>
+          {username !== ownerName && (
+            <button className={styles.button} onClick={toggleReady}>
+              {readyStatus[userId.toString()] ? "Cancel Ready" : "Ready"}
+            </button>
+          )}
+          {username === ownerName && (
+            <button
+              className={styles.button}
+              onClick={handleBegin}
+              disabled={!canStart || players.length !== playersNumber}
+            >
+              Begin
+            </button>
+          )}
+          <button className={styles.button} onClick={handleExitGame}>Exit</button>
+        </div>
+        
+        {countDown !== null && (
+          <div className={styles.overlay}>
+            <div className={styles.countdown} key={countDown}>{countDown === "0" ? "GO!" : countDown}</div>
+          </div>
+        )}
+      </div>
+
+      <ToastContainer />
+    </>
   );
 };
 
