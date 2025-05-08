@@ -13,7 +13,8 @@ const CreateForm: React.FC = () => {
   const router = useRouter();
   const dispatch = useDispatch(); // Set up dispatch for Redux actions
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId)
-  const [isPrivate, setIsPrivate] = useState(false);
+  // const [isPrivate, setIsPrivate] = useState(false);
+  const [difficulty, setDifficulty] = useState("easy");
   const [gameName, setGameName] = useState("");
   const [password, setPassword] = useState("");
   const [maxPlayers, setMaxPlayers] = useState("2");
@@ -21,7 +22,7 @@ const CreateForm: React.FC = () => {
 
   const handleCreateGame = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission
-    
+
     if (!gameName.trim()) {
       alert("Game name cannot be empty!");
       return;
@@ -37,9 +38,11 @@ const CreateForm: React.FC = () => {
       hints: null,
       gameId: null,
       realPlayersNumber: null,
-      modeType: "combat", // placeholder
+      modeType: "combat",
       endTime: null,
-      scoreBoard: null
+      scoreBoard: null,
+      answer: null,
+      difficulty: difficulty,
     };
 
     try {
@@ -63,7 +66,8 @@ const CreateForm: React.FC = () => {
             currentTeamId: null,
             gameResults: null,
             hintUsage: 0,
-            scoreBoard: null
+            scoreBoard: null,
+            answer: null,
           }
         ));
         router.push(`/game/start/${response.gameId}`);
@@ -82,10 +86,10 @@ const CreateForm: React.FC = () => {
       <h2 className={styles.createTitle}>Create Game Session</h2>
       <label>
         Game Name:
-        <input 
-          type="text" 
-          className={styles.input} 
-          onChange={(e) => setGameName(e.target.value)} 
+        <input
+          type="text"
+          className={styles.input}
+          onChange={(e) => setGameName(e.target.value)}
         />
       </label>
 
@@ -108,7 +112,7 @@ const CreateForm: React.FC = () => {
         </select>
       </label>
 
-      <div className={styles.inlineField}>
+      {/* <div className={styles.inlineField}>
         <span className={styles.labelText}>Private 🔒</span>
 
         <label className={styles.switch}>
@@ -119,19 +123,25 @@ const CreateForm: React.FC = () => {
           />
           <span className={styles.slider}></span>
         </label>
-      </div>
+      </div> */}
 
-      {isPrivate && (
-        <label>
-          Password:
-          <input
-            type="password"
-            className={styles.input}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>
-      )}
+      <label>
+        Password:
+        <input
+          type="password"
+          className={styles.input}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </label>
+
+      <label>
+        Difficulty:
+        <select className={styles.input} onChange={(e) => setDifficulty(e.target.value)}>
+          <option value="easy">easy</option>
+          <option value="hard">hard</option>
+        </select>
+      </label>
 
       <button type="submit" className={styles.createButton}>Create</button>
     </form>

@@ -3,11 +3,12 @@
 import React, { useEffect, useState } from 'react';
 import styles from '@/styles/gameBoard.module.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { hintUsageIncrement, ownerUpdate, scoreBoardResultSet } from '@/gameSlice';
+import { answerUpdate, clearGameState, hintUpdate, hintUsageClear, hintUsageIncrement, ownerUpdate, scoreBoardResultSet } from '@/gameSlice';
 import InteractiveMap from '@/hooks/interactiveMap';
 import { Client } from '@stomp/stompjs';
 import { useRouter } from 'next/navigation';
 import { useApi } from '@/hooks/useApi';
+import { Game } from '@/types/game';
 
 const GameBoard: React.FC = () => {
   const dispatch = useDispatch(); // Set up dispatch for Redux actions
@@ -28,10 +29,12 @@ const GameBoard: React.FC = () => {
   const ownerId = useSelector((state: { game: { ownerId: string } }) => state.game.ownerId);
   const gameMode = useSelector((state: { game: { modeType: string } }) => state.game.modeType);
   const initialScoreBoard = useSelector((state: { game: { scoreBoard: Map<string, number> } }) => state.game.scoreBoard);
+  const answer = useSelector((state: { game: { answer: string } }) => state.game.answer);
   const restTime = useSelector((state: { game: { time: string } }) => state.game.time);
   const [currentTime, setCurrentTime] = useState<string | null>(null);
   const [gameEnded, setGameEnded] = useState(false);
   const [endMessage, setEndMessage] = useState('');
+  const [nextLocked, setNextLocked] = useState(false);
 
   const currentHint = hints[hintIndex - 1];
   const handleHintClick = (index: number) => {
@@ -140,8 +143,13 @@ const GameBoard: React.FC = () => {
 
   const handleFinishGame = async () => {
     try {
-      await apiService.put(`/infinite/${gameId}`, {});
-      router.push(`/game/results/${gameId}`);
+      await apiService.put(`/finishexercise/${gameId}`, {});
+
+      setTimeout(() => {
+        dispatch(hintUsageClear());
+        dispatch(clearGameState());
+      }, 1000);
+      router.push(`/game`);
     } catch (error) {
       console.error('Error finishing game:', error);
     }
@@ -150,9 +158,31 @@ const GameBoard: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.topBar}>
-        <div className={styles.scoreboardWrapper}>
-          <button className={styles.userBoxGreen} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
-        </div>
+        {gameMode !== "exercise" ? (
+          <div className={styles.scoreboardWrapper}>
+            <button className={styles.userBoxGreen} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
+          </div>
+        ) : (
+          <div className={styles.scoreboardWrapper}>
+            <button className={styles.userBoxGreen} onClick={async () => {
+              if (nextLocked) return;
+              setNextLocked(true);
+
+              try {
+                const response: Game = await apiService.post(`/next/${gameId}`, {});
+                dispatch(hintUpdate(response.hints ?? []));
+                dispatch(hintUsageClear());
+                dispatch(answerUpdate(response.answer ?? ""));
+              } catch (err) {
+                console.error('error', err);
+              } finally {
+                setTimeout(() => setNextLocked(false), 500);
+              }
+            }}>
+              Next
+            </button>
+          </div>
+        )}
         {showExitWindow && (
           <div className={styles.modalOverlay}>
             <div className={styles.exitModal}>
@@ -187,30 +217,50 @@ const GameBoard: React.FC = () => {
         )}
 
         <div className={styles.scoreboardWrapper}>
-          <button
-            className={styles.userBoxBlue}
-            onClick={() => setShowScoreBoard(prev => !prev)}
-          >
-            Scoreboard
-          </button>
+          {gameMode !== "exercise" ? (
+            <>
+              <button
+                className={styles.userBoxBlue}
+                onClick={() => setShowScoreBoard(prev => !prev)}
+              >
+                Scoreboard
+              </button>
 
-          <div
-            className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
-              }`}
-          >
-            <h3>Scoreboard</h3>
-            <ul>
-              {scoreBoard
-                ? Array.from(scoreBoard.entries())
-                  .sort(([, a], [, b]) => b - a)
-                  .map(([player, score]) => (
-                    <li key={player}>
-                      {player}: {score === -1 ? "give up" : score}
-                    </li>
-                  ))
-                : <li>Loading...</li>}
-            </ul>
-          </div>
+              <div
+                className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
+                  }`}
+              >
+                <h3>Scoreboard</h3>
+                <ul>
+                  {scoreBoard
+                    ? Array.from(scoreBoard.entries())
+                      .sort(([, a], [, b]) => b - a)
+                      .map(([player, score]) => (
+                        <li key={player}>
+                          {player}: {score === -1 ? "give up" : score}
+                        </li>
+                      ))
+                    : <li>Loading...</li>}
+                </ul>
+              </div>
+            </>
+          ) : (
+            <>
+              <button
+                className={styles.userBoxBlue}
+                onClick={() => setShowScoreBoard(prev => !prev)}
+              >
+                Answer
+              </button>
+
+              <div
+                className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
+                  }`}
+              >
+                <h3>{answer}</h3>
+              </div>
+            </>
+          )}
         </div>
 
         <div className={styles.scoreboardWrapper}>

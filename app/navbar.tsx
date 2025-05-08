@@ -103,9 +103,17 @@ export default function Navbar() {
       }}
     >
       {/* Logo */}
-      <Link href="/game">
-        <Image src="/mapmaster-logo.png" alt="Home" width={70} height={60} />
-      </Link>
+      <Tooltip title="Home">
+        <Link href="/game">
+          <Image
+            src="/mapmaster-logo.png"
+            alt="Home"
+            width={70}
+            height={60}
+            style={{ cursor: "pointer" }}
+          />
+        </Link>
+      </Tooltip>
 
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
         {/* Leaderboard */}
@@ -121,7 +129,7 @@ export default function Navbar() {
         {/* Dropdown Trigger */}
         <Dropdown
           dropdownRender={() => dropdownContent}
-          trigger={["click"]}
+          trigger={["hover"]}
           placement="bottomRight"
           arrow={false}
           open={dropdownOpen}

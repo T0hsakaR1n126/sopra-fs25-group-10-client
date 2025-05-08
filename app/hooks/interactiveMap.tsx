@@ -3,7 +3,8 @@
 import { useEffect, useRef } from "react";
 import { useApi } from "./useApi";
 import { useDispatch, useSelector } from "react-redux";
-import { hintUpdate, hintUsageClear } from "@/gameSlice";
+import { answerUpdate, hintUpdate, hintUsageClear } from "@/gameSlice";
+import { toast, ToastContainer } from "react-toastify";
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
@@ -20,11 +21,41 @@ const InteractiveMap: React.FC = () => {
   const hintUsingNumber = useSelector((state: { game: { hintUsage: number } }) => state.game.hintUsage);
   const hintUsageRef = useRef(hintUsingNumber);
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
+  const modeType = useSelector((state: { game: { modeType: string } }) => state.game.modeType);
+
+  const answer = useSelector((state: { game: { answer: string } }) => state.game.answer);
+  const answerRef = useRef(answer);
+
+  const submitLocked = useRef(false);
 
   interface submitResponse {
     judgement: boolean;
     hints: Map<string, string>[];
+    answer: string;
   }
+
+  function flashElement(el: SVGPathElement) {
+    const originalStyle = el.getAttribute("style") || "";
+    const originalFill = "#fff6d5";
+
+    let count = 0;
+    const interval = setInterval(() => {
+      const isEven = count % 2 === 0;
+      const color = isEven ? "blue" : originalFill;
+
+      const newStyle = originalStyle.replace(/fill:([^;]+);?/, `fill:${color};`);
+      el.setAttribute("style", newStyle);
+
+      count++;
+      if (count >= 6) {
+        clearInterval(interval);
+      }
+    }, 200);
+  }
+
+  useEffect(() => {
+    answerRef.current = answer;
+  }, [answer]);
 
   useEffect(() => {
     fetch("/world_map.svg")
@@ -38,7 +69,7 @@ const InteractiveMap: React.FC = () => {
           if (svgElement) {
             svgRef.current = svgElement;
             svgElement.style.width = "100%";
-            svgElement.style.height = "100%";
+            svgElement.style.height = "120%";
             svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
             svgElement.style.cursor = "grab";
 
@@ -52,10 +83,10 @@ const InteractiveMap: React.FC = () => {
               country.addEventListener("mouseover", () => {
                 country.setAttribute("data-original-fill", "#fff6d5");
                 country.style.fill = "blue";
-                country.style.cursor = "pointer"; 
+                country.style.cursor = "pointer";
                 const infoBox = document.getElementById("info-box");
                 if (infoBox) {
-                  infoBox.innerText = `Country Info: ${countryName}`;
+                  infoBox.innerText = `Country: ${countryName}`;
                 }
               });
 
@@ -64,7 +95,7 @@ const InteractiveMap: React.FC = () => {
                 country.style.fill = originalColor;
                 const infoBox = document.getElementById("info-box");
                 if (infoBox) {
-                  infoBox.innerText = "Country Info";
+                  infoBox.innerText = "Country";
                 }
               });
 
@@ -73,26 +104,64 @@ const InteractiveMap: React.FC = () => {
                 if (movedRef.current) {
                   return;
                 }
-                try {
-                  console.log(gameId, countryId, hintUsageRef.current)
-                  apiService.put<submitResponse>(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
-                    .then((response) => {
-                      console.log(response)
-                      if (response.judgement) {
-                        alert("Your answer is correct!");
-                      } else {
-                        alert("Your answer is wrong!");
-                      }
+                if (submitLocked.current) { return; }
+                submitLocked.current = true;
+                console.log(gameId, countryId, hintUsageRef.current)
+                apiService.put<submitResponse>(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
+                  .then((response) => {
+                    console.log(response)
+                    if (response.judgement) {
+                      toast.success('Your answer is correct!', {
+                        position: "top-center",
+                        autoClose: 1000,
+                        style: {
+                          width: '300px',
+                          padding: '30px',
+                          fontSize: '20px',
+                          marginTop: '50px',
+                          marginBottom: '10px',
+                        },
+                      });
+                    } else {
+                      toast.error('Your answer is wrong!', {
+                        position: "top-center",
+                        autoClose: 1000,
+                        style: {
+                          width: '300px',
+                          padding: '30px',
+                          fontSize: '20px',
+                          marginTop: '50px',
+                          marginBottom: '10px',
+                        },
+                      });
+                    }
+
+                    const currentAnswer = answerRef.current;
+                    const ansCountryElement = svgElement.querySelector(`path[id="${currentAnswer}"]`) as SVGPathElement | null;
+                    // let targetEl: SVGPathElement | null = null;
+                    // if (ansCountryElement.length > 0) {
+                    //   targetEl = Array.from(ansCountryElement).find(el => !el.id.startsWith("path")) as SVGPathElement || ansCountryElement[0] as SVGPathElement;
+                    // }
+                    // if (targetEl) {
+                    if (ansCountryElement && !ansCountryElement.id.startsWith("path")) {
+                      console.log("Found matching SVG element:", ansCountryElement);
+                      flashElement(ansCountryElement);
+                    } else {
+                      console.warn("No matching SVG element found for", ansCountryElement);
+                    }
+
+                    if (modeType !== "exercise") {
                       dispatch(hintUpdate(response.hints));
                       dispatch(hintUsageClear());
-                    })
-                    .catch(error => {
-                      console.error("Error submitting answer:", error);
-                    });
-                  dispatch(hintUsageClear());
-                } catch (error) {
-                  console.error("Error fetching country data:", error);
-                }
+                      dispatch(answerUpdate(response.answer));
+                    }
+                  })
+                  .catch(error => {
+                    console.error("Error submitting answer:", error);
+                  }).finally(() => {
+                    setTimeout(() => submitLocked.current = false, 1000);
+                  });
+                dispatch(hintUsageClear());
               });
             });
 
@@ -101,23 +170,6 @@ const InteractiveMap: React.FC = () => {
               svgRef.current.style.transform = `translate(${translateRef.current.x}px, ${translateRef.current.y}px) scale(${scaleRef.current})`;
             };
 
-            // svgElement.addEventListener("click", (event) => {
-            //   if (!svgRef.current) return;
-
-            //   const svgRect = svgRef.current.getBoundingClientRect();
-            //   const clickX = event.clientX - svgRect.left;
-            //   const clickY = event.clientY - svgRect.top;
-
-            //   if (isZoomedRef.current) {
-            //     svgElement.style.transform = "scale(1)";
-            //     svgElement.style.transformOrigin = "center";
-            //     isZoomedRef.current = false;
-            //   } else {
-            //     svgElement.style.transform = "scale(5)";
-            //     svgElement.style.transformOrigin = `${clickX}px ${clickY}px`;
-            //     isZoomedRef.current = true;
-            //   }
-            // }, false);
             svgElement.addEventListener("wheel", (event) => {
               event.preventDefault();
               if (!svgRef.current) return;
@@ -157,7 +209,7 @@ const InteractiveMap: React.FC = () => {
               if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
                 movedRef.current = true;
               }
-              
+
               translateRef.current.x += dx;
               translateRef.current.y += dy;
               dragStartRef.current = { x: event.clientX, y: event.clientY };
@@ -208,13 +260,14 @@ const InteractiveMap: React.FC = () => {
         zIndex: 10,
         pointerEvents: "none",
       }}>
-        Country Info
+        Country
       </div>
       <div id="svg-container" style={{
         width: "100%",
         height: "100%",
         overflow: "hidden"
       }} />
+      <ToastContainer />
     </div>
   );
 };
