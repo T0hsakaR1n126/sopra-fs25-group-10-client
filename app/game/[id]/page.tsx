@@ -172,7 +172,7 @@ const GameBoard: React.FC = () => {
                 const response: Game = await apiService.post(`/next/${gameId}`, {});
                 dispatch(hintUpdate(response.hints ?? []));
                 dispatch(hintUsageClear());
-                dispatch(answerUpdate(response.answer ? response.answer.replace(/(?<!^)([A-Z])/g, ' $1') : ""));
+                dispatch(answerUpdate(response.answer ?? ""));
               } catch (err) {
                 console.error('error', err);
               } finally {

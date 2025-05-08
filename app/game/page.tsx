@@ -73,7 +73,7 @@ const Dashboard: React.FC = () => {
                 gameId: gameId?.toString() ?? "",
                 scoreBoard: game.scoreBoard ?? new Map<string, number>(),
                 modeType: game.modeType ?? "solo",
-                answer: game.answer?.replace(/(?<!^)([A-Z])/g, ' $1') ?? "",
+                answer: game.answer ?? "",
               }));
               dispatch(ownerUpdate(userId));
               dispatch(gameTimeInitialize(game.time ?? ""));

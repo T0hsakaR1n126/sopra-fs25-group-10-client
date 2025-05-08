@@ -9,7 +9,7 @@ import { useApi } from '@/hooks/useApi';
 import { useSelector } from 'react-redux';
 import { Game } from '@/types/game';
 import { useDispatch } from "react-redux"; // Import useDispatch
-import { clearGameState, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
+import { answerUpdate, clearGameState, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -32,7 +32,7 @@ const GameStart = () => {
   const [readyStatus, setReadyStatus] = useState<Record<string, boolean>>({});
   const [canStart, setCanStart] = useState<boolean>(false);
   const [client, setClient] = useState<Client | null>(null);
-
+  
   useEffect(() => {
     setGameCodeShown(gameCode);
 
@@ -97,8 +97,9 @@ const GameStart = () => {
                 gameId: gameId?.toString() ?? "",
                 scoreBoard: game.scoreBoard ?? new Map<string, number>(),
                 modeType: game.modeType ?? "combat",
-                answer: game.answer?.replace(/(?<!^)([A-Z])/g, ' $1') ?? "",
+                answer: game.answer ?? "",
               }));
+              dispatch(answerUpdate(game.answer ?? ""));
             }
           } catch (err) {
             console.error('Invalid message:', err);

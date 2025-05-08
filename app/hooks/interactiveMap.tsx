@@ -137,16 +137,17 @@ const InteractiveMap: React.FC = () => {
                     }
 
                     const currentAnswer = answerRef.current;
-                    const ansCountryElement = svgElement.querySelectorAll(`path[data-name_en="${currentAnswer}"]`);
-                    let targetEl: SVGPathElement | null = null;
-                    if (ansCountryElement.length > 0) {
-                      targetEl = Array.from(ansCountryElement).find(el => !el.id.startsWith("path")) as SVGPathElement || ansCountryElement[0] as SVGPathElement;
-                    }
-                    if (targetEl) {
-                      console.log("Found matching SVG element:", targetEl);
-                      flashElement(targetEl);
+                    const ansCountryElement = svgElement.querySelector(`path[id="${currentAnswer}"]`) as SVGPathElement | null;
+                    // let targetEl: SVGPathElement | null = null;
+                    // if (ansCountryElement.length > 0) {
+                    //   targetEl = Array.from(ansCountryElement).find(el => !el.id.startsWith("path")) as SVGPathElement || ansCountryElement[0] as SVGPathElement;
+                    // }
+                    // if (targetEl) {
+                    if (ansCountryElement && !ansCountryElement.id.startsWith("path")) {
+                      console.log("Found matching SVG element:", ansCountryElement);
+                      flashElement(ansCountryElement);
                     } else {
-                      console.warn("No matching SVG element found for", targetEl);
+                      console.warn("No matching SVG element found for", ansCountryElement);
                     }
 
                     if (modeType !== "exercise") {
