@@ -13,6 +13,12 @@ import { answerUpdate, clearGameState, gameStart, gameTimeInitialize, ownerUpdat
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
+interface Message {
+  sender: string;
+  content: string;
+}
+
 const GameStart = () => {
   const router = useRouter();
   const gameId = useParams()?.id;
@@ -35,7 +41,7 @@ const GameStart = () => {
   
   // State for chat functionality
   const [showChat, setShowChat] = useState(false); // Toggle chat visibility
-  const [chatMessages, setChatMessages] = useState<string[]>([]); // Store chat messages
+  const [chatMessages, setChatMessages] = useState<Message[]>([]); // Store chat messages with Message type
   const [chatInput, setChatInput] = useState(""); // Store current chat input
 
   useEffect(() => {
@@ -131,15 +137,15 @@ const GameStart = () => {
           setGameCodeShown(data);
         });
 
-        // Subscribe to game-specific chat topic
-        stompClient.subscribe(`/topic/game/${gameId}/chat`, (message) => {
-          try {
-            const data = JSON.parse(message.body);
-            setChatMessages((prev) => [...prev, data.message]);
-          } catch (err) {
-            console.error('Invalid chat message:', err);
-          }
-        });
+    stompClient.subscribe(`/topic/chat/${gameId}`, (message) => {
+      try {
+        console.log("here")
+        const data: Message = JSON.parse(message.body);
+        setChatMessages((prevMessages) => [...prevMessages, data]);
+      } catch (err) {
+        console.error('Invalid chat message:', err);
+      }
+    });
       },
       onDisconnect: () => {
         console.log("STOMP disconnected");
@@ -224,17 +230,22 @@ const GameStart = () => {
     });
   };
 
-  // Handle sending a chat message
   const handleSendMessage = () => {
     if (chatInput.trim() && client && client.connected) {
-      const message = { message: `${username}: ${chatInput}` }; // Include username with message
+      const message: Message = {
+        sender: username, 
+        content: chatInput, 
+      };
+
       client.publish({
-        destination: `/app/game/${gameId}/chat`,
-        body: JSON.stringify(message),
+        destination: `/app/chat/${gameId}`,
+        body: JSON.stringify(message)
       });
-      setChatInput(""); // Clear input after sending
+
+      setChatInput("");  // Clear input after sending
     }
   };
+
 
   return (
     <>
@@ -287,7 +298,7 @@ const GameStart = () => {
             <h3 className={styles.chatTitle}>Game Chat</h3>
             <div className={styles.chatMessages}>
               {chatMessages.map((msg, idx) => (
-                <div key={idx} className={styles.chatMessage}>{msg}</div>
+                <div key={idx} className={styles.chatMessage}>{msg.content}</div>
               ))}
             </div>
             <div className={styles.chatInputBox}>

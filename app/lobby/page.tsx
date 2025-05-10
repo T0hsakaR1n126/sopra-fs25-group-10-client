@@ -10,6 +10,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
 import { gameInitialize } from '@/gameSlice';
 
+
+interface Message {
+  sender: string;
+  content: string;
+  timestamp: string;
+}
+
 const Lobby: React.FC = () => {
   const apiService = useApi();
   const router = useRouter();
@@ -19,7 +26,7 @@ const Lobby: React.FC = () => {
   const [paginatedGames, setPaginatedGames] = useState<Game[]>([]);
   const [joinCode, setJoinCode] = useState("");
   //for chat
-  const [chatMessages, setChatMessages] = useState<any[]>([]); // Store chat messages here
+  const [chatMessages, setChatMessages] = useState<Message[]>([]); // Store chat messages with Message type
   const [messageInput, setMessageInput] = useState(""); // Input state for new messages
   const clientRef = useRef<Client | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
