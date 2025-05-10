@@ -128,7 +128,7 @@ const Lobby: React.FC = () => {
   return (
     <div className={styles.page}>
       {/* Chat Panel */}
-      <div className={styles.chatPanel}>
+      {/* <div className={styles.chatPanel}>
         <h3 className={styles.chatTitle}>Lobby Chat</h3>
         <div className={styles.chatMessages}>
           
@@ -141,7 +141,7 @@ const Lobby: React.FC = () => {
           />
           <button className={styles.chatSendButton}>Send</button>
         </div>
-      </div>
+      </div> */}
 
       <div className={styles.leftPanel}>
         <h1 className={styles.title}>Game Lobby</h1>

@@ -33,6 +33,11 @@ const GameStart = () => {
   const [canStart, setCanStart] = useState<boolean>(false);
   const [client, setClient] = useState<Client | null>(null);
   
+  // State for chat functionality
+  const [showChat, setShowChat] = useState(false); // Toggle chat visibility
+  const [chatMessages, setChatMessages] = useState<string[]>([]); // Store chat messages
+  const [chatInput, setChatInput] = useState(""); // Store current chat input
+
   useEffect(() => {
     setGameCodeShown(gameCode);
 
@@ -73,7 +78,7 @@ const GameStart = () => {
 
         stompClient.subscribe(`/topic/ready/${gameId}/status`, (message) => {
           const map: Record<string, boolean> = JSON.parse(message.body);
-          console.log("[WS] Ready Status Received:", map);  // 添加这个
+          console.log("[WS] Ready Status Received:", map);
           const normalizedMap: Record<string, boolean> = {};
           for (const [k, v] of Object.entries(map)) {
             normalizedMap[k.toString()] = v;
@@ -124,6 +129,16 @@ const GameStart = () => {
         stompClient.subscribe(`/topic/${gameId}/gameCode`, (message) => {
           const data: string = message.body;
           setGameCodeShown(data);
+        });
+
+        // Subscribe to game-specific chat topic
+        stompClient.subscribe(`/topic/game/${gameId}/chat`, (message) => {
+          try {
+            const data = JSON.parse(message.body);
+            setChatMessages((prev) => [...prev, data.message]);
+          } catch (err) {
+            console.error('Invalid chat message:', err);
+          }
         });
       },
       onDisconnect: () => {
@@ -209,6 +224,18 @@ const GameStart = () => {
     });
   };
 
+  // Handle sending a chat message
+  const handleSendMessage = () => {
+    if (chatInput.trim() && client && client.connected) {
+      const message = { message: `${username}: ${chatInput}` }; // Include username with message
+      client.publish({
+        destination: `/app/game/${gameId}/chat`,
+        body: JSON.stringify(message),
+      });
+      setChatInput(""); // Clear input after sending
+    }
+  };
+
   return (
     <>
       <div className={styles.card}>
@@ -239,13 +266,46 @@ const GameStart = () => {
               className={styles.button}
               onClick={handleBegin}
               disabled={!canStart || players.length !== playersNumber}
+              title={!canStart || players.length !== playersNumber ? "Waiting for all players to get ready" : ""}
             >
               Begin
             </button>
           )}
           <button className={styles.button} onClick={handleExitGame}>Exit</button>
+          {/* Added chat toggle button next to Exit button */}
+          <button
+            className={styles.button}
+            onClick={() => setShowChat(!showChat)}
+          >
+            {showChat ? 'Hide Chat' : 'Show Chat'}
+          </button>
         </div>
-        
+
+        {/* Added chat panel below the button group */}
+        {showChat && (
+          <div className={styles.chatPanel}>
+            <h3 className={styles.chatTitle}>Game Chat</h3>
+            <div className={styles.chatMessages}>
+              {chatMessages.map((msg, idx) => (
+                <div key={idx} className={styles.chatMessage}>{msg}</div>
+              ))}
+            </div>
+            <div className={styles.chatInputBox}>
+              <input
+                type="text"
+                placeholder="Type a message..."
+                className={styles.chatInput}
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              />
+              <button className={styles.chatSendButton} onClick={handleSendMessage}>
+                Send
+              </button>
+            </div>
+          </div>
+        )}
+
         {countDown !== null && (
           <div className={styles.overlay}>
             <div className={styles.countdown} key={countDown}>{countDown === "0" ? "GO!" : countDown}</div>
@@ -259,4 +319,3 @@ const GameStart = () => {
 };
 
 export default GameStart;
-
