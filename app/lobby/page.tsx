@@ -187,9 +187,9 @@ const Lobby: React.FC = () => {
             key={idx}
             className={`${styles.chatMessage} ${msg.sender === userName ? styles.ownMessage : ''}`}
           >
-            <div className={styles.messageContent}>
-              <strong>{msg.sender}</strong>: {msg.content}
-            </div>
+          <div className={styles.messageContent}>
+            <span><strong>{msg.sender}</strong>: {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}</span>
+          </div>  
             <div className={styles.timestamp}>
               {new Date(msg.timestamp).toLocaleTimeString()}
             </div>

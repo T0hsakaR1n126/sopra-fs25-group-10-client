@@ -296,11 +296,13 @@ const GameStart = () => {
         {showChat && (
           <div className={styles.chatPanel}>
             <h3 className={styles.chatTitle}>Game Chat</h3>
-            <div className={styles.chatMessages}>
-              {chatMessages.map((msg, idx) => (
-                <div key={idx} className={styles.chatMessage}>{msg.content}</div>
-              ))}
-            </div>
+                      <div className={styles.chatMessages}>
+            {chatMessages.map((msg, idx) => (
+              <div key={idx} className={styles.chatMessage}>
+                <strong>{msg.sender}:</strong> {msg.content}
+              </div>
+            ))}
+          </div>
             <div className={styles.chatInputBox}>
               <input
                 type="text"
