@@ -30,7 +30,7 @@ const Lobby: React.FC = () => {
   const [messageInput, setMessageInput] = useState(""); // Input state for new messages
   const clientRef = useRef<Client | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
+  
   
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const userName = useSelector((state: { user: { username: string } }) => state.user.username);
@@ -49,17 +49,6 @@ const Lobby: React.FC = () => {
         console.log('STOMP connected');
         clientRef.current = client;
         
-        client.subscribe('/topic/chat/lobby', (message) => {
-          try {
-            console.log('RAW message body:', message.body);
-            const newMessage = JSON.parse(message.body);
-            console.log(newMessage)
-            setChatMessages((prevMessages) => [...prevMessages, newMessage]);
-          } catch (err) {
-            console.error('Invalid message:', err);
-          }
-        });
-        
         client.subscribe(`/topic/lobby`, (message) => {
           try {
             console.log('RAW message body:', message.body);
@@ -71,6 +60,18 @@ const Lobby: React.FC = () => {
             console.error('Invalid message:', err);
           }
         });
+        
+        client.subscribe('/topic/chat/lobby', (message) => {
+          try {
+            console.log('RAW message body:', message.body);
+            const newMessage = JSON.parse(message.body);
+            console.log(newMessage)
+            setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+          } catch (err) {
+            console.error('Invalid message:', err);
+          }
+        });
+        
         
         apiService.put("/lobby", {}).catch((err) => {
           console.error('Error fetching lobby data: ', err);
@@ -166,11 +167,11 @@ const Lobby: React.FC = () => {
         body: JSON.stringify(newMessage),
       });
     }
-
+    
     setMessageInput("");
   };
-
-   useEffect(() => {
+  
+  useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
@@ -180,42 +181,42 @@ const Lobby: React.FC = () => {
     <div className={styles.page}>
     {/* Chat Panel */}
     <div className={styles.chatPanel}>
-      <h3 className={styles.chatTitle}>Lobby Chat</h3>
-      <div className={styles.chatMessages}>
-        {chatMessages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`${styles.chatMessage} ${msg.sender === userName ? styles.ownMessage : ''}`}
-          >
-          <div className={styles.messageContent}>
-            <span><strong>{msg.sender}</strong>: {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}</span>
-          </div>  
-            <div className={styles.timestamp}>
-              {new Date(msg.timestamp).toLocaleTimeString()}
-            </div>
-          </div>
-        ))}
-        {/* Empty div to act as a scroll anchor */}
-        <div ref={messagesEndRef} />
+    <h3 className={styles.chatTitle}>Lobby Chat</h3>
+    <div className={styles.chatMessages}>
+    {chatMessages.map((msg, idx) => (
+      <div
+      key={idx}
+      className={`${styles.chatMessage} ${msg.sender === userName ? styles.ownMessage : ''}`}
+      >
+      <div className={styles.messageContent}>
+      <span><strong>{msg.sender}</strong>: {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}</span>
+      </div>  
+      <div className={styles.timestamp}>
+      {new Date(msg.timestamp).toLocaleTimeString()}
       </div>
-      <div className={styles.chatInputBox}>
-        <input
-          type="text"
-          placeholder="Type a message..."
-          className={styles.chatInput}
-          value={messageInput}
-          onChange={(e) => setMessageInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && messageInput.trim()) {
-              handleSendMessage(); // Trigger send on Enter key press
-              e.preventDefault(); // Prevent form submission or other default Enter key behavior
-            }
-          }}
-        />
-        <button className={styles.chatSendButton} onClick={handleSendMessage}>
-          Send
-        </button>
       </div>
+    ))}
+    {/* Empty div to act as a scroll anchor */}
+    <div ref={messagesEndRef} />
+    </div>
+    <div className={styles.chatInputBox}>
+    <input
+    type="text"
+    placeholder="Type a message..."
+    className={styles.chatInput}
+    value={messageInput}
+    onChange={(e) => setMessageInput(e.target.value)}
+    onKeyDown={(e) => {
+      if (e.key === "Enter" && messageInput.trim()) {
+        handleSendMessage(); // Trigger send on Enter key press
+        e.preventDefault(); // Prevent form submission or other default Enter key behavior
+      }
+    }}
+    />
+    <button className={styles.chatSendButton} onClick={handleSendMessage}>
+    Send
+    </button>
+    </div>
     </div>
     
     
