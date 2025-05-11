@@ -129,7 +129,7 @@ Note: If a team member fails to show continuous progress after using their Joker
 |             **@fuxinyu01**              |04-05-2025        | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/41effb5ee40d0d072069b4a62262020c0aaaf43f https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/fd1b4dd0b093b7a7b3a7ddce11b4868b84e8f383 | write tests|write tests for the newly added ready service and tests of edge cases for gamecontroller test |
 ---
 
-## Contributions Week 6 - [05-05-2025] to [11-05-2025]
+## Contributions Week 7 - [05-05-2025] to [11-05-2025]
 | **Student**        | **Date** | **Link to Commit** | **Description**           | **Relevance**                 |
 | ------------------------ | -------------- | ------------------------ | ------------------------------- | ----------------------------------- |
 |**@yzq0325**| 06-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/30afd4b3a96aacd0ee7d802f5dec9f9e885037a1|implement game feedback|Users can see which country the hints describe when they submit their answer.|
