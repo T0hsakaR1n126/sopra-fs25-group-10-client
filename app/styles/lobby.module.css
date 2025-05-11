@@ -367,6 +367,7 @@
   }
 }
 
+/* Chat Panel */
 .chatPanel {
   position: fixed;
   top: 200px;
@@ -381,26 +382,75 @@
   flex-direction: column;
   justify-content: space-between;
   z-index: 50;
+  overflow-y: auto;  /* Allows scrolling when there are many messages */
 }
 
+/* Chat Title */
 .chatTitle {
   font-size: 1.5rem;
   font-weight: bold;
   margin-bottom: 10px;
   text-align: center;
+  color: #ffffff;  /* Ensures title is visible on dark background */
 }
 
+/* Chat Message Container */
 .chatMessages {
   flex: 1;
   overflow-y: auto;
-  font-size: 0.9rem;
-  margin-bottom: 10px;
-  padding-right: 6px;
+  margin-bottom: 16px; /* Space for the input box */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
+/* Individual Chat Message */
+.chatMessage {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  max-width: 80%;
+  font-size: 14px;
+  color: #333;
+  word-wrap: break-word;
+}
+
+/* For own message (user's messages) */
+.ownMessage {
+  background-color:rgba(20, 160, 224, 0.99); /* Light green for the user's messages */
+  align-self: flex-end; /* Align own message to the right */
+  border-radius: 8px 8px 0 8px;
+}
+
+/* For others' messages */
+.chatMessage:not(.ownMessage) {
+  background-color: #f9f9f9; /* Light gray for others' messages */
+  align-self: flex-start; /* Align others' messages to the left */
+  border-radius: 8px 8px 8px 0;
+}
+
+/* Message Content */
+.messageContent {
+  font-size: 16px;
+  color: #333;
+}
+
+/* Timestamp Style */
+.timestamp {
+  font-size: 12px;
+  color: #888;
+  text-align: right;
+  margin-top: 4px;
+}
+
+/* Input box */
 .chatInputBox {
   display: flex;
   gap: 6px;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .chatInput {
@@ -413,6 +463,7 @@
   color: white;
 }
 
+/* Send button */
 .chatSendButton {
   padding: 8px 10px;
   background-color: #0ea5e9;
@@ -421,8 +472,48 @@
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
 }
 
+/* Hover effect for Send button */
 .chatSendButton:hover {
   background-color: #0284c7;
+}
+
+/* Focus effect for Send button */
+.chatSendButton:focus {
+  outline: none;
+  background-color: #0284c7;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Chat Panel Responsiveness */
+@media (max-width: 768px) {
+  .chatPanel {
+    width: 100%;
+    left: 0;
+    top: 0;
+    border-radius: 0;
+  }
+
+  .chatTitle {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .chatPanel {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .chatInputBox {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .chatSendButton {
+    width: 100%;
+    padding: 12px;
+  }
 }
