@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
 import styles from "@/styles/leaderboard.module.css";
 import { User } from "@/types/user";
+import Link from "next/link";
+
 
 const LeaderboardPage: React.FC = () => {
   const apiService = useApi();
@@ -82,7 +84,11 @@ const LeaderboardPage: React.FC = () => {
             {paginatedEntries.map((entry, index) => (
               <div className={getRankClass(index)} key={entry.userId ?? `fallback-${index}`}>
                 <div className={styles.cell}>{index + 1}</div>
-                <div className={styles.cell}>{entry.username}</div>
+                <div className={styles.cell}>
+                  <Link href={`/user/${entry.userId}/profile`} style={{ color: "#0ea5e9", textDecoration: "underline" }}>
+                    {entry.username}
+                  </Link>
+                </div>
                 <div className={`${styles.cell} ${styles.cellLevel}`}>
                   {parseInt(entry.level ?? "0") < 5000
                     ? "MapAmateur"
