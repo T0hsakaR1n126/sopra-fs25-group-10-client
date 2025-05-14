@@ -3,13 +3,15 @@ import { useEffect, useState } from "react";
 import { Input, Button, Form } from "antd";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user"
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserInfo } from "@/userSlice";
 // import Authenticator from "@/auth/authenticator";
 
 const ProfilePage = () => {
   const router = useRouter();
+  const params = useParams(); // 获取 URL 参数
+  const viewedUserId = params.id as string;
   const apiService = useApi();
   const dispatch = useDispatch();
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
@@ -24,7 +26,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response: User = await apiService.get<User>(`/users/${userId}`);
+        const response: User = await apiService.get<User>(`/users/${params.id}`);
         setUser(response);
       } catch (error) {
         if (error instanceof Error) {

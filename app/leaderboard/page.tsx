@@ -85,7 +85,7 @@ const LeaderboardPage: React.FC = () => {
               <div className={getRankClass(index)} key={entry.userId ?? `fallback-${index}`}>
                 <div className={styles.cell}>{index + 1}</div>
                 <div className={styles.cell}>
-                  <Link href={`/user/${entry.userId}/profile`} style={{ color: "#0ea5e9", textDecoration: "underline" }}>
+                  <Link href={`/users/${entry.userId}/profile`} style={{ color: "#0ea5e9", textDecoration: "underline" }}>
                     {entry.username}
                   </Link>
                 </div>

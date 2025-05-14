@@ -14,6 +14,7 @@ export default function Navbar() {
   const avatar = useSelector((state: RootState) => state.user.avatar);
   const level = useSelector((state: RootState) => state.user.level);
   const logout = useLogout();
+  const userId = localStorage.getItem("userid");  // 获取当前用户的 id
 
   const xp = (level ?? 0) * 100;
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -53,7 +54,7 @@ export default function Navbar() {
       {/* menu */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <Link
-          href="/users/profile"
+          href={`/users/${userId}/profile`}
           onClick={() => setDropdownOpen(false)}
           style={{ ...menuItemStyle, backgroundColor: hovered === "profile" ? "#014b7d" : "transparent" }}
           onMouseEnter={() => setHovered("profile")}
