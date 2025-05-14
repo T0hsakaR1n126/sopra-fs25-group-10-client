@@ -80,7 +80,7 @@ const ProfilePage = () => {
 
   return (
     // <Authenticator>
-    <div style={{ minHeight: "100vh", paddingTop: "80px", padding: "80px 16px", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}>
+    <div style={{ minHeight: "100vh", paddingTop: "80px", padding: "80px 16px",       overflowY: "auto", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}>
       <div style={{ width: "100%", maxWidth: "500px", margin: "auto", padding: "20px", background: "#333", color: "#fff", borderRadius: "8px", boxSizing: "border-box" }}>
         <h2 style={{ textAlign: "center" }}>User Profile</h2>
         {/* Profile Form */}
