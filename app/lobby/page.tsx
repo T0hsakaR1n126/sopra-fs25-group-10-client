@@ -98,6 +98,7 @@ const Lobby: React.FC = () => {
           hintUsage: 0,
           scoreBoard: null,
           answer: null,
+          idToCountryName: null,
         }
       ));
       router.push(`/game/start/${game.gameId}`);

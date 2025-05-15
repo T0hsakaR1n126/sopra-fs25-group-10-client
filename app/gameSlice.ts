@@ -39,6 +39,7 @@ interface GameState {
   hintUsage: number; // Number of hints used
   scoreBoard: Map<string, number> | null; // Store the score board
   answer: string | null; // Store the answer
+  idToCountryName: Record<string, string> | null; // Map of country IDs to names
 }
 
 // Initial state setup for each game
@@ -59,6 +60,7 @@ const initialState: GameState = {
   hintUsage: 1, // Number of hints used
   scoreBoard: null, // Store the score board
   answer: null, // Store the answer
+  idToCountryName: null, // Map of country IDs to names
 };
 
 // Create the game slice
@@ -127,12 +129,17 @@ const gameSlice = createSlice({
     answerUpdate: (state, action: PayloadAction<string>) => {
       state.answer = action.payload;
     },
+    setIdToCountryName: (state, action: PayloadAction<Record<string, string>>) => {
+      state.idToCountryName = action.payload;
+    },
   },
 });
 
 // Export actions for use in components
 export const { 
-  gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, ownerUpdate, clearGameState, answerUpdate
+  gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, 
+  hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, 
+  ownerUpdate, clearGameState, answerUpdate, setIdToCountryName
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
