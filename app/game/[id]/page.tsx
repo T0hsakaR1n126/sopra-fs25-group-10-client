@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from '@/styles/gameBoard.module.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { answerUpdate, clearGameState, hintUpdate, hintUsageClear, hintUsageIncrement, ownerUpdate, scoreBoardResultSet } from '@/gameSlice';
@@ -51,14 +51,6 @@ const GameBoard: React.FC = () => {
       setHintIndex(target);
     }
   };
-
-  const answerRef = useRef(answer);
-  const [answerShown, setAnswerShown] = useState("");
-  const idToCountryName = useSelector((state: any) => state.game.idToCountryName);
-  useEffect(() => {
-    answerRef.current = answer;
-    setAnswerShown(idToCountryName[answerRef.current] || answerRef.current);
-  }, [answer]);
 
   useEffect(() => {
     setHintIndex(1);
@@ -265,7 +257,7 @@ const GameBoard: React.FC = () => {
                 className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
                   }`}
               >
-                <h3>{answerShown}</h3>
+                <h3>{answer}</h3>
               </div>
             </>
           )}

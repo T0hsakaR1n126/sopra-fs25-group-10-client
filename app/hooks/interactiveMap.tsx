@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useApi } from "./useApi";
 import { useDispatch, useSelector } from "react-redux";
-import { answerUpdate, hintUpdate, hintUsageClear, setIdToCountryName } from "@/gameSlice";
+import { answerUpdate, hintUpdate, hintUsageClear } from "@/gameSlice";
 import { toast, ToastContainer } from "react-toastify";
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
@@ -24,8 +24,6 @@ const InteractiveMap: React.FC = () => {
   const modeType = useSelector((state: { game: { modeType: string } }) => state.game.modeType);
 
   const answer = useSelector((state: { game: { answer: string } }) => state.game.answer);
-  const idToCountryName = useSelector((state: any) => state.game.idToCountryName);
-
   const answerRef = useRef(answer);
 
   const submitLocked = useRef(false);
@@ -69,18 +67,6 @@ const InteractiveMap: React.FC = () => {
           const svgElement = container.querySelector("svg");
 
           if (svgElement) {
-            const idToNameMap: Record<string, string> = {};
-            const countryName = svgElement.querySelectorAll("path[data-name_en]");
-
-            countryName.forEach(country => {
-              const id = country.getAttribute("id");
-              const name = country.getAttribute("data-name_en");
-              if (id && name && !id.startsWith("path")) {
-                idToNameMap[id] = name;
-              }
-            });
-            dispatch(setIdToCountryName(idToNameMap));
-
             svgRef.current = svgElement;
             svgElement.style.width = "100%";
             svgElement.style.height = "120%";
@@ -125,7 +111,7 @@ const InteractiveMap: React.FC = () => {
                   .then((response) => {
                     console.log(response)
                     if (response.judgement) {
-                      toast.success(`Your answer is correct! The answer is: ${idToCountryName[answerRef.current]}.`, {
+                      toast.success('Your answer is correct!', {
                         position: "top-center",
                         autoClose: 1000,
                         style: {
@@ -137,7 +123,7 @@ const InteractiveMap: React.FC = () => {
                         },
                       });
                     } else {
-                      toast.error(`Your answer is wrong! The answer is: ${idToCountryName[answerRef.current]}.`, {
+                      toast.error('Your answer is wrong!', {
                         position: "top-center",
                         autoClose: 1000,
                         style: {
