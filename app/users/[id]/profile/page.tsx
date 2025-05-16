@@ -11,35 +11,39 @@ import { updateUserInfo } from "@/userSlice";
 const ProfilePage = () => {
   const router = useRouter();
   const params = useParams(); // 获取 URL 参数
-  const viewedUserId = params.id as string;
   const apiService = useApi();
   const dispatch = useDispatch();
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const token = useSelector((state: { user: { token: string } }) => state.user.token);
-
+  const viewedUserId = (!params.id || params.id === "none") ? userId : params.id as string;
   const [form] = Form.useForm();
   const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const avatar = ["/avatar_1.png", "/avatar_2.png", "/avatar_3.png", "/avatar_4.png", "/avatar_5.png", "/avatar_6.png"];
   const currentAvatar = Form.useWatch("avatar", form);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response: User = await apiService.get<User>(`/users/${params.id}`);
-        setUser(response);
-      } catch (error) {
-        if (error instanceof Error) {
-          alert(`Something went wrong while fetching user:\n${error.message}`);
-          router.push("/game");
-        } else {
-          console.error("An unknown error occurred while fetching user.");
-        }
-      }
-    };
+    useEffect(() => {
+      console.log("params:", params);         // 输出整个 params 对象
+      console.log("params.id:", params.id);   // 输出具体的 id
+    }, [params]);
 
-    fetchUser();
-  }, [apiService, userId, router]);
+useEffect(() => {
+  const fetchUser = async () => {
+    try {
+      const response: User = await apiService.get<User>(`/users/${viewedUserId}`);
+      setUser(response);
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(`Something went wrong while fetching user:\n${error.message}`);
+        router.push("/game");
+      } else {
+        console.error("An unknown error occurred while fetching user.");
+      }
+    }
+  };
+
+  fetchUser();
+}, [apiService, viewedUserId, router]);
 
   const handleEdit = () => {
     setIsEditing(true);

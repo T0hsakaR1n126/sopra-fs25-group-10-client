@@ -10,11 +10,8 @@ import { Avatar, Dropdown, Tooltip } from "antd";
 import { useState } from "react";
 
 export default function Navbar() {
-  const username = useSelector((state: RootState) => state.user.username);
-  const avatar = useSelector((state: RootState) => state.user.avatar);
-  const level = useSelector((state: RootState) => state.user.level);
+  const { username, avatar, level, userId } = useSelector((state: RootState) => state.user);
   const logout = useLogout();
-  const userId = localStorage.getItem("userid");  // 获取当前用户的 id
 
   const xp = (level ?? 0) * 100;
   const [dropdownOpen, setDropdownOpen] = useState(false);
