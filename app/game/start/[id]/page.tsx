@@ -13,6 +13,12 @@ import { answerUpdate, clearGameState, gameStart, gameTimeInitialize, ownerUpdat
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+
+interface Message {
+  sender: string;
+  content: string;
+}
+
 const GameStart = () => {
   const router = useRouter();
   const gameId = useParams()?.id;
@@ -33,6 +39,11 @@ const GameStart = () => {
   const [canStart, setCanStart] = useState<boolean>(false);
   const [client, setClient] = useState<Client | null>(null);
   
+  // State for chat functionality
+  const [showChat, setShowChat] = useState(false); // Toggle chat visibility
+  const [chatMessages, setChatMessages] = useState<Message[]>([]); // Store chat messages with Message type
+  const [chatInput, setChatInput] = useState(""); // Store current chat input
+
   useEffect(() => {
     setGameCodeShown(gameCode);
 
@@ -73,7 +84,7 @@ const GameStart = () => {
 
         stompClient.subscribe(`/topic/ready/${gameId}/status`, (message) => {
           const map: Record<string, boolean> = JSON.parse(message.body);
-          console.log("[WS] Ready Status Received:", map);  // 添加这个
+          console.log("[WS] Ready Status Received:", map);
           const normalizedMap: Record<string, boolean> = {};
           for (const [k, v] of Object.entries(map)) {
             normalizedMap[k.toString()] = v;
@@ -125,6 +136,16 @@ const GameStart = () => {
           const data: string = message.body;
           setGameCodeShown(data);
         });
+
+    stompClient.subscribe(`/topic/chat/${gameId}`, (message) => {
+      try {
+        console.log("here")
+        const data: Message = JSON.parse(message.body);
+        setChatMessages((prevMessages) => [...prevMessages, data]);
+      } catch (err) {
+        console.error('Invalid chat message:', err);
+      }
+    });
       },
       onDisconnect: () => {
         console.log("STOMP disconnected");
@@ -209,6 +230,23 @@ const GameStart = () => {
     });
   };
 
+  const handleSendMessage = () => {
+    if (chatInput.trim() && client && client.connected) {
+      const message: Message = {
+        sender: username, 
+        content: chatInput, 
+      };
+
+      client.publish({
+        destination: `/app/chat/${gameId}`,
+        body: JSON.stringify(message)
+      });
+
+      setChatInput("");  // Clear input after sending
+    }
+  };
+
+
   return (
     <>
       <div className={styles.card}>
@@ -239,13 +277,48 @@ const GameStart = () => {
               className={styles.button}
               onClick={handleBegin}
               disabled={!canStart || players.length !== playersNumber}
+              title={!canStart || players.length !== playersNumber ? "Waiting for all players to get ready" : ""}
             >
               Begin
             </button>
           )}
           <button className={styles.button} onClick={handleExitGame}>Exit</button>
+          {/* Added chat toggle button next to Exit button */}
+          <button
+            className={styles.button}
+            onClick={() => setShowChat(!showChat)}
+          >
+            {showChat ? 'Hide Chat' : 'Show Chat'}
+          </button>
         </div>
-        
+
+        {/* Added chat panel below the button group */}
+        {showChat && (
+          <div className={styles.chatPanel}>
+            <h3 className={styles.chatTitle}>Game Chat</h3>
+                      <div className={styles.chatMessages}>
+            {chatMessages.map((msg, idx) => (
+              <div key={idx} className={styles.chatMessage}>
+                <strong>{msg.sender}:</strong> {msg.content}
+              </div>
+            ))}
+          </div>
+            <div className={styles.chatInputBox}>
+              <input
+                type="text"
+                placeholder="Type a message..."
+                className={styles.chatInput}
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+              />
+              <button className={styles.chatSendButton} onClick={handleSendMessage}>
+                Send
+              </button>
+            </div>
+          </div>
+        )}
+
         {countDown !== null && (
           <div className={styles.overlay}>
             <div className={styles.countdown} key={countDown}>{countDown === "0" ? "GO!" : countDown}</div>
@@ -259,4 +332,3 @@ const GameStart = () => {
 };
 
 export default GameStart;
-
