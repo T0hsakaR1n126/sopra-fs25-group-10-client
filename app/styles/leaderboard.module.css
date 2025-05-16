@@ -30,7 +30,7 @@
 .lobbyCard {
   width: 80%;
   display: grid;
-  grid-template-columns: 0.6fr 1.4fr 0.8fr 1fr 1fr;
+  grid-template-columns: 0.6fr 2fr 1fr 1fr;
   align-items: center;
   padding: 14px 20px;
   border-radius: 8px;
@@ -55,7 +55,7 @@
 .headerRow {
   width: 80%;
   display: grid;
-  grid-template-columns: 0.6fr 1.4fr 0.8fr 1fr 1fr;
+  grid-template-columns: 0.6fr 2fr 1fr 1fr;
   font-weight: bold;
   color: #cccccc;
   margin: 0 auto 10px;
@@ -84,14 +84,11 @@
 
 /* 确保头像在单元格中居中 */
 .cell img {
-  display: block;
-  margin: 0 auto;
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   object-fit: cover;
 }
-
 .scrollDownBtn {
   font-size: 24px;
   cursor: pointer;
