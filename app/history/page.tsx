@@ -18,6 +18,7 @@ type MatchHistoryItem = {
   gameTime: number;
   gameCreationDate: string;
   modeType: string; 
+  gameName: string;
 };
 
 // const fallbackHistory: MatchHistoryItem[] = [

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Game } from './types/game';
 
 // Define the type for our slice's state
 interface GameHistory {
@@ -39,7 +40,7 @@ interface GameState {
   hintUsage: number; // Number of hints used
   scoreBoard: Map<string, number> | null; // Store the score board
   answer: string | null; // Store the answer
-  idToCountryName: Record<string, string> | null; // Map of country IDs to names
+  recreateGame: Game | null;
 }
 
 // Initial state setup for each game
@@ -60,7 +61,7 @@ const initialState: GameState = {
   hintUsage: 1, // Number of hints used
   scoreBoard: null, // Store the score board
   answer: null, // Store the answer
-  idToCountryName: null, // Map of country IDs to names
+  recreateGame: null, // Allow null as an initial value
 };
 
 // Create the game slice
@@ -125,21 +126,20 @@ const gameSlice = createSlice({
       state.gameResults = null;
       state.hintUsage = 1; // Reset hint usage when a new game starts
       state.scoreBoard = null; // Reset score board
+      state.recreateGame = null;
     },
     answerUpdate: (state, action: PayloadAction<string>) => {
       state.answer = action.payload;
     },
-    setIdToCountryName: (state, action: PayloadAction<Record<string, string>>) => {
-      state.idToCountryName = action.payload;
+    setRecreateGame: (state, action: PayloadAction<Game>) => {
+      state.recreateGame = action.payload;
     },
   },
 });
 
 // Export actions for use in components
 export const { 
-  gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, 
-  hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, 
-  ownerUpdate, clearGameState, answerUpdate, setIdToCountryName
+  gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, ownerUpdate, clearGameState, answerUpdate, setRecreateGame
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
