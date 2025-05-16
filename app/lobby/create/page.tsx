@@ -46,9 +46,7 @@ const CreateForm: React.FC = () => {
     };
 
     try {
-      console.log(newGame)
       const response = await apiService.post<Game>("/games", newGame);
-      console.log(JSON.stringify(response, null, 2));
       if (response.gameId) {
         dispatch(gameInitialize(
           {

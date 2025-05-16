@@ -10,9 +10,7 @@ import { Avatar, Dropdown, Tooltip } from "antd";
 import { useState } from "react";
 
 export default function Navbar() {
-  const username = useSelector((state: RootState) => state.user.username);
-  const avatar = useSelector((state: RootState) => state.user.avatar);
-  const level = useSelector((state: RootState) => state.user.level);
+  const { username, avatar, level, userId } = useSelector((state: RootState) => state.user);
   const logout = useLogout();
 
   const xp = (level ?? 0) * 100;
@@ -53,7 +51,7 @@ export default function Navbar() {
       {/* menu */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <Link
-          href="/users/profile"
+          href={`/users/${userId}/profile`}
           onClick={() => setDropdownOpen(false)}
           style={{ ...menuItemStyle, backgroundColor: hovered === "profile" ? "#014b7d" : "transparent" }}
           onMouseEnter={() => setHovered("profile")}

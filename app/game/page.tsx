@@ -34,7 +34,7 @@ const Dashboard: React.FC = () => {
       brokerURL: 'ws://localhost:8080/ws', // TODO: replace with your WebSocket URL
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log('STOMP connected', gameId);
+
 
         client.subscribe(`/topic/startsolo/${userId}/gameId`, (message) => {
           try {
@@ -56,7 +56,7 @@ const Dashboard: React.FC = () => {
 
         client.subscribe(`/topic/start/${gameId}/ready-time`, (message) => {
           try {
-            console.log('RAW message body:', message.body);
+
             const data: string = message.body;
             setCountDownStart(parseInt(data));
           } catch (err) {
@@ -84,7 +84,7 @@ const Dashboard: React.FC = () => {
         });
       },
       onDisconnect: () => {
-        console.log('STOMP disconnected');
+
       }
     });
 
@@ -140,7 +140,7 @@ const Dashboard: React.FC = () => {
     };
 
     try {
-      console.log(newGame);
+
       if (!isExercise) {
         await apiService.post<Game>("/startsolo", newGame);
       } else {

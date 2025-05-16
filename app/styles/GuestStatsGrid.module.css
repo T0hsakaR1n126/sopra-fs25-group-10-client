@@ -1,17 +1,18 @@
 /* GuestStatsGrid.module.css */
 .container {
     min-height: 100vh;
-    background-color: black;
+    background-color: transparent;
     color: white;
     padding: 2.5rem;
   }
   
-  .heading {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 1.5rem;
-  }
+.heading {
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 6rem; /* 新增：向下偏移 */
+  margin-bottom: 1rem;
+}
   
   .loading {
     text-align: center;
@@ -58,3 +59,10 @@
     font-weight: 600;
   }
   
+
+  .subheading {
+  font-size: 1rem;
+  color: #cccccc;
+  text-align: center;
+  margin-bottom: 2rem;
+}

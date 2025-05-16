@@ -17,7 +17,8 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-x: hidden; /* 禁止水平滚动 */
+  overflow-y: auto;   /* 允许垂直滚动 */
   position: relative;
   z-index: 0;
 }
