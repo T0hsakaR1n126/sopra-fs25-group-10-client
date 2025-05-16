@@ -11,18 +11,21 @@ import { useApi } from '@/hooks/useApi';
 import { Game } from '@/types/game';
 
 const GameBoard: React.FC = () => {
-  const dispatch = useDispatch(); // Set up dispatch for Redux actions
+  const dispatch = useDispatch();
   const router = useRouter();
   const apiService = useApi();
   const [hintIndex, setHintIndex] = useState(1);
   const [unlockedHints, setUnlockedHints] = useState(1);
   const [showScoreBoard, setShowScoreBoard] = useState(false);
   const [showExitWindow, setShowExitWindow] = useState(false);
-  const [scoreBoard, setScoreBoard] = useState<Map<string, number>>();
-  const rawHints = useSelector(
-    (state: { game: { hints: { difficulty: string; text: string }[] } }) =>
-      state.game.hints || []
-  );
+  const [scoreBoard, setScoreBoard] = useState<Map<string, number> | null>(null);
+  const [currentTime, setCurrentTime] = useState<string | null>(null);
+  const [gameEnded, setGameEnded] = useState(false);
+  const [showRules, setShowRules] = useState(false);
+  const [endMessage, setEndMessage] = useState('');
+  const [nextLocked, setNextLocked] = useState(false);
+
+  const rawHints = useSelector((state: { game: { hints: { difficulty: string; text: string }[] } }) => state.game.hints || []);
   const hints = [...rawHints].sort((a, b) => parseInt(b.difficulty) - parseInt(a.difficulty));
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const gameId = useSelector((state: { game: { gameId: string } }) => state.game.gameId);
@@ -31,23 +34,17 @@ const GameBoard: React.FC = () => {
   const initialScoreBoard = useSelector((state: { game: { scoreBoard: Map<string, number> } }) => state.game.scoreBoard);
   const answer = useSelector((state: { game: { answer: string } }) => state.game.answer);
   const restTime = useSelector((state: { game: { time: string } }) => state.game.time);
-  const [currentTime, setCurrentTime] = useState<string | null>(null);
-  const [gameEnded, setGameEnded] = useState(false);
-  const [showRules, setShowRules] = useState(false);  // 新增规则弹窗显示状态
-  const [endMessage, setEndMessage] = useState('');
-  const [nextLocked, setNextLocked] = useState(false);
 
   const currentHint = hints[hintIndex - 1];
+
   const handleHintClick = (index: number) => {
     const target = index + 1;
-
-    if (target == unlockedHints + 1 && target <= hints.length) {
+    if (target === unlockedHints + 1 && target <= hints.length) {
       setUnlockedHints(target);
       setHintIndex(target);
       dispatch(hintUsageIncrement());
       return;
     }
-
     if (target <= unlockedHints) {
       setHintIndex(target);
     }
@@ -72,35 +69,29 @@ const GameBoard: React.FC = () => {
     }
 
     const client = new Client({
-      brokerURL: 'ws://localhost:8080/ws', // TODO: replace with your WebSocket URL
+      brokerURL: process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:8080/ws',
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected');
-
         client.subscribe(`/topic/user/${gameId}/scoreBoard`, (message) => {
           try {
-            console.log('RAW message body:', message.body);
             const data: Map<string, number> = JSON.parse(message.body);
             setScoreBoard(new Map(Object.entries(data)));
             dispatch(scoreBoardResultSet(data));
           } catch (err) {
-            console.error('Invalid message:', err);
+            console.error('Invalid scoreboard message:', err);
           }
         });
-
         client.subscribe(`/topic/game/${gameId}/formatted-time`, (message) => {
           try {
-            console.log('RAW message body:', message.body);
             const data: string = message.body;
             setCurrentTime(data);
           } catch (err) {
-            console.error('Invalid message:', err);
+            console.error('Invalid time message:', err);
           }
         });
-
         client.subscribe(`/topic/end/${gameId}`, (message) => {
           try {
-            console.log('RAW message body:', message.body);
             const data: string = message.body;
             setGameEnded(true);
             setEndMessage(data);
@@ -116,27 +107,27 @@ const GameBoard: React.FC = () => {
               router.push(`/game/results/${gameId}`);
             }, 1000);
           } catch (err) {
-            console.error('Invalid message:', err);
+            console.error('Invalid end message:', err);
           }
         });
-
         client.subscribe(`/topic/game/${gameId}/owner`, (message) => {
           try {
-            console.log('RAW message body:', message.body);
             const data: string = message.body;
             dispatch(ownerUpdate(data));
           } catch (err) {
-            console.error('Invalid message:', err);
+            console.error('Invalid owner message:', err);
           }
         });
       },
       onDisconnect: () => {
         console.log('STOMP disconnected');
-      }
+      },
+      onStompError: (frame) => {
+        console.error('STOMP error:', frame);
+      },
     });
 
     client.activate();
-
     return () => {
       client.deactivate();
     };
@@ -145,7 +136,6 @@ const GameBoard: React.FC = () => {
   const handleFinishGame = async () => {
     try {
       await apiService.put(`/finishexercise/${gameId}`, {});
-
       setTimeout(() => {
         dispatch(hintUsageClear());
         dispatch(clearGameState());
@@ -159,208 +149,194 @@ const GameBoard: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.topBar}>
-        {gameMode !== "exercise" ? (
-          <div className={styles.scoreboardWrapper}>
-            <button className={styles.userBoxGreen} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
-          </div>
-        ) : (
-          <div className={styles.scoreboardWrapper}>
-            <button className={styles.userBoxGreen} onClick={async () => {
-              if (nextLocked) return;
-              setNextLocked(true);
-
-              try {
-                const response: Game = await apiService.post(`/next/${gameId}`, {});
-                dispatch(hintUpdate(response.hints ?? []));
-                dispatch(hintUsageClear());
-                dispatch(answerUpdate(response.answer ?? ""));
-              } catch (err) {
-                console.error('error', err);
-              } finally {
-                setTimeout(() => setNextLocked(false), 500);
-              }
-            }}>
-              Next
-            </button>
-          </div>
-        )}
-        {showExitWindow && (
-          <div className={styles.modalOverlay}>
-            <div className={styles.exitModal}>
-              <p>The game is still ongoing.<br />Are you sure you want to exit?</p>
-              <div className={styles.exitButtons}>
-                <button
-                  className={styles.exitButton}
-                  onClick={async () => {
-                    try {
-                      await apiService.put(`/giveup/${userId}`, {});
-                      if (gameMode === "combat") {
-                        router.push('/lobby');
-                      } else {
-                        router.push('/game');
+        <div className={styles.topLeft}>
+          {gameMode !== "exercise" ? (
+            <div className={styles.scoreboardWrapper}>
+              <button className={styles.userBoxGreen} onClick={() => setShowExitWindow(prev => !prev)}>
+                Exit
+              </button>
+            </div>
+          ) : (
+            <div className={styles.scoreboardWrapper}>
+              <button
+                className={styles.userBoxGreen}
+                onClick={async () => {
+                  if (nextLocked) return;
+                  setNextLocked(true);
+                  try {
+                    const response: Game = await apiService.post(`/next/${gameId}`, {});
+                    dispatch(hintUpdate(response.hints ?? []));
+                    dispatch(hintUsageClear());
+                    dispatch(answerUpdate(response.answer ?? ""));
+                  } catch (err) {
+                    console.error('Error fetching next game:', err);
+                  } finally {
+                    setTimeout(() => setNextLocked(false), 500);
+                  }
+                }}
+              >
+                Next
+              </button>
+            </div>
+          )}
+          {showExitWindow && (
+            <div className={styles.modalOverlay}>
+              <div className={styles.exitModal}>
+                <p>The game is still ongoing.<br />Are you sure you want to exit?</p>
+                <div className={styles.exitButtons}>
+                  <button
+                    className={styles.exitButton}
+                    onClick={async () => {
+                      try {
+                        await apiService.put(`/giveup/${userId}`, {});
+                        router.push(gameMode === "combat" ? '/lobby' : '/game');
+                      } catch (error) {
+                        console.error('Error leaving game:', error);
                       }
-                    } catch (error) {
-                      console.error('Error leaving game:', error);
-                    }
-                  }}
-                >
-                  give up with score lost
-                </button>
-                <button
-                  className={styles.exitButton}
-                  onClick={() => setShowExitWindow(false)}
-                >
-                  misoperating, back...
-                </button>
+                    }}
+                  >
+                    Give up with score lost
+                  </button>
+                  <button
+                    className={styles.exitButton}
+                    onClick={() => setShowExitWindow(false)}
+                  >
+                    Misoperating, back...
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
-        <div className={styles.scoreboardWrapper}>
-          {gameMode !== "exercise" ? (
-            <>
-              <button
-                className={styles.userBoxBlue}
-                onClick={() => setShowScoreBoard(prev => !prev)}
-              >
-                Scoreboard
-              </button>
-
-              <div
-                className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
-                  }`}
-              >
-                <h3>Scoreboard</h3>
-                <ul>
-                  {scoreBoard
-                    ? Array.from(scoreBoard.entries())
-                      .sort(([, a], [, b]) => b - a)
-                      .map(([player, score]) => (
-                        <li key={player}>
-                          {player}: {score === -1 ? "give up" : score}
-                        </li>
-                      ))
-                    : <li>Loading...</li>}
-                </ul>
-              </div>
-            </>
-          ) : (
-            <>
-              <button
-                className={styles.userBoxBlue}
-                onClick={() => setShowScoreBoard(prev => !prev)}
-              >
-                Answer
-              </button>
-
-              <div
-                className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
-                  }`}
-              >
-                <h3>{answer}</h3>
-              </div>
-            </>
           )}
         </div>
 
-                  {/* 新增问号按钮 */}
+        <div className={styles.topCenter}>
           <div className={styles.scoreboardWrapper}>
-          
+            <button
+              className={styles.userBoxBlue}
+              onClick={() => setShowScoreBoard(prev => !prev)}
+            >
+              {gameMode !== "exercise" ? "Scoreboard" : "Answer"}
+            </button>
+            <div
+              className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden}`}
+            >
+              {gameMode !== "exercise" ? (
+                <>
+                  <h3>Scoreboard</h3>
+                  <ul>
+                    {scoreBoard ? (
+                      Array.from(scoreBoard.entries())
+                        .sort(([, a], [, b]) => b - a)
+                        .map(([player, score]) => (
+                          <li key={player}>
+                            {player}: {score === -1 ? "gave up" : score}
+                          </li>
+                        ))
+                    ) : (
+                      <li>Loading...</li>
+                    )}
+                  </ul>
+                </>
+              ) : (
+                <h3>{answer || "No answer available"}</h3>
+              )}
+            </div>
+          </div>
+        </div>
 
+        <div className={styles.topRight}>
+          <div className={styles.scoreboardWrapper}>
             <button
               className={styles.userBoxQuestion}
               onClick={() => setShowRules(prev => !prev)}
               aria-label="Show game rules"
-              style={{ color: '#fff', marginLeft: '1008px' }}  // 往右移动8像素
             >
-            <svg
-              viewBox="0 0 1024 1024"
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              fill="currentColor"
-            >
-                    <path
-          fill="#fff"
-          d="M527.487228 48.563042 527.487228 48.563042c247.13868 0 447.478498 200.070688 447.478498 446.867584 0 246.798942-200.339818 446.868607-447.478498 446.868607-247.137657 0-447.482591-200.070688-447.482591-446.868607C80.004637 248.63373 280.350594 48.563042 527.487228 48.563042L527.487228 48.563042zM527.487228 110.49558c-100.254332 0-194.499809 39.909965-265.392416 110.699218-70.88442 70.794369-119.160937 174.137039-119.160937 274.250154s48.27754 203.459878 119.160937 274.249131c70.89056 70.794369 165.137061 109.780289 265.392416 109.780289 100.251262 0 203.739241-48.213072 274.622638-119.003348 70.889537-70.78823 109.932762-164.91398 109.932762-265.027096s-48.278563-194.23068-119.167077-265.023002C721.989083 159.632697 627.737466 110.49558 527.487228 110.49558L527.487228 110.49558zM354.562806 394.625756c1.161453-41.924855 3.344165-73.80596 12.090363-95.641267s20.888749-41.339524 40.134069-58.523905c19.24532-17.166985 40.672328-29.831422 64.288189-37.998429 23.61586-8.144494 48.543599-12.223393 74.783217-12.223393 53.055356 0 96.29823 18.355043 131.584897 49.498344 32.809243 28.981055 46.443775 72.057129 46.443775 121.694643 0 23.298636-3.602038 44.411489-12.634762 63.329351-9.04705 18.931165-21.814842 42.512233-51.254338 70.748321-29.445636 28.247344-48.977481 48.338938-58.599629 60.265572-9.619078 11.943007-16.919345 26.205848-21.862937 42.804898-4.964058 16.593933-6.563486 16.426111-6.563486 25.149796l-76.970022 0c0-11.059893 2.623757-16.990976 7.873318-36.508495 5.244444-19.505239 13.116739-36.535101 23.61586-51.094702 10.499122-14.553461 29.438473-35.954887 56.851822-64.198138 27.40107-28.236088 45.044916-48.764634 52.913117-61.579497 7.872295-12.801561 11.808954-31.879058 11.808954-57.20998 0-25.331945-9.042957-47.739281-27.114544-67.257823-18.080797-19.500123-44.316322-29.255301-78.716806-29.255301-77.556377 0-116.328425 46.001707-116.328425 137.998981L354.562806 394.625756 354.562806 394.625756 354.562806 394.625756 354.562806 394.625756zM574.468239 792.046161l-80.216973 0 0-89.094154 80.216973 0L574.468239 792.046161 574.468239 792.046161 574.468239 792.046161z"
-        />
-            </svg>
-          </button>
-          
-
+              <svg
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+              >
+                <path
+                  fill="#fff"
+                  d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92c-.5.51-.86.97-1.04 1.69-.08.32-.13.68-.13 1.14h-2v-.5c0-.83.36-1.54.86-2.06l1.22-1.24c.36-.37.55-.88.55-1.44 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"
+                />
+              </svg>
+            </button>
             <div
               className={`${styles.scoreboardPopup} ${showRules ? styles.popupVisible : styles.popupHidden}`}
               style={{ width: '280px', textAlign: 'left' }}
             >
               <h3>Game Rules</h3>
               <p>
-                Game Modes<br />
+                <strong>Game Modes</strong><br />
                 Solo Mode: Practice and simulate the game.<br />
-                Combat Mode: Battles for multiple players.<br />
-                <br />
-                Scoring System<br />
+                Combat Mode: Battles for multiple players.<br /><br />
+                <strong>Scoring System</strong><br />
                 Each game starts with 100 points.<br />
                 Using a hint deducts 20 points.<br />
                 5 hints max — using all results in 0 points.
               </p>
             </div>
           </div>
-
-        <div className={styles.scoreboardWrapper}>
           {String(restTime) !== "-1" ? (
             <div className={styles.timer}>
               <div>Time left:</div>
-              <div className={styles.red}>{currentTime}</div>
+              <div className={styles.red}>{currentTime || "00:00"}</div>
             </div>
           ) : (
-            <button className={styles.userBoxGreen} onClick={handleFinishGame}>Finish</button>
+            <button
+              className={styles.userBoxGreen}
+              onClick={handleFinishGame}
+            >
+              Finish
+            </button>
           )}
         </div>
       </div>
 
       <div className={styles.mainContent}>
         <div className={styles.hintBox}>
-          {currentHint && (
+          {currentHint ? (
             <div className={styles.hintText}>
               <p>
                 <strong>Hint {hintIndex}:</strong><br />
                 {currentHint.text}
               </p>
             </div>
+          ) : (
+            <div className={styles.hintText}>
+              <p>No hints available</p>
+            </div>
           )}
-
           <div className={styles.hintIcons}>
             Hint Usage:<br />
             {hints.map((_, index) => {
               const isUsed = index < unlockedHints;
-
               return (
                 <span
                   key={index}
                   onClick={() => handleHintClick(index)}
-                  className={`${styles.hintIcon} ${isUsed ? styles.hintUsed : ""}`}
-                />
+                  className={`${styles.hintIcon} ${isUsed ? styles.hintUsed : styles.hintLocked}`}
+                >
+                  {isUsed ? '✓' : '🔒'}
+                </span>
               );
             })}
           </div>
-
         </div>
-
         <div className={styles.mapArea}>
           <InteractiveMap />
         </div>
       </div>
       {gameEnded && (
         <div className={styles.endOverlay}>
-          <div className={styles.endMessage}>
-            {endMessage}
-          </div>
+          <div className={styles.endMessage}>{endMessage}</div>
         </div>
       )}
     </div>
   );
-
-}
+};
 
 export default GameBoard;
