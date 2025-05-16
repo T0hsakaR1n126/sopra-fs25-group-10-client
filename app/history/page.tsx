@@ -94,6 +94,13 @@ const GameHistoryPage: React.FC = () => {
 
   const paginated = filtered.slice(start, end);
 
+  function formatTimestampToYMDHM(timestamp: string): string {
+    const iso = timestamp.split(".")[0];
+    const date = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }  
+
   return (
     <div style={{ paddingTop: "80px" }}>
       <div className={styles.container}>
@@ -145,7 +152,7 @@ const GameHistoryPage: React.FC = () => {
                     <div className={styles.lobbyCard} key={index}>
                       <div className={`${styles.cell} ${styles.cellIndex}`}>{index + 1}</div>
                       <div className={`${styles.cell} ${styles.cellName}`}>{item.gameName}</div>
-                      <div className={`${styles.cell} ${styles.cellDate} ${styles.cellCenter}`}>{item.gameCreationDate}</div>
+                      <div className={`${styles.cell} ${styles.cellDate} ${styles.cellCenter}`}>{formatTimestampToYMDHM(item.gameCreationDate)}</div>
                       <div className={`${styles.cell} ${styles.cellAccuracy}`}>
                         {item.correctAnswers} of {item.totalQuestions} correct
                       </div>

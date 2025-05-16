@@ -49,6 +49,8 @@ const Results = () => {
       }
 
       router.push(`/game/start/${gameId}`);
+    } else {
+      router.push("/game");
     }
   }
 

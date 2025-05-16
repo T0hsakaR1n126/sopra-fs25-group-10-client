@@ -123,7 +123,7 @@ const Dashboard: React.FC = () => {
 
   const handleStart = async (isExercise: boolean) => {
     const newGame: Game = {
-      gameName: isExercise ? username + "-Exercise-" : username + "-Solo-",
+      gameName: isExercise ? username + "-Exercise-" : username + "-Solo",
       gameCode: null,
       playersNumber: "1",
       time: isExercise ? "-1" : selectedSoloTime,

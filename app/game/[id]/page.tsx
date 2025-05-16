@@ -9,6 +9,7 @@ import { Client } from '@stomp/stompjs';
 import { useRouter } from 'next/navigation';
 import { useApi } from '@/hooks/useApi';
 import { Game } from '@/types/game';
+import { countryIdMap } from '@/utils/idToCountryName';
 
 const GameBoard: React.FC = () => {
   const dispatch = useDispatch(); // Set up dispatch for Redux actions
@@ -257,7 +258,7 @@ const GameBoard: React.FC = () => {
                 className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
                   }`}
               >
-                <h3>{answer}</h3>
+                <h3>{countryIdMap[answer]}</h3>
               </div>
             </>
           )}
