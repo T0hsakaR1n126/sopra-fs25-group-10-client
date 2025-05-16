@@ -73,7 +73,7 @@ const Results = () => {
     setLoading(true);
     try {
       const res = await apiService.get(`/game/${id}/results`);
-      console.log("API Game Results:", res);
+
       setGameData(res as GameData);
     } catch (error) {
       console.error("Failed to fetch game results:", error);

@@ -72,7 +72,7 @@ const GameBoard: React.FC = () => {
       brokerURL: process.env.NEXT_PUBLIC_WEBSOCKET_URL || 'ws://localhost:8080/ws',
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log('STOMP connected');
+
         client.subscribe(`/topic/user/${gameId}/scoreBoard`, (message) => {
           try {
             const data: Map<string, number> = JSON.parse(message.body);
@@ -120,7 +120,6 @@ const GameBoard: React.FC = () => {
         });
       },
       onDisconnect: () => {
-        console.log('STOMP disconnected');
       },
       onStompError: (frame) => {
         console.error('STOMP error:', frame);

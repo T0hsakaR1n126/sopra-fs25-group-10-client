@@ -26,7 +26,7 @@ export const useLogout = () => {
     }
 
     try {
-      console.log("Logging out...");
+
 
       // Call the API to log out the user
       // await apiService.put(`/logout/${currentUserId}`, {}, {
@@ -38,7 +38,6 @@ export const useLogout = () => {
       }
       , 500);
 
-      console.log("Logged out successfully!");
       router.push("/");
     } catch (error) {
       messageApi.error(`Error logging out: ${String(error)}`);

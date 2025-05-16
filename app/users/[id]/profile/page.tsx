@@ -23,8 +23,6 @@ const ProfilePage = () => {
   const currentAvatar = Form.useWatch("avatar", form);
 
     useEffect(() => {
-      console.log("params:", params);         // 输出整个 params 对象
-      console.log("params.id:", params.id);   // 输出具体的 id
     }, [params]);
 
 useEffect(() => {

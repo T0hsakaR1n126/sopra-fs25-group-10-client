@@ -73,7 +73,7 @@ const GameStart = () => {
       brokerURL: "ws://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log("STOMP connected");
+
 
         stompClient.subscribe(`/topic/ready/${gameId}/players`, (message) => {
           const data: User[] = JSON.parse(message.body);
@@ -84,18 +84,18 @@ const GameStart = () => {
 
         stompClient.subscribe(`/topic/ready/${gameId}/status`, (message) => {
           const map: Record<string, boolean> = JSON.parse(message.body);
-          console.log("[WS] Ready Status Received:", map);
+
           const normalizedMap: Record<string, boolean> = {};
           for (const [k, v] of Object.entries(map)) {
             normalizedMap[k.toString()] = v;
           }
-          console.log("[WS] Ready Status Received:", normalizedMap);
+
           setReadyStatus(normalizedMap);
         });
 
         stompClient.subscribe(`/topic/ready/${gameId}/canStart`, (message) => {
           const can: boolean = JSON.parse(message.body);
-          console.log("[WS] Can Start Received:", can);
+
           setCanStart(can);
         });
 
@@ -139,7 +139,7 @@ const GameStart = () => {
 
     stompClient.subscribe(`/topic/chat/${gameId}`, (message) => {
       try {
-        console.log("here")
+
         const data: Message = JSON.parse(message.body);
         setChatMessages((prevMessages) => [...prevMessages, data]);
       } catch (err) {
@@ -148,7 +148,7 @@ const GameStart = () => {
     });
       },
       onDisconnect: () => {
-        console.log("STOMP disconnected");
+
       }
     });
 
@@ -204,7 +204,7 @@ const GameStart = () => {
 
   const toggleReady = () => {
     const newReady = !readyStatus[userId.toString()];
-    console.log("[Toggle Ready] Sending:", { userId, ready: newReady });
+
 
     if (client && client.connected) {
       client.publish({
