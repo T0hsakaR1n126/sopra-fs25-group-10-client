@@ -33,10 +33,13 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
         await apiService.post("/auth", {
           token: token,
         });
-      } catch (error: any) {
+      } catch (error: unknown) {
         let message = "Something went wrong during authentication.";
-        if (error?.response?.data?.message) {
-          message = error.response.data.message;
+        if (typeof error === "object" && error !== null && "response" in error) {
+          const err = error as { response?: { data?: { message?: string } } };
+          if (err.response?.data?.message) {
+            message = err.response.data.message;
+          }
         } else if (error instanceof Error) {
           message = error.message;
         }

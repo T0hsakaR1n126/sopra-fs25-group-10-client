@@ -49,14 +49,18 @@ const Login: React.FC = () => {
         router.push("/game");
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       let message = "Something went wrong during login.";
-      if (error?.response?.data?.message) {
-        message = error.response.data.message;
+    
+      if (typeof error === "object" && error !== null && "response" in error) {
+        const err = error as { response?: { data?: { message?: string } } };
+        if (err.response?.data?.message) {
+          message = err.response.data.message;
+        }
       } else if (error instanceof Error) {
         message = error.message;
       }
-
+    
       showErrorToast(message);
     }
   };

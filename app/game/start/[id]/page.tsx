@@ -70,7 +70,7 @@ const GameStart = () => {
     fetchPlayers();
 
     const stompClient = new Client({
-      brokerURL: "ws://localhost:8080/ws",
+      brokerURL: "wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws",
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("STOMP connected");

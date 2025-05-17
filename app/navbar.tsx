@@ -100,7 +100,7 @@ export default function Navbar() {
           <BookOutlined /> Statistics
         </Link>
         <div
-          onClick={async (e) => {
+          onClick={async () => {
             setDropdownOpen(false);
             window.dispatchEvent(new Event("dashboardExit"));
             await new Promise((res) => setTimeout(res, 1500));

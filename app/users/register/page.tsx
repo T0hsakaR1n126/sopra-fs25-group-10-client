@@ -2,7 +2,7 @@
 
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
-import { Layout, Row, Col, Form, Input, Button } from "antd";
+import { Layout, Row, Col, Form, Input} from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
@@ -52,14 +52,18 @@ const Register: React.FC = () => {
         setTimeout(() => {router.push("/game");}, 800);
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       let message = "Something went wrong during registration.";
-      if (error?.response?.data?.message) {
-        message = error.response.data.message;
+    
+      if (typeof error === "object" && error !== null && "response" in error) {
+        const err = error as { response?: { data?: { message?: string } } };
+        if (err.response?.data?.message) {
+          message = err.response.data.message;
+        }
       } else if (error instanceof Error) {
         message = error.message;
       }
-
+    
       showErrorToast(message);
     }
   };
