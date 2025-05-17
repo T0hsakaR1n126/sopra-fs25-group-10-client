@@ -3,65 +3,53 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
-import { useApi } from "./useApi"; 
+import { useApi } from "./useApi";
 import { clearUserState } from "@/userSlice";
+import { showErrorToast } from "@/utils/showErrorToast";
+import { clearGameState } from "@/gameSlice";
 
 export default function AuthWrapper({ children }: { children: React.ReactNode }) {
-  const token = useSelector((state: { user: { token: string } }) => state.user.token);
-  const [authChecked, setAuthChecked] = useState(false);
-  const [authFailed, setAuthFailed] = useState(false);
   const pathname = usePathname();
   const apiService = useApi();
   const dispatch = useDispatch();
-  const router = useRouter(); 
+  const router = useRouter();
 
   const noAuthRoutes = ["/", "/users/login", "/users/register"];
-  const shouldAuth = !noAuthRoutes.includes(pathname);
 
   useEffect(() => {
-    if (token === undefined || token === null) {
-      return;
-    }
-    
-    if (!shouldAuth) {
-      setAuthChecked(true); 
-      return;
-    }
+    const shouldAuth = !noAuthRoutes.includes(pathname);
+    if (!shouldAuth) return;
 
-    if (!token) {
-      setAuthFailed(true);
-      setAuthChecked(true);
-      return;
+    const token = useSelector((state: { user: { token: string } }) => state.user.token);
+    if (token === undefined || token === null) {
+      showErrorToast("Token not found! Back to home page...");
+      dispatch(clearUserState());
+      dispatch(clearGameState());
+      router.push("/");
     }
 
     const verifyToken = async () => {
       try {
-        const response = await apiService.post("/auth", {
+        await apiService.post("/auth", {
           token: token,
         });
-
-        if (response) {
-          setAuthFailed(false);
-        } else {
-          setAuthFailed(true);
+      } catch (error: any) {
+        let message = "Something went wrong during authentication.";
+        if (error?.response?.data?.message) {
+          message = error.response.data.message;
+        } else if (error instanceof Error) {
+          message = error.message;
         }
-      } catch (error) {
-        console.error("Auth check error", error);
-        setAuthFailed(true);
-      } finally {
-        setAuthChecked(true);
+
+        showErrorToast(message);
+        dispatch(clearUserState());
+        dispatch(clearGameState());
+        router.push("/");
       }
     };
 
     verifyToken();
-  }, [token, pathname, shouldAuth, apiService]);
-
-  useEffect(() => {
-    if (shouldAuth && authChecked && authFailed) {
-      dispatch(clearUserState());
-      router.push("/users/login");
-    }
-  }, [shouldAuth, authChecked, authFailed, dispatch, router]);
+  }, [router, apiService]);
 
   return <>{children}</>;
 }

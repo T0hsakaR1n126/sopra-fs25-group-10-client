@@ -4,7 +4,7 @@ import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import Link from "next/link";
 import { useRouter } from "next/navigation"; // use NextJS router for navigation
-import { Layout, Row, Col, Form, Input, Button } from "antd";
+import { Layout, Row, Col, Form, Input } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import { useDispatch } from "react-redux"; // Import useDispatch

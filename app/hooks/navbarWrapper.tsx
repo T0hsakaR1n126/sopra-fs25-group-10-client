@@ -2,36 +2,49 @@
 
 import { usePathname } from 'next/navigation';
 import Navbar from '@/navbar';
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from 'react';
 
 const excludeNavbar = ["/", "/users/login", "/users/register"];
 
 export default function NavbarWrapper({ children }: { children: React.ReactNode }) {
   const path = usePathname();
-  const [hasShown, setHasShown] = useState(false);
+  const [shouldShow, setShouldShow] = useState(false);
   const hideNavbar = excludeNavbar.includes(path) ||
-   /^\/game\/[^\/]+$/.test(path) ||
-   /^\/game\/results\/.+$/.test(path) ||
-   /^\/game\/start\/.+$/.test(path);
+    /^\/game\/[^\/]+$/.test(path) ||
+    /^\/game\/results\/.+$/.test(path) ||
+    /^\/game\/start\/.+$/.test(path);
 
-   useEffect(() => {
-    if (!hideNavbar && !hasShown) {
-      setHasShown(true);
+  useEffect(() => {
+    setShouldShow(!hideNavbar);
+    if (!hideNavbar) {
+      setExit(false);
     }
-  }, [hideNavbar]);
+  }, [path]);
+
+  const [exit, setExit] = useState(false);
+  useEffect(() => {
+    const handler = () => {
+      setExit(true);
+    };
+    window.addEventListener("navbarExit", handler);
+    return () => window.removeEventListener("navbarExit", handler);
+  }, []);
 
   return (
     <>
-      {!hideNavbar && (
-        <motion.div
-          initial={{ y: -80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-        >
-          <Navbar />
-        </motion.div>
-      )}
+      <AnimatePresence>
+        {shouldShow && !exit && (
+          <motion.div
+            initial={{ y: -80, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -80, opacity: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Navbar />
+          </motion.div>
+        )}
+      </AnimatePresence>
       {children}
     </>
   );
