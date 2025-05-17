@@ -36,7 +36,7 @@ type MatchHistoryItem = {
 
 const GameHistoryPage: React.FC = () => {
   const apiService = useApi();
-  const [history, setHistory] = useState<Array<MatchHistoryItem>>(new Array());
+  const [history, setHistory] = useState<Array<MatchHistoryItem>>([]);
   const [filter, setFilter] = useState<"All" | "Solo" | "Combat">("All");
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);

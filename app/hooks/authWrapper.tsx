@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { usePathname, useRouter } from "next/navigation";
 import { useApi } from "./useApi";
@@ -14,13 +14,14 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
   const dispatch = useDispatch();
   const router = useRouter();
 
+  const token = useSelector((state: { user: { token: string } }) => state.user.token);
+    
   const noAuthRoutes = ["/", "/users/login", "/users/register"];
 
   useEffect(() => {
     const shouldAuth = !noAuthRoutes.includes(pathname);
     if (!shouldAuth) return;
 
-    const token = useSelector((state: { user: { token: string } }) => state.user.token);
     if (token === undefined || token === null) {
       showErrorToast("Token not found! Back to home page...");
       dispatch(clearUserState());
