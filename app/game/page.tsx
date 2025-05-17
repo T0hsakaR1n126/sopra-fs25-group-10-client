@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useApi } from "@/hooks/useApi";
 import { Client } from "@stomp/stompjs";
 import { gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from "@/gameSlice";
+import { motion } from "framer-motion";
 
 const Dashboard: React.FC = () => {
   const router = useRouter();
@@ -145,7 +146,7 @@ const Dashboard: React.FC = () => {
         await apiService.post<Game>("/startsolo", newGame);
       } else {
         await apiService.post<Game>("/startexercise", newGame);
-      } 
+      }
     } catch (error) {
       if (error instanceof Error) {
         alert(`Something went wrong during game creation:\n${error.message}`);
@@ -168,7 +169,12 @@ const Dashboard: React.FC = () => {
   return (
     <div className="game-body">
       <div className="game-container">
-        <div className="solo-container">
+        <motion.div
+          initial={{ opacity: 0, y: 80 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.5 }}
+          className="solo-container"
+        >
           <button className="button solo-button" onClick={toggleSoloPopup}>
             <div className="button-inner">
               <img src="/solo.png" alt="Solo Icon" className="button-icon" />
@@ -211,18 +217,28 @@ const Dashboard: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        <div className="combat-container">
+        <motion.div
+          initial={{ opacity: 0, y: 80 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.65 }}
+          className="combat-container"
+        >
           <button className="button combat-button" onClick={() => router.push("/lobby")}>
             <div className="button-inner">
               <img src="/combat.png" alt="Combat Icon" className="button-icon" />
               <span className="button-label">COMBAT</span>
             </div>
           </button>
-        </div>
+        </motion.div>
 
-        <div className="exercise-container">
+        <motion.div
+          initial={{ opacity: 0, y: 80 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut", delay: 0.8 }}
+          className="exercise-container"
+        >
           <button className="button exercise-button" onClick={toggleExercisePopup}>
             <div className="button-inner">
               <img src="/exercise.png" alt="Exercise Icon" className="button-icon" />
@@ -250,7 +266,7 @@ const Dashboard: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
+        </motion.div>
 
       </div>
       {countDown !== null && (
