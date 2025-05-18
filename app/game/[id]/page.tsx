@@ -9,6 +9,7 @@ import { Client } from '@stomp/stompjs';
 import { useRouter } from 'next/navigation';
 import { useApi } from '@/hooks/useApi';
 import { Game } from '@/types/game';
+import { countryIdMap } from '@/utils/idToCountryName';
 
 const GameBoard: React.FC = () => {
   const dispatch = useDispatch(); // Set up dispatch for Redux actions
@@ -71,7 +72,8 @@ const GameBoard: React.FC = () => {
     }
 
     const client = new Client({
-      brokerURL: 'ws://localhost:8080/ws', // TODO: replace with your WebSocket URL
+      brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
+      // brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected');
@@ -257,7 +259,7 @@ const GameBoard: React.FC = () => {
                 className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
                   }`}
               >
-                <h3>{answer}</h3>
+                <h3>{countryIdMap[answer]}</h3>
               </div>
             </>
           )}

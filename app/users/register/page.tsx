@@ -2,13 +2,17 @@
 
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
-import { Layout, Row, Col, Form, Input, Button } from "antd";
+import { Layout, Row, Col, Form, Input} from "antd";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import Image from 'next/image';
 import { useRouter } from "next/navigation";
 import { login } from "@/userSlice";
 import { useDispatch } from "react-redux"; // Import useDispatch
 import Link from "next/link";
 import { clearGameState } from "@/gameSlice";
+import { motion } from "framer-motion";
+import { showErrorToast } from "@/utils/showErrorToast";
+import { showSuccessToast } from "@/utils/showSuccessToast";
 
 const { Content } = Layout;
 
@@ -44,74 +48,108 @@ const Register: React.FC = () => {
         dispatch(clearGameState()); // Clear game state on login
 
         // Navigate to the user overview (or wherever the user should go after registration)
-        router.push("/game");
+        showSuccessToast("Register successfully! Logging in...");
+        setTimeout(() => {router.push("/game");}, 800);
       }
 
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(`Something went wrong during registration:\n${error.message}`);
-      } else {
-        console.error("An unknown error occurred during registration.");
+    } catch (error: unknown) {
+      let message = "Something went wrong during registration.";
+    
+      if (typeof error === "object" && error !== null && "response" in error) {
+        const err = error as { response?: { data?: { message?: string } } };
+        if (err.response?.data?.message) {
+          message = err.response.data.message;
+        }
+      } else if (error instanceof Error) {
+        message = error.message;
       }
+    
+      showErrorToast(message);
     }
   };
 
   return (
     <Content style={{ minHeight: "100vh", padding: "50px" }}>
-      <Row justify="center" align="middle" style={{ textAlign: "center" }}>
+      <div
+        style={{
+          position: "absolute",
+          top: "100px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 10,
+        }}
+      >
+        <Image
+          src="/mapmaster-logo.png"
+          alt="MapMaster Logo"
+          width={300}
+          height={250}
+        />
+      </div>
+
+      <Row justify="center" align="middle" style={{ textAlign: "center", marginTop: "320px" }}>
         <Col xs={24} md={16}>
-          <Image
-            src="/mapmaster-logo.png"
-            alt="MapMaster Logo"
-            width={300}
-            height={250}
-          />
-          <div className="login-container">
-            <Form
-              form={form}
-              name="register"
-              size="large"
-              onFinish={handleRegister}
-              layout="vertical"
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <div className="login-container">
+              <Form
+                form={form}
+                name="register"
+                size="large"
+                onFinish={handleRegister}
+                layout="vertical"
+                validateTrigger="onChange"
+              >
+                <Form.Item
+                  name="username"
+                  label="username"
+                  rules={[{ required: true, message: "Please input your username!" }]}
+                  style={{ marginBottom: 24 }}
+                >
+                  <Input placeholder="Enter username" prefix={<UserOutlined />} />
+                </Form.Item>
+
+                <Form.Item
+                  name="name"
+                  label="Name"
+                  rules={[{ required: true, message: "Please input your name!" }]}
+                >
+                  <Input placeholder="Enter name" />
+                </Form.Item>
+
+                <Form.Item
+                  name="password"
+                  label="password"
+                  rules={[{ required: true, message: "Please input your password!" }]}
+                  style={{ marginBottom: 24 }}
+                >
+                  <Input.Password placeholder="Enter password" visibilityToggle={true} prefix={<LockOutlined />} />
+                </Form.Item>
+
+                <Form.Item style={{ marginBottom: 0 }}>
+                  <button type="submit" className="login-button">
+                    Register
+                  </button>
+                </Form.Item>
+              </Form>
+            </div>
+            <p
+              style={{
+                marginTop: 20,
+                textAlign: "center",
+                fontSize: 14,
+                color: "#bbb",
+              }}
             >
-              <Form.Item
-                name="username"
-                label="Username"
-                rules={[{ required: true, message: "Please input your username!" }]}
-              >
-                <Input placeholder="Enter username" />
-              </Form.Item>
-
-              <Form.Item
-                name="name"
-                label="Name"
-                rules={[{ required: true, message: "Please input your name!" }]}
-              >
-                <Input placeholder="Enter name" />
-              </Form.Item>
-
-              <Form.Item
-                name="password"
-                label="Password"
-                rules={[{ required: true, message: "Please input your password!" }]}
-              >
-                <Input.Password placeholder="Enter password" visibilityToggle={true} />
-              </Form.Item>
-
-              <Form.Item>
-                <Button type="primary" htmlType="submit" className="login-button">
-                  Register
-                </Button>
-              </Form.Item>
-            </Form>
-          </div>
-
-          <p>
-            Already have an account?{" "}
-            <Link href="/users/login" className="login-link">
-              Log in here
-            </Link>
-          </p>
+              Already have an account?{" "}
+              <Link href="/users/login" className="login-link">
+                Log in here
+              </Link>
+            </p>
+          </motion.div>
         </Col>
       </Row>
     </Content>

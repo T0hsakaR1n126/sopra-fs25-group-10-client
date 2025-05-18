@@ -8,10 +8,11 @@
 }
 
 .game-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 40px;
+    justify-items: center;
+    align-items: center;
     position: relative;
     margin-top: 30px;
 }
@@ -166,6 +167,7 @@
 }
 
 .solo-container {
+    grid-column: 1 / 2;
     position: relative;
 }
 
@@ -275,4 +277,15 @@
 
 .exercise-slider::-moz-range-thumb {
     background: #ef6c00;
+}
+
+.combat-container {
+    grid-column: 2 / 3;
+    position: relative;
+}
+
+
+.exercise-container {
+    grid-column: 3 / 4;
+    position: relative;
 }

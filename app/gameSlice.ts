@@ -39,6 +39,7 @@ interface GameState {
   hintUsage: number; // Number of hints used
   scoreBoard: Map<string, number> | null; // Store the score board
   answer: string | null; // Store the answer
+  playersNumber: number | null; // Store the number of players
 }
 
 // Initial state setup for each game
@@ -59,6 +60,7 @@ const initialState: GameState = {
   hintUsage: 1, // Number of hints used
   scoreBoard: null, // Store the score board
   answer: null, // Store the answer
+  playersNumber: null, // Store the number of players
 };
 
 // Create the game slice
@@ -73,6 +75,7 @@ const gameSlice = createSlice({
       state.gameStarted = action.payload.gameStarted;
       state.modeType = action.payload.modeType;
       state.time = action.payload.time;
+      state.playersNumber = action.payload.playersNumber;
     },
     
     gameStart: (state, action: PayloadAction<{ hints: Map<string, string>[]; gameId: string; scoreBoard: Map<string, number>, modeType: string, answer: string }>) => {

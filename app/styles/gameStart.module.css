@@ -22,30 +22,12 @@
 .chatMessage {
   padding: 5px;
   border-bottom: 1px solid #444;
-  word-break: break-all; /* 防止长文本溢出 */
+  word-break: break-all;
 }
 
 .chatInputBox {
   display: flex;
   gap: 8px;
-}
-
-.chatInput {
-  flex: 1;
-  padding: 8px;
-  border: none;
-  border-radius: 5px;
-  background-color: #333;
-  color: white;
-}
-
-.chatSendButton {
-  background-color: #1e90ff;
-  color: white;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
 }
 
 .card {
@@ -68,40 +50,50 @@
   margin-bottom: 4px;
 }
 
-/* ... 其他样式保持不变 ... */
-
-/* 修改 buttonGroup 样式：水平排列 */
-.buttonGroup {
-  display: flex;
-  flex-direction: row; /* 改为水平排列 */
-  flex-wrap: wrap; /* 允许换行 */
-  gap: 12px; /* 按钮间距 */
-  margin-top: 12px;
-  justify-content: center; /* 按钮居中 */
-}
-
-.button {
-  background-color: #0ea5e9;
-  color: white;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
+.fancyButton {
+  font-family: "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
+  font-size: 28px; 
+  padding: 18px 36px;
+  background: #4ade80;
+  color: #111;
+  border: 4px solid #065f46;
+  border-radius: 20px;
+  box-shadow: 5px 5px 0 #065f46;
   cursor: pointer;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 
-.button:hover {
-  background-color: #0284c7;
+.fancyButton:hover {
+  background: #34d399;
+  transform: translateY(-3px);
 }
 
-.button:disabled {
-  background-color: #ccc;
-  color: #666;
+.fancyButton:active {
+  transform: translateY(3px);
+  box-shadow: 3px 3px 0 #065f46;
+}
+
+.fancyButtonDisabled {
+  background-color: #999 !important;
+  color: #333 !important;
   cursor: not-allowed;
+  box-shadow: none !important;
+  transform: none !important;
   opacity: 0.6;
+  pointer-events: none;
 }
 
-/* 其余样式保持不变 */
+.buttonBar {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 32px;
+}
+
 .overlay {
   position: fixed;
   top: 0;
@@ -128,12 +120,420 @@
     transform: scale(2);
     opacity: 0;
   }
+
   50% {
     transform: scale(1);
     opacity: 1;
   }
+
   100% {
     transform: scale(0.8);
     opacity: 0;
   }
+}
+
+.roomWrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.background {
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.8);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: -1;
+}
+
+.mainBoard {
+  display: grid;
+  grid-template-columns: repeat(3, 120px);
+  grid-template-rows: repeat(3, 150px);
+  gap: 20px;
+  justify-content: center;
+  align-content: center;
+  margin-top: 60px;
+}
+
+.playerSlot {
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 2px solid #aaa;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.emptySlot {
+  font-size: 20px;
+  color: #999;
+}
+
+.infoPanel {
+  position: absolute;
+  right: 40px;
+  top: 60px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 12px 16px;
+  border-radius: 12px;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.chatBox {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 300px;
+  height: 340px;
+  background: rgba(15, 15, 30, 0.85);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  font-size: 14px;
+  z-index: 10;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.collapseBtn {
+  background: none;
+  color: #ccc;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+.collapseBtn:hover {
+  color: #fff;
+  text-shadow: 0 0 2px #fff;
+}
+
+.chatMessages {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chatLine {
+  background: #1e1e2f;
+  padding: 6px 10px;
+  border-radius: 12px;
+  max-width: 85%;
+  word-break: break-word;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  font-size: 13px;
+  animation: fadeInBubble 0.25s ease-out;
+}
+@keyframes fadeInBubble {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chatInputWrapper {
+  display: flex;
+  gap: 6px;
+}
+
+
+.chatInputWrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.chatInput {
+  flex: 1;
+  padding: 8px 12px;
+  background: #111;
+  color: #eee;
+  border: 2px solid #333;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.chatSendButton {
+  padding: 8px 14px;
+  background: #4ade80;
+  color: #000;
+  font-weight: bold;
+  border: 2px solid #065f46;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 2px 2px 0 #065f46;
+  transition: transform 0.1s ease;
+}
+.chatSendButton:hover {
+  background: #34d399;
+  transform: translateY(-2px);
+}
+.chatSendButton:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 0 #065f46;
+}
+
+
+.chatToggle {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 20px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 40px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.buttonBar {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+}
+
+.buttonBar button {
+  background: #1e90ff;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 48px;
+  margin-top: 100px;
+  padding: 0 40px;
+}
+
+.slot {
+  width: 220px;
+  height: 400px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(6px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+  position: relative;
+  margin-top: 80px;
+}
+
+.slot:hover {
+  transform: scale(1.05);
+}
+
+.empty {
+  color: #999;
+  font-size: 20px;
+}
+
+.playerCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  background-color: #333;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  line-height: 42px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  color: white;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.gameCode {
+  position: absolute;
+  bottom: 200px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  display: inline-block;
+  background: #fffbcc;
+  color: #222;
+  padding: 14px 24px;
+  border: 3px dashed #f59e0b;
+  border-radius: 12px;
+  font-family: 'Luckiest Guy', 'Comic Neue', 'Arial Rounded MT', sans-serif;
+  font-size: 24px;
+  box-shadow: 4px 4px 0 #222;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: pulse 3s infinite;
+  z-index: 10;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1) rotate(-3deg);
+  }
+
+  50% {
+    transform: translateX(-50%) scale(1.05) rotate(-2deg);
+  }
+}
+
+.gameCode:hover {
+  transform: translateX(-50%) rotate(0deg) scale(1.05);
+  box-shadow: 6px 6px 0 #000;
+}
+
+.avatarImg {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 12px #1e90ff;
+}
+
+.avatarFallback {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background-color: #444;
+  color: white;
+  font-size: 32px;
+  text-align: center;
+  line-height: 96px;
+  font-weight: bold;
+}
+
+.playerName {
+  font-size: 20px;
+  font-weight: 500;
+  color: white;
+  text-shadow: 0 0 4px black;
+}
+
+.readyStampWrapper {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.readyStamp {
+  font-family: 'serif';
+  font-weight: bold;
+  font-size: 16px;
+  color: #fff;
+  background-color: #c00;
+  padding: 6px 12px;
+  border: 2px solid #800;
+  border-radius: 8px;
+  letter-spacing: 2px;
+  transform: rotate(-8deg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  text-shadow: 1px 1px 2px #000;
+  animation: stampPopIn 0.3s ease-out;
+}
+
+.playerPopup {
+  position: absolute;
+  background: rgba(20, 20, 20, 0.85);
+  backdrop-filter: blur(12px);
+  color: #fff;
+  padding: 16px 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  min-width: 220px;
+  max-width: 260px;
+  z-index: 1000;
+  font-family: 'Inter', sans-serif;
+  text-align: center;
+}
+
+.playerPopup h3 {
+  margin: 0 0 6px 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.playerTitle {
+  max-width: 180px;
+  margin: 0 auto 10px auto;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #00ff99, #00b3ff);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px rgba(0,255,255,0.2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: badgeGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes badgeGlow {
+  from {
+    box-shadow: 0 0 5px rgba(0,255,255,0.2);
+  }
+  to {
+    box-shadow: 0 0 12px rgba(0,255,255,0.5);
+  }
+}
+
+.playerPopup .email,
+.playerPopup .bio {
+  font-size: 12px;
+  color: #ccc;
+  line-height: 1.4;
+  margin-top: 4px;
+  word-break: break-word;
 }

@@ -5,6 +5,7 @@ import { useApi } from "./useApi";
 import { useDispatch, useSelector } from "react-redux";
 import { answerUpdate, hintUpdate, hintUsageClear } from "@/gameSlice";
 import { toast, ToastContainer } from "react-toastify";
+import { countryIdMap } from "@/utils/idToCountryName";
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
@@ -111,7 +112,7 @@ const InteractiveMap: React.FC = () => {
                   .then((response) => {
                     console.log(response)
                     if (response.judgement) {
-                      toast.success('Your answer is correct!', {
+                      toast.success(`Your answer is correct! The answer is: ${countryIdMap[answerRef.current]}`, {
                         position: "top-center",
                         autoClose: 1000,
                         style: {
@@ -123,7 +124,7 @@ const InteractiveMap: React.FC = () => {
                         },
                       });
                     } else {
-                      toast.error('Your answer is wrong!', {
+                      toast.error(`Your answer is wrong! The answer is: ${countryIdMap[answerRef.current]}`, {
                         position: "top-center",
                         autoClose: 1000,
                         style: {

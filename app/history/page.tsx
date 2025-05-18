@@ -18,6 +18,7 @@ type MatchHistoryItem = {
   gameTime: number;
   gameCreationDate: string;
   modeType: string; 
+  gameName: string;
 };
 
 // const fallbackHistory: MatchHistoryItem[] = [
@@ -35,7 +36,7 @@ type MatchHistoryItem = {
 
 const GameHistoryPage: React.FC = () => {
   const apiService = useApi();
-  const [history, setHistory] = useState<Map<string, MatchHistoryItem>>(new Map());
+  const [history, setHistory] = useState<Array<MatchHistoryItem>>([]);
   const [filter, setFilter] = useState<"All" | "Solo" | "Combat">("All");
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -51,7 +52,7 @@ const GameHistoryPage: React.FC = () => {
         setLoading(true);
 
         const response = await apiService.get(`/history/${userId}`);
-        const gameHistory = (response as { gameHistory: Map<string, MatchHistoryItem> }).gameHistory;
+        const gameHistory = (response as { gameHistory: Array<MatchHistoryItem> }).gameHistory;
 
         if (
           gameHistory &&
@@ -68,7 +69,7 @@ const GameHistoryPage: React.FC = () => {
               "modeType" in item
           )
         ) {
-          setHistory(new Map(Object.entries(gameHistory)));
+          setHistory(Object.values(gameHistory));
         } else {
           throw new Error("Invalid data format from server.");
         }
@@ -86,12 +87,19 @@ const GameHistoryPage: React.FC = () => {
   }, [apiService, userId]);
 
 
-  const filtered = Array.from(history.entries()).filter(([, entry]) => {
+  const filtered = history.filter((entry) => {
     if (filter === "All") return true;
     return filter === "Solo" ? entry.modeType === "solo" : entry.modeType === "combat";
-  });  
+  });
 
   const paginated = filtered.slice(start, end);
+
+  function formatTimestampToYMDHM(timestamp: string): string {
+    const iso = timestamp.split(".")[0];
+    const date = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }  
 
   return (
     <div style={{ paddingTop: "80px" }}>
@@ -140,11 +148,11 @@ const GameHistoryPage: React.FC = () => {
                 <div className={styles.emptyMessage}>No Available History</div>
               ) : (
                 <>
-                  {paginated.map(([key, item], index) => (
-                    <div className={styles.lobbyCard} key={key}>
+                  {paginated.map((item, index) => (
+                    <div className={styles.lobbyCard} key={index}>
                       <div className={`${styles.cell} ${styles.cellIndex}`}>{index + 1}</div>
-                      <div className={`${styles.cell} ${styles.cellName}`}>{key}</div>
-                      <div className={`${styles.cell} ${styles.cellDate} ${styles.cellCenter}`}>{item.gameCreationDate}</div>
+                      <div className={`${styles.cell} ${styles.cellName}`}>{item.gameName}</div>
+                      <div className={`${styles.cell} ${styles.cellDate} ${styles.cellCenter}`}>{formatTimestampToYMDHM(item.gameCreationDate)}</div>
                       <div className={`${styles.cell} ${styles.cellAccuracy}`}>
                         {item.correctAnswers} of {item.totalQuestions} correct
                       </div>
@@ -169,7 +177,7 @@ const GameHistoryPage: React.FC = () => {
 
                     <button
                       onClick={() => setCurrentPage((p) => p + 1)}
-                      disabled={end >= history.size}
+                      disabled={end >= history.length}
                     >
                       Next
                     </button>
