@@ -164,7 +164,7 @@ const GameBoard: React.FC = () => {
         <div className={styles.topLeft}>
           {gameMode !== "exercise" ? (
             <div className={styles.scoreboardWrapper}>
-              <button className={styles.userBoxGreen} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
+              <button className={styles.userBoxRed} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
             </div>
           ) : (
             <div className={styles.scoreboardWrapper}>
@@ -207,13 +207,13 @@ const GameBoard: React.FC = () => {
                       }
                     }}
                   >
-                    give up with score lost
+                    Give Up & Exit
                   </button>
                   <button
                     className={styles.exitButton}
                     onClick={() => setShowExitWindow(false)}
                   >
-                    misoperating, back...
+                    Cancel & Go Back to Game
                   </button>
                 </div>
               </div>
@@ -317,13 +317,14 @@ const GameBoard: React.FC = () => {
                 <div className={styles.red}>{currentTime}</div>
               </div>
             ) : (
-              <button className={styles.userBoxGreen} onClick={handleFinishGame}>Finish</button>
+              <button className={styles.userBoxRed} onClick={handleFinishGame}>Finish</button>
             )}
           </div>
         </div>
       </div>
 
       <div className={styles.mainContent}>
+        <div className={styles.sidebar}>
         <div className={styles.hintBox}>
           {currentHint ? (
             <div className={styles.hintText}>
@@ -354,13 +355,12 @@ const GameBoard: React.FC = () => {
               );
             })}
           </div>
-
         </div>
-
+        </div>
         <div className={styles.mapArea}>
           <InteractiveMap />
         </div>
-      </div>
+        </div>
       {gameEnded && (
         <div className={styles.endOverlay}>
           <div className={styles.endMessage}>

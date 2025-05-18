@@ -36,7 +36,8 @@
 
 
 .userBoxGreen,
-.userBoxBlue {
+.userBoxBlue,
+.userBoxRed {
     padding: 10px 20px;
     border-radius: 10px;
     text-align: center;
@@ -47,6 +48,11 @@
 .userBoxGreen {
     background-color: #2e7d32;
 }
+
+.userBoxRed{
+    background-color:rgb(218, 25, 25);
+}
+
 
 .userBoxBlue {
     background-color: #1565c0;
@@ -61,6 +67,16 @@
     color: red;
     font-weight: bold;
     font-size: 20px;
+}
+
+.sidebar {
+    display: flex;
+    background-color: #e1f5fe;
+
+    flex-direction: column; /* Stack sidebar items vertically */
+    width: 25vw            /* Set the desired width for the sidebar */
+    height: 100vh;           /* Span the full height of the viewport */
+    /* overflow: hidden; */
 }
 
 .mainContent {
@@ -123,6 +139,11 @@
     justify-content: center;
     align-items: center;
     position: relative;
+}
+
+.mapArea svg g:hover,
+.mapArea svg polygon:hover {
+  cursor: pointer;
 }
 
 .mapImage {
