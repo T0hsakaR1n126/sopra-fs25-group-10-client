@@ -155,6 +155,15 @@ Note: If a team member fails to show continuous progress after using their Joker
 |**@T0hsakaR1n126**| 16-05-2025 - 17-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/ad9f74a006afb34b03c1d39e50f681c6f2bccc7d  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/ba0dcb2aa4320a8ebc7bd1d2eae6a757af7b17b1  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/d5455da6bdae993d274fdd1f113d21ffa44f1636  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/aaacdbc78fa03b81d90a62f2addf539573363e6e |make some improvements on the application |to refactor some code and improve some funcstion|
 |**@T0hsakaR1n126**| 16-05-2025 - 17-05-2024 | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/5e3b3d3509f1040409b12affa0d409d6c32a3d3f https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/965f08d24a88b9abd6655d0b03ced357e3e8a048 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/03ca9531b844bb7c12e9a780fa8b3cc27f576c3b |fix bugs |fix some bugs in tests and deployment.|
 |**@T0hsakaR1n126**| 16-05-2025 - 17-05-2024 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/57be45badec1dd46eb63fa162d8f543676467a3b https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/34ffc38925e331d311037d5e10975b26b08196ba |implement tests |implement some tests to improve code coverage.|
+|**@JaveyBae**| 15-05-2025  | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/dd73a39a97a05d3ae1415b4a6e75386369fb104f  |clear console.log message |avoid data leak|
+|**@JaveyBae**| 15-05-2025  |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/dd73a39a97a05d3ae1415b4a6e75386369fb104f   https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/647278fdcbe567766a606b8e8789fc6faf6e584d  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/b55c35425bfecf3c812dbbfa6f3d7ffcf0402cf6  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/f41073ab59f145fcd0007eadfd4605363c4640d2 |level-explanation and avatar display on leaderboard |add more user feature on leaderboard|
+|**@JaveyBae**| 14-05-2025  |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/7d06defeaee33c205e3ec34cf631521451a5149b   |Make the edit page scrollbale |add more user feature on leaderboard|
+|**@JaveyBae**| 15-05-2025 - 16-05-2025  |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/2db22cbd86b3f7e18a2c4fe4575bfdad6307d169   https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/a52f9acf1918336f00500e022d63f42523e928b1  |Implement ? button for game rule display |To clarify the rules in game section|
+
+
+
+
+
  ---
 
 *Continue with the same table format as above.*
