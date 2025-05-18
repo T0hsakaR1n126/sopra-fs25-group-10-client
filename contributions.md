@@ -146,6 +146,14 @@ Note: If a team member fails to show continuous progress after using their Joker
 | **@rkoonireddy** |09-05-2025| https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/e7e2f430e6a4ddb19c376b18ea36c7371dbadc29  |Tests for combat game start |Create tests for combat game and add minor modifications. |
 | **@rkoonireddy** |09-05-2025| https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/c9327e99d3f9685e119da73b1e38aa1c5c306e57  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/1854ac800d921da6e8ccce9a7c7ab14a518140bb |Lobby chat | Integration to lobby chat and some UI additions |
 
+--- 
+## Contributions Week 8 - [12-05-2025] to [18-05-2025]
+| **Student**        | **Date** | **Link to Commit** | **Description**           | **Relevance**                 |
+| ------------------------ | -------------- | ------------------------ | ------------------------------- | ----------------------------------- |
+|**@rkoonireddy**| 18-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/pull/182/commits/7652f3b1a598cf04ff9f6dca1358adc598241fe1 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/pull/182/commits/4aa24ba78fc70645c993aaa528e1a6bb3500041f |Hint Generation and Prompt Improvement|Created comprehensive prompt to adjust and streamline hints. Added hint generation per game. Created logic to distribute questions across countries in various continents (Oceania less frequently). Added Continent field to the countries.|
+|**@rkoonireddy**| 18-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/pull/182/commits/8395316653b92ae895c9718103d4a32df62fc3f6|Tests for util service| Write tests for Utility service which included hint generation and storage|
+
+
  ---
 
 *Continue with the same table format as above.*
