@@ -68,7 +68,7 @@ const CreateForm: React.FC = () => {
             hintUsage: 0,
             scoreBoard: null,
             answer: null,
-            recreateGame: null,
+            playersNumber: response.playersNumber ? parseInt(response.playersNumber, 10) : null,
           }
         ));
         router.push(`/game/start/${response.gameId}`);
