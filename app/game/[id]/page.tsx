@@ -338,9 +338,10 @@ const GameBoard: React.FC = () => {
               <p>No hints available</p>
             </div>
           )}
-
-          <div className={styles.hintIcons}>
-            Hint Usage:<br />
+          
+        <div className={styles.hintIconsContainer}>
+          <div className={styles.hintLabel}>Hint Usage:</div>
+          <div className={styles.hintIconsRow}>
             {hints.map((_, index) => {
               const isUsed = index < unlockedHints;
 
@@ -355,6 +356,8 @@ const GameBoard: React.FC = () => {
               );
             })}
           </div>
+        </div>
+
         </div>
         </div>
         <div className={styles.mapArea}>

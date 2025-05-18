@@ -279,8 +279,9 @@ const InteractiveMap = () => {
   }, [hintUsingNumber]);
   
   return (
-    <div style={{ width: "100%", height: "100%", position: "relative" }}>
-    <div id="info-box" style={{
+    <div style={{ width: "100%", height: "100%", position: "relative", backgroundColor: "black" }}>
+    {/* Comment info box */}
+    {/* <div id="info-box" style={{
       color: "black",
       position: "absolute",
       top: "10px",
@@ -292,7 +293,7 @@ const InteractiveMap = () => {
       pointerEvents: "none",
     }}>
     Country
-    </div>
+    </div> */}
     <div
     id="hover-info-box"
     style={{
@@ -315,10 +316,11 @@ const InteractiveMap = () => {
     <div id="svg-container" style={{
       width: "100%",
       height: "100%",
-      backgroundColor: "rgba(14, 55, 82, 0.64)",
+      backgroundColor: "#052A51",
       // #40e0d0
       //Light Ocean Blue:rgb(49, 114, 158)
-      // Deep Ocean Blue: #003366
+      // Deep Ocean Blue:rgb(6, 46, 85)
+      borderRadius:"20px",
       overflow: "hidden"
     }} />
     <ToastContainer />
