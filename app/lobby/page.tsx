@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
 import { gameInitialize } from '@/gameSlice';
 
-
 interface Message {
   sender: string;
   content: string;
@@ -21,7 +20,7 @@ const Lobby: React.FC = () => {
   const apiService = useApi();
   const router = useRouter();
   const dispatch = useDispatch(); // Set up dispatch for Redux actions
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [showChat, setShowChat] = useState(true);
   const [games, setGames] = useState<Game[]>([]);
   const [paginatedGames, setPaginatedGames] = useState<Game[]>([]);
   const [joinCode, setJoinCode] = useState("");
@@ -31,15 +30,24 @@ const Lobby: React.FC = () => {
   const clientRef = useRef<Client | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const userName = useSelector((state: { user: { username: string } }) => state.user.username);
 
-  // only for mock, remove when backend is ready
+  // paginate page
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 4;
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
+
+  // toggle create form
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const toggleCreate = () => setShowCreateForm((prev) => !prev);
+  useEffect(() => {
+    document.body.classList.add("lobby-no-scroll");
+    return () => {
+      document.body.classList.remove("lobby-no-scroll");
+    };
+  }, []);
 
   useEffect(() => {
     const client = new Client({
@@ -177,113 +185,143 @@ const Lobby: React.FC = () => {
   return (
     <div className={styles.page}>
       {/* Chat Panel */}
-      <div className={styles.chatPanel}>
-        <h3 className={styles.chatTitle}>Lobby Chat</h3>
-        <div className={styles.chatMessages}>
-          {chatMessages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`${styles.chatMessage} ${msg.sender === userName ? styles.ownMessage : ''}`}
-            >
-              <div className={styles.messageContent}>
-                <span><strong>{msg.sender}</strong>: {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}</span>
+      {showChat && (
+        <div className={styles.chatBox}>
+          <div className={styles.chatHeader}>
+            <span>Chat</span>
+            <button className={styles.collapseBtn} onClick={() => setShowChat(false)}>
+              Fold
+            </button>
+          </div>
+          <div className={styles.chatMessages}>
+            {chatMessages.map((msg, idx) => (
+              <div
+                key={idx}
+                className={`${styles.chatLine} ${msg.sender === userName ? styles.ownMessage : styles.otherMessage}`}
+              >
+                <div className={styles.bubble}>
+                  <div className={styles.sender}>
+                    {msg.sender}
+                  </div>
+                  <div className={styles.content}>
+                    {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
+                  </div>
+                  <div className={styles.time}>
+                    {new Date(msg.timestamp).toLocaleTimeString()}
+                  </div>
+                </div>
               </div>
-              <div className={styles.timestamp}>
-                {new Date(msg.timestamp).toLocaleTimeString()}
-              </div>
-            </div>
-          ))}
-          {/* Empty div to act as a scroll anchor */}
-          <div ref={messagesEndRef} />
-        </div>
-        <div className={styles.chatInputBox}>
-          <input
-            type="text"
-            placeholder="Type a message..."
-            className={styles.chatInput}
-            value={messageInput}
-            onChange={(e) => setMessageInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && messageInput.trim()) {
-                handleSendMessage(); // Trigger send on Enter key press
-                e.preventDefault(); // Prevent form submission or other default Enter key behavior
-              }
-            }}
-          />
-          <button className={styles.chatSendButton} onClick={handleSendMessage}>
-            Send
-          </button>
-        </div>
-      </div>
 
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className={styles.chatInputWrapper}>
+            <input
+              type="text"
+              placeholder="Type a message..."
+              className={styles.chatInput}
+              value={messageInput}
+              onChange={(e) => setMessageInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && messageInput.trim()) {
+                  handleSendMessage();
+                  e.preventDefault();
+                }
+              }}
+            />
+            <button className={styles.chatSendButton} onClick={handleSendMessage}>
+              Send
+            </button>
+          </div>
+        </div>
+      )}
+      {!showChat && (
+        <div className={styles.chatToggle} onClick={() => setShowChat(true)}>
+          💬
+        </div>
+      )}
 
       <div className={styles.leftPanel}>
-        <h1 className={styles.title}>Game Lobby</h1>
-        <p className={styles.subtitle}>Feel free to join!</p>
-
-        <div className={styles.headerRow}>
-          <div>Game Name</div>
-          <div>Player in Game</div>
-          <div>Private</div>
-        </div>
+        <h1 className={styles.title}><span className={styles.icon}>🎮</span> Game Lobby</h1>
+        <h2 className={styles.subtitle}>👇 Tap a card to join!</h2>
 
         {paginatedGames.length === 0 ? (
-          <div className={styles.emptyMessage}>No Available Game</div>
+          <div className={styles.emptyMessage}>No Available Game. Create one!</div>
         ) : (
-          paginatedGames.map((game, idx) => (
-            <div key={idx} className={styles.lobbyCard} onClick={() => handleJoinGame(game, userId)}>
-              <div className={styles.teamName}>
-                {game.gameName}
+          <div className={styles.roomListScrollable}>
+            {paginatedGames.map((game, idx) => (
+              <div
+                key={idx}
+                className={styles.gameCard}
+                onClick={() => handleJoinGame(game, userId)}
+              >
+                <div className={styles.cardTop}>
+                  <span className={styles.gameName}>{game.gameName}</span>
+                  {game.password && <span className={styles.lockIcon}>🔒</span>}
+                </div>
+                <div className={styles.cardBottom}>
+                  <div className={styles.cardItem}>
+                    <span>👥</span>
+                    <span>{game.realPlayersNumber} / {game.playersNumber}</span>
+                  </div>
+                  <div className={styles.cardItem}>
+                    <span>🕒</span>
+                    <span>{Number(game.time) === 1 ? "1 min" : `${game.time ?? 60} mins`}</span>
+                  </div>
+                  <div className={styles.cardItem}>
+                    ⭐ {game.difficulty ?? "Easy"}
+                  </div>
+                </div>
               </div>
-              <div className={styles.playerCount}>{game.realPlayersNumber} / {game.playersNumber}</div>
-              <div className={styles.ownerLink}>{game.password !== "" && <span title="Private game">🔒</span>}</div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
         <div className={styles.pagination}>
           <button
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1}
+            onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
           >
-            Prev
+            ◀ Prev
           </button>
 
-          <span>Page {currentPage}</span>
+          <span className={styles.currentPage}>Page {currentPage}</span>
 
           <button
-            onClick={() => setCurrentPage((p) => p + 1)}
             disabled={end >= games.length}
+            onClick={() => setCurrentPage(p => p + 1)}
           >
-            Next
+            Next ▶
           </button>
         </div>
-
 
       </div>
 
       {/* Toggle Button */}
-      <div className={styles.sidebarToggle} onClick={() => setShowSidebar(!showSidebar)}>
-        {showSidebar ? ">" : "+ Create New Game"}
-      </div>
-      <div className={styles.joinCodeBox}>
-        <h3>Join with Code?</h3>
-        <div style={{ display: "flex", gap: "8px", width: "100%" }}>
+      <div className={styles.sidePanel}>
+        <button className={styles.createButton} onClick={toggleCreate}>
+          {showCreateForm ? 'Close' : '+ Create Game'}
+        </button>
+
+        {showCreateForm && <CreateForm />}
+
+        <form
+          className={styles.joinForm}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleJoinWithCode();
+          }}
+        >
           <input
+            className={styles.joinInput}
             type="text"
-            className={styles.input}
-            placeholder="Enter code..."
+            placeholder="Join Wih Code..."
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value)}
           />
-          <button className={styles.createButton} onClick={handleJoinWithCode}>
+          <button className={styles.joinButton} type="submit">
             Join
           </button>
-        </div>
-      </div>
-
-      {/* Sidebar */}
-      <div className={`${styles.rightPanel} ${showSidebar ? styles.show : ""}`}>
-        <CreateForm />
+        </form>
       </div>
     </div>
   );

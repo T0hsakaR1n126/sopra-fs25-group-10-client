@@ -1,35 +1,3 @@
-/* 保持其他样式不变 */
-.chatPanel {
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
-  border-radius: 10px;
-  padding: 10px;
-  margin-top: 10px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.chatTitle {
-  margin: 0 0 10px 0;
-  font-size: 1.2em;
-}
-
-.chatMessages {
-  height: auto;
-  margin-bottom: 10px;
-}
-
-.chatMessage {
-  padding: 5px;
-  border-bottom: 1px solid #444;
-  word-break: break-all;
-}
-
-.chatInputBox {
-  display: flex;
-  gap: 8px;
-}
-
 .card {
   position: absolute;
   top: 50%;
@@ -52,7 +20,7 @@
 
 .fancyButton {
   font-family: "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
-  font-size: 28px; 
+  font-size: 28px;
   padding: 18px 36px;
   background: #4ade80;
   color: #111;
@@ -137,6 +105,19 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  animation: fadeInRoomwrapper 0.6s ease-out;
+}
+
+@keyframes fadeInRoomwrapper {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .background {
@@ -213,7 +194,7 @@
   font-size: 15px;
   margin-bottom: 8px;
   padding-bottom: 6px;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .collapseBtn {
@@ -224,6 +205,7 @@
   cursor: pointer;
   transition: color 0.2s ease;
 }
+
 .collapseBtn:hover {
   color: #fff;
   text-shadow: 0 0 2px #fff;
@@ -239,31 +221,61 @@
 }
 
 .chatLine {
-  background: #1e1e2f;
-  padding: 6px 10px;
-  border-radius: 12px;
-  max-width: 85%;
-  word-break: break-word;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  font-size: 13px;
+  display: flex;
+  justify-content: flex-start;
+  margin: 4px 0;
+}
+
+.ownMessage {
+  justify-content: flex-end;
+}
+
+.otherMessage {
+  justify-content: flex-start;
+}
+
+.bubble {
+  max-width: 75%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background-color: #1e293b;
+  color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
   animation: fadeInBubble 0.25s ease-out;
 }
-@keyframes fadeInBubble {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+
+.ownMessage .bubble {
+  background-color: #0ea5e9;
+  color: black;
+  border-bottom-right-radius: 4px;
 }
 
-.chatInputWrapper {
-  display: flex;
-  gap: 6px;
+.otherMessage .bubble {
+  background-color: #2a2a2a;
+  color: #e2e8f0;
+  border-bottom-left-radius: 4px;
 }
 
+.sender {
+  font-weight: bold;
+  font-size: 13px;
+  opacity: 0.9;
+}
+
+.content {
+  font-size: 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.time {
+  font-size: 11px;
+  text-align: right;
+  opacity: 0.6;
+}
 
 .chatInputWrapper {
   display: flex;
@@ -292,10 +304,12 @@
   box-shadow: 2px 2px 0 #065f46;
   transition: transform 0.1s ease;
 }
+
 .chatSendButton:hover {
   background: #34d399;
   transform: translateY(-2px);
 }
+
 .chatSendButton:active {
   transform: translateY(1px);
   box-shadow: 1px 1px 0 #065f46;
@@ -316,6 +330,28 @@
   line-height: 40px;
   cursor: pointer;
   z-index: 10;
+}
+
+.messageContent {
+  font-size: 14px;
+  color: #eaeaea;
+  background-color: #2a2a2a;
+  padding: 8px 10px;
+  border-radius: 8px;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  margin-bottom: 2px;
+}
+
+.ownMessage .messageContent {
+  background-color: #374151;
+  color: #d1fae5;
+}
+
+.timestamp {
+  font-size: 11px;
+  color: #888;
+  margin-left: 8px;
 }
 
 .buttonBar {
@@ -512,8 +548,8 @@
   font-weight: bold;
   color: white;
   background: linear-gradient(135deg, #00ff99, #00b3ff);
-  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-  box-shadow: 0 0 10px rgba(0,255,255,0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.2);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -522,10 +558,11 @@
 
 @keyframes badgeGlow {
   from {
-    box-shadow: 0 0 5px rgba(0,255,255,0.2);
+    box-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
   }
+
   to {
-    box-shadow: 0 0 12px rgba(0,255,255,0.5);
+    box-shadow: 0 0 12px rgba(0, 255, 255, 0.5);
   }
 }
 

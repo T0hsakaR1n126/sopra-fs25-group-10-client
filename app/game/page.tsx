@@ -48,8 +48,6 @@ const Dashboard: React.FC = () => {
       // brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
-
-
         client.subscribe(`/topic/startsolo/${userId}/gameId`, (message) => {
           try {
             const data: string = message.body;

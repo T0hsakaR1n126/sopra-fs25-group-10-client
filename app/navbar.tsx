@@ -7,10 +7,11 @@ import { UserOutlined, HistoryOutlined, TrophyOutlined, LogoutOutlined, BookOutl
 import { useLogout } from "@/utils/useLogout"; // Import the logout function
 import { Avatar, Dropdown, Tooltip } from "antd";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Navbar() {
   const router = useRouter();
+  const pathname = usePathname();
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const username = useSelector((state: { user: { username: string } }) => state.user.username);
   const avatar = useSelector((state: { user: { avatar: string } }) => state.user.avatar);
@@ -59,8 +60,13 @@ export default function Navbar() {
           onClick={async (e) => {
             e.preventDefault();
             setDropdownOpen(false);
-            window.dispatchEvent(new Event("dashboardExit"));
-            await new Promise((res) => setTimeout(res, 1500));
+            if (pathname === "/game") {
+              window.dispatchEvent(new Event("dashboardExit"));
+              await new Promise((res) => setTimeout(res, 1500));
+            } else {
+              window.dispatchEvent(new Event("otherExit"));
+              await new Promise((res) => setTimeout(res, 600));
+            }
             router.push(`/users/${userId}/profile`);
           }}
           style={{ ...menuItemStyle, backgroundColor: hovered === "profile" ? "#014b7d" : "transparent" }}
@@ -74,8 +80,13 @@ export default function Navbar() {
           onClick={async (e) => {
             e.preventDefault();
             setDropdownOpen(false);
-            window.dispatchEvent(new Event("dashboardExit"));
-            await new Promise((res) => setTimeout(res, 1500));
+            if (pathname === "/game") {
+              window.dispatchEvent(new Event("dashboardExit"));
+              await new Promise((res) => setTimeout(res, 1500));
+            } else {
+              window.dispatchEvent(new Event("otherExit"));
+              await new Promise((res) => setTimeout(res, 600));
+            }
             router.push("/history");
           }}
           style={{ ...menuItemStyle, backgroundColor: hovered === "history" ? "#014b7d" : "transparent" }}
@@ -89,8 +100,13 @@ export default function Navbar() {
           onClick={async (e) => {
             e.preventDefault();
             setDropdownOpen(false);
-            window.dispatchEvent(new Event("dashboardExit"));
-            await new Promise((res) => setTimeout(res, 1500));
+            if (pathname === "/game") {
+              window.dispatchEvent(new Event("dashboardExit"));
+              await new Promise((res) => setTimeout(res, 1500));
+            } else {
+              window.dispatchEvent(new Event("otherExit"));
+              await new Promise((res) => setTimeout(res, 600));
+            }
             router.push("/statistics");
           }}
           style={{ ...menuItemStyle, backgroundColor: hovered === "statistics" ? "#014b7d" : "transparent" }}
@@ -102,8 +118,13 @@ export default function Navbar() {
         <div
           onClick={async () => {
             setDropdownOpen(false);
-            window.dispatchEvent(new Event("dashboardExit"));
-            await new Promise((res) => setTimeout(res, 1500));
+            if (pathname === "/game") {
+              window.dispatchEvent(new Event("dashboardExit"));
+              await new Promise((res) => setTimeout(res, 1500));
+            } else {
+              window.dispatchEvent(new Event("otherExit"));
+              await new Promise((res) => setTimeout(res, 600));
+            }
             logout();
           }}
           style={{ ...menuItemStyle, color: "#ff4d4f", backgroundColor: hovered === "logout" ? "#444" : "transparent" }}
@@ -148,8 +169,13 @@ export default function Navbar() {
             onClick={async (e) => {
               e.preventDefault();
               setDropdownOpen(false);
-              window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
+              if (pathname === "/game") {
+                window.dispatchEvent(new Event("dashboardExit"));
+                await new Promise((res) => setTimeout(res, 1500));
+              } else {
+                window.dispatchEvent(new Event("otherExit"));
+                await new Promise((res) => setTimeout(res, 600));
+              }
               router.push("/leaderboard");
             }}
           >

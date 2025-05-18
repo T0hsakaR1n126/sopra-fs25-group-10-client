@@ -17,6 +17,7 @@ import { showSuccessToast } from '@/utils/showSuccessToast';
 interface Message {
   sender: string;
   content: string;
+  timestamp: string;
 }
 
 const luckiestGuy = Luckiest_Guy({ weight: "400", subsets: ['latin'] });
@@ -46,6 +47,12 @@ const GameStart = () => {
   const [showChat, setShowChat] = useState(true); // Toggle chat visibility
   const [chatMessages, setChatMessages] = useState<Message[]>([]); // Store chat messages with Message type
   const [chatInput, setChatInput] = useState(""); // Store current chat input
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatMessages]);
 
   // mini profile
   interface miniProfile {
@@ -256,7 +263,7 @@ const GameStart = () => {
 
   const handleSendMessage = () => {
     if (chatInput.trim() && client && client.connected) {
-      const message: Message = {
+      const message = {
         sender: username,
         content: chatInput,
       };
@@ -329,24 +336,46 @@ const GameStart = () => {
         {showChat && (
           <div className={styles.chatBox}>
             <div className={styles.chatHeader}>
-              <span>Chat 💬</span>
+              <span>Chat</span>
               <button className={styles.collapseBtn} onClick={() => setShowChat(false)}>
                 Fold
               </button>
             </div>
             <div className={styles.chatMessages}>
-              {chatMessages.map((msg, i) => (
-                <div key={i} className={styles.chatLine}>
-                  <b>{msg.sender}:</b> {msg.content}
+              {chatMessages.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`${styles.chatLine} ${msg.sender === username ? styles.ownMessage : styles.otherMessage}`}
+                >
+                  <div className={styles.bubble}>
+                    <div className={styles.sender}>
+                      {msg.sender}
+                    </div>
+                    <div className={styles.content}>
+                      {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
+                    </div>
+                    <div className={styles.time}>
+                      {new Date(msg.timestamp).toLocaleTimeString()}
+                    </div>
+                  </div>
                 </div>
+
               ))}
+              <div ref={messagesEndRef} />
             </div>
             <div className={styles.chatInputWrapper}>
               <input
+                type="text"
+                placeholder="Type a message..."
                 className={styles.chatInput}
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && chatInput.trim()) {
+                    handleSendMessage();
+                    e.preventDefault();
+                  }
+                }}
               />
               <button className={styles.chatSendButton} onClick={handleSendMessage}>
                 Send
