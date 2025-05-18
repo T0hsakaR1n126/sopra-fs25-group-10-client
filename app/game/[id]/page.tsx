@@ -34,6 +34,7 @@ const GameBoard: React.FC = () => {
   const restTime = useSelector((state: { game: { time: string } }) => state.game.time);
   const [currentTime, setCurrentTime] = useState<string | null>(null);
   const [gameEnded, setGameEnded] = useState(false);
+  const [showRules, setShowRules] = useState(false);
   const [endMessage, setEndMessage] = useState('');
   const [nextLocked, setNextLocked] = useState(false);
 
@@ -160,131 +161,180 @@ const GameBoard: React.FC = () => {
   return (
     <div className={styles.container}>
       <div className={styles.topBar}>
-        {gameMode !== "exercise" ? (
-          <div className={styles.scoreboardWrapper}>
-            <button className={styles.userBoxGreen} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
-          </div>
-        ) : (
-          <div className={styles.scoreboardWrapper}>
-            <button className={styles.userBoxGreen} onClick={async () => {
-              if (nextLocked) return;
-              setNextLocked(true);
+        <div className={styles.topLeft}>
+          {gameMode !== "exercise" ? (
+            <div className={styles.scoreboardWrapper}>
+              <button className={styles.userBoxGreen} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
+            </div>
+          ) : (
+            <div className={styles.scoreboardWrapper}>
+              <button className={styles.userBoxGreen} onClick={async () => {
+                if (nextLocked) return;
+                setNextLocked(true);
 
-              try {
-                const response: Game = await apiService.post(`/next/${gameId}`, {});
-                dispatch(hintUpdate(response.hints ?? []));
-                dispatch(hintUsageClear());
-                dispatch(answerUpdate(response.answer ?? ""));
-              } catch (err) {
-                console.error('error', err);
-              } finally {
-                setTimeout(() => setNextLocked(false), 500);
-              }
-            }}>
-              Next
-            </button>
-          </div>
-        )}
-        {showExitWindow && (
-          <div className={styles.modalOverlay}>
-            <div className={styles.exitModal}>
-              <p>The game is still ongoing.<br />Are you sure you want to exit?</p>
-              <div className={styles.exitButtons}>
-                <button
-                  className={styles.exitButton}
-                  onClick={async () => {
-                    try {
-                      await apiService.put(`/giveup/${userId}`, {});
-                      if (gameMode === "combat") {
-                        router.push('/lobby');
-                      } else {
-                        router.push('/game');
+                try {
+                  const response: Game = await apiService.post(`/next/${gameId}`, {});
+                  dispatch(hintUpdate(response.hints ?? []));
+                  dispatch(hintUsageClear());
+                  dispatch(answerUpdate(response.answer ?? ""));
+                } catch (err) {
+                  console.error('error', err);
+                } finally {
+                  setTimeout(() => setNextLocked(false), 500);
+                }
+              }}>
+                Next
+              </button>
+            </div>
+          )}
+          {showExitWindow && (
+            <div className={styles.modalOverlay}>
+              <div className={styles.exitModal}>
+                <p>The game is still ongoing.<br />Are you sure you want to exit?</p>
+                <div className={styles.exitButtons}>
+                  <button
+                    className={styles.exitButton}
+                    onClick={async () => {
+                      try {
+                        await apiService.put(`/giveup/${userId}`, {});
+                        if (gameMode === "combat") {
+                          router.push('/lobby');
+                        } else {
+                          router.push('/game');
+                        }
+                      } catch (error) {
+                        console.error('Error leaving game:', error);
                       }
-                    } catch (error) {
-                      console.error('Error leaving game:', error);
-                    }
-                  }}
-                >
-                  give up with score lost
-                </button>
-                <button
-                  className={styles.exitButton}
-                  onClick={() => setShowExitWindow(false)}
-                >
-                  misoperating, back...
-                </button>
+                    }}
+                  >
+                    give up with score lost
+                  </button>
+                  <button
+                    className={styles.exitButton}
+                    onClick={() => setShowExitWindow(false)}
+                  >
+                    misoperating, back...
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-
-        <div className={styles.scoreboardWrapper}>
-          {gameMode !== "exercise" ? (
-            <>
-              <button
-                className={styles.userBoxBlue}
-                onClick={() => setShowScoreBoard(prev => !prev)}
-              >
-                Scoreboard
-              </button>
-
-              <div
-                className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
-                  }`}
-              >
-                <h3>Scoreboard</h3>
-                <ul>
-                  {scoreBoard
-                    ? Array.from(scoreBoard.entries())
-                      .sort(([, a], [, b]) => b - a)
-                      .map(([player, score]) => (
-                        <li key={player}>
-                          {player}: {score === -1 ? "give up" : score}
-                        </li>
-                      ))
-                    : <li>Loading...</li>}
-                </ul>
-              </div>
-            </>
-          ) : (
-            <>
-              <button
-                className={styles.userBoxBlue}
-                onClick={() => setShowScoreBoard(prev => !prev)}
-              >
-                Answer
-              </button>
-
-              <div
-                className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
-                  }`}
-              >
-                <h3>{countryIdMap[answer]}</h3>
-              </div>
-            </>
           )}
         </div>
 
-        <div className={styles.scoreboardWrapper}>
-          {String(restTime) !== "-1" ? (
-            <div className={styles.timer}>
-              <div>Time left:</div>
-              <div className={styles.red}>{currentTime}</div>
+        <div className={styles.topCenter}>
+          <div className={styles.scoreboardWrapper}>
+            {gameMode !== "exercise" ? (
+              <>
+                <button
+                  className={styles.userBoxBlue}
+                  onClick={() => setShowScoreBoard(prev => !prev)}
+                >
+                  Scoreboard
+                </button>
+
+                <div
+                  className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
+                    }`}
+                >
+                  <h3>Scoreboard</h3>
+                  <ul>
+                    {scoreBoard
+                      ? Array.from(scoreBoard.entries())
+                        .sort(([, a], [, b]) => b - a)
+                        .map(([player, score]) => (
+                          <li key={player}>
+                            {player}: {score === -1 ? "give up" : score}
+                          </li>
+                        ))
+                      : <li>Loading...</li>}
+                  </ul>
+                </div>
+              </>
+            ) : (
+              <>
+                <button
+                  className={styles.userBoxBlue}
+                  onClick={() => setShowScoreBoard(prev => !prev)}
+                >
+                  Answer
+                </button>
+
+                <div
+                  className={`${styles.scoreboardPopup} ${showScoreBoard ? styles.popupVisible : styles.popupHidden
+                    }`}
+                >
+                  <h3>{countryIdMap[answer]}</h3>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className={styles.topRight}>
+          <div className={styles.scoreboardWrapper}>
+            <button
+              className={styles.userBoxQuestion}
+              onClick={() => setShowRules(prev => !prev)}
+              aria-label="Show game rules"
+              style={{ color: '#fff', marginLeft: '1008px' }}
+            >
+              <svg
+                viewBox="0 0 1024 1024"
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                fill="currentColor"
+              >
+                <path
+                  fill="#fff"
+                  d="M527.487228 48.563042 527.487228 48.563042c247.13868 0 447.478498 200.070688 447.478498 446.867584 0 246.798942-200.339818 446.868607-447.478498 446.868607-247.137657 0-447.482591-200.070688-447.482591-446.868607C80.004637 248.63373 280.350594 48.563042 527.487228 48.563042L527.487228 48.563042zM527.487228 110.49558c-100.254332 0-194.499809 39.909965-265.392416 110.699218-70.88442 70.794369-119.160937 174.137039-119.160937 274.250154s48.27754 203.459878 119.160937 274.249131c70.89056 70.794369 165.137061 109.780289 265.392416 109.780289 100.251262 0 203.739241-48.213072 274.622638-119.003348 70.889537-70.78823 109.932762-164.91398 109.932762-265.027096s-48.278563-194.23068-119.167077-265.023002C721.989083 159.632697 627.737466 110.49558 527.487228 110.49558L527.487228 110.49558zM354.562806 394.625756c1.161453-41.924855 3.344165-73.80596 12.090363-95.641267s20.888749-41.339524 40.134069-58.523905c19.24532-17.166985 40.672328-29.831422 64.288189-37.998429 23.61586-8.144494 48.543599-12.223393 74.783217-12.223393 53.055356 0 96.29823 18.355043 131.584897 49.498344 32.809243 28.981055 46.443775 72.057129 46.443775 121.694643 0 23.298636-3.602038 44.411489-12.634762 63.329351-9.04705 18.931165-21.814842 42.512233-51.254338 70.748321-29.445636 28.247344-48.977481 48.338938-58.599629 60.265572-9.619078 11.943007-16.919345 26.205848-21.862937 42.804898-4.964058 16.593933-6.563486 16.426111-6.563486 25.149796l-76.970022 0c0-11.059893 2.623757-16.990976 7.873318-36.508495 5.244444-19.505239 13.116739-36.535101 23.61586-51.094702 10.499122-14.553461 29.438473-35.954887 56.851822-64.198138 27.40107-28.236088 45.044916-48.764634 52.913117-61.579497 7.872295-12.801561 11.808954-31.879058 11.808954-57.20998 0-25.331945-9.042957-47.739281-27.114544-67.257823-18.080797-19.500123-44.316322-29.255301-78.716806-29.255301-77.556377 0-116.328425 46.001707-116.328425 137.998981L354.562806 394.625756 354.562806 394.625756 354.562806 394.625756 354.562806 394.625756zM574.468239 792.046161l-80.216973 0 0-89.094154 80.216973 0L574.468239 792.046161 574.468239 792.046161 574.468239 792.046161z"
+                />
+              </svg>
+            </button>
+
+
+            <div
+              className={`${styles.scoreboardPopup} ${showRules ? styles.popupVisible : styles.popupHidden}`}
+              style={{ width: '280px', textAlign: 'left' }}
+            >
+              <h3>Game Rules</h3>
+              <p>
+                Game Modes<br />
+                Solo Mode: Practice and simulate the game.<br />
+                Combat Mode: Battles for multiple players.<br />
+                <br />
+                Scoring System<br />
+                Each game starts with 100 points.<br />
+                Using a hint deducts 20 points.<br />
+                5 hints max — using all results in 0 points.
+              </p>
             </div>
-          ) : (
-            <button className={styles.userBoxGreen} onClick={handleFinishGame}>Finish</button>
-          )}
+          </div>
+          <div className={styles.scoreboardWrapper}>
+            {String(restTime) !== "-1" ? (
+              <div className={styles.timer}>
+                <div>Time left:</div>
+                <div className={styles.red}>{currentTime}</div>
+              </div>
+            ) : (
+              <button className={styles.userBoxGreen} onClick={handleFinishGame}>Finish</button>
+            )}
+          </div>
         </div>
       </div>
 
       <div className={styles.mainContent}>
         <div className={styles.hintBox}>
-          {currentHint && (
+          {currentHint ? (
             <div className={styles.hintText}>
               <p>
                 <strong>Hint {hintIndex}:</strong><br />
                 {currentHint.text}
               </p>
+            </div>
+          ) : (
+            <div className={styles.hintText}>
+              <p>No hints available</p>
             </div>
           )}
 
@@ -297,8 +347,10 @@ const GameBoard: React.FC = () => {
                 <span
                   key={index}
                   onClick={() => handleHintClick(index)}
-                  className={`${styles.hintIcon} ${isUsed ? styles.hintUsed : ""}`}
-                />
+                  className={`${styles.hintIcon} ${isUsed ? styles.hintUsed : styles.hintLocked}`}
+                >
+                  {isUsed ? '✓' : '🔒'}
+                </span>
               );
             })}
           </div>

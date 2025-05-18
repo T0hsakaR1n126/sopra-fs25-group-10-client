@@ -47,12 +47,11 @@ const Lobby: React.FC = () => {
       // brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
-        console.log('STOMP connected');
         clientRef.current = client;
 
         client.subscribe(`/topic/lobby`, (message) => {
           try {
-            console.log('RAW message body:', message.body);
+
             const data: Game[] = JSON.parse(message.body);
             const filteredData = data.filter((game) => String(game.ownerId) !== String(userId));
             setGames(filteredData);
@@ -64,9 +63,7 @@ const Lobby: React.FC = () => {
 
         client.subscribe('/topic/chat/lobby', (message) => {
           try {
-            console.log('RAW message body:', message.body);
             const newMessage = JSON.parse(message.body);
-            console.log(newMessage)
             setChatMessages((prevMessages) => [...prevMessages, newMessage]);
           } catch (err) {
             console.error('Invalid message:', err);
@@ -79,7 +76,6 @@ const Lobby: React.FC = () => {
         });
       },
       onDisconnect: () => {
-        console.log('STOMP disconnected');
       }
     });
 
@@ -105,7 +101,6 @@ const Lobby: React.FC = () => {
     } else {
       game.password = "";
     }
-    console.log(JSON.stringify(game, null, 2));
     try {
       await apiService.put<Game>(`/lobbyIn/${userId}`, game);
       dispatch(gameInitialize(

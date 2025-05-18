@@ -6,13 +6,34 @@
 }
 
 .topBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: black;
-    color: white;
-    padding: 10px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: black;
+  color: white;
+  padding: 12px 30px;
+  gap: 20px;
 }
+
+.topLeft,
+.topCenter,
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topCenter {
+  flex: 1;
+  justify-content: center;
+}
+
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 
 .userBoxGreen,
 .userBoxBlue {
@@ -250,4 +271,17 @@
   }
 
   
-  
+.userBoxQuestion {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.userBoxQuestion svg {
+  display: block;
+  background: transparent;
+}
