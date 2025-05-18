@@ -65,7 +65,7 @@ const LeaderboardPage: React.FC = () => {
             <div className={`${styles.cell} ${styles.cellName}`}>
               <div style={{ display: "flex", alignItems: "center",  justifyContent: "center" , gap: "10px" }}>
                 <img
-                  src={entry.avatar}
+                  src={entry.avatar ?? ""}
                   alt={`${entry.username}'s avatar`}
                   style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover" }}
                 />
