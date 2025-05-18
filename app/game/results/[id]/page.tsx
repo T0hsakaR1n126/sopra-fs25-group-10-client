@@ -24,18 +24,13 @@ const Results = () => {
   const gameMode = useSelector(
     (state: { game: { modeType: string } }) => state.game.modeType
   );
+  const gameId = useSelector(
+    (state: { game: { gameId: string } }) => state.game.gameId
+  );
 
   const entries = Object.entries(scoreBoard) as [string, number][];
 
-  const handleBackToLobby = async () => {
-    // if (String(userId) === String(ownerId)) {
-    //   apiService.put(`/save/${gameId}`, {})
-    //     .then()
-    //     .catch((error) => {
-    //       alert(`Error saving game: ${error.message}`);
-    //       router.push("/game");
-    //     });
-    // }
+  const handleBack = async () => {
     if (gameMode === "combat") {
       try {
         const response: User = await apiService.get<User>(`/users/${userId}`);
@@ -52,11 +47,12 @@ const Results = () => {
           console.error("An unknown error occurred while fetching user.");
         }
       }
-      router.push("/lobby");
+
+      router.push(`/game/start/${gameId}`);
     } else {
       router.push("/game");
     }
-  };
+  }
 
   return (
     <div className={styles.wrapper}>
@@ -90,8 +86,8 @@ const Results = () => {
           )}
         </ul>
         <div className={styles.belowBox}>
-          <button className={styles.backButton} onClick={handleBackToLobby}>
-            {gameMode === "solo" ? "Back to Hall" : "Back to Lobby"}
+          <button className={styles.backButton} onClick={handleBack}>
+            {gameMode === "solo" ? "Back to Hall" : "Back"}
           </button>
         </div>
       </div>

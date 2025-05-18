@@ -23,8 +23,7 @@ export class ApiService {
   * @throws ApplicationError if res.ok is false.
   */
   private async processResponse<T>(
-    res: Response,
-    errorMessage: string,
+    res: Response
   ): Promise<T> {
     if (!res.ok) {
       let errorDetail = res.statusText;
@@ -38,9 +37,8 @@ export class ApiService {
       } catch {
         // If parsing fails, keep using res.statusText
       }
-      const detailedMessage = `${errorMessage} (${res.status}: ${errorDetail})`;
       const error: ApplicationError = new Error(
-        detailedMessage,
+        errorDetail,
       ) as ApplicationError;
       error.info = JSON.stringify(
         { status: res.status, statusText: res.statusText },
@@ -74,8 +72,7 @@ export class ApiService {
     });
     
     return this.processResponse<T>(
-      res,
-      "An error occurred while fetching the data.\n",
+      res
     );
   }
   
@@ -101,8 +98,7 @@ export class ApiService {
     });
     
     return this.processResponse<T>(
-      res,
-      "An error occurred while posting the data.\n",
+      res
     );
   }
   
@@ -128,8 +124,7 @@ public async put<T>(endpoint: string, data: unknown, options?: { headers?: Recor
   });
 
   return this.processResponse<T>(
-    res,
-    "An error occurred while updating the data.\n",
+    res
   );
 }
 
@@ -153,8 +148,7 @@ public async delete<T>(endpoint: string, options?: { headers?: Record<string, st
   });
 
   return this.processResponse<T>(
-    res,
-    "An error occurred while deleting the data.\n",
+    res
   );
 }
 

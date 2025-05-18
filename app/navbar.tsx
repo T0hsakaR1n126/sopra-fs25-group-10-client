@@ -8,9 +8,13 @@ import { RootState } from "./"; // Import RootState to type the useSelector hook
 import { useLogout } from "@/utils/useLogout"; // Import the logout function
 import { Avatar, Dropdown, Tooltip } from "antd";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  const { username, avatar, level, userId } = useSelector((state: RootState) => state.user);
+  const router = useRouter();
+  const username = useSelector((state: RootState) => state.user.username);
+  const avatar = useSelector((state: RootState) => state.user.avatar);
+  const level = useSelector((state: RootState) => state.user.level);
   const logout = useLogout();
 
   const xp = (level ?? 0) * 100;
@@ -52,7 +56,13 @@ export default function Navbar() {
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <Link
           href={`/users/${userId}/profile`}
-          onClick={() => setDropdownOpen(false)}
+          onClick={async (e) => {
+            e.preventDefault();
+            setDropdownOpen(false);
+            window.dispatchEvent(new Event("dashboardExit"));
+            await new Promise((res) => setTimeout(res, 1500));
+            router.push("/users/profile");
+          }}
           style={{ ...menuItemStyle, backgroundColor: hovered === "profile" ? "#014b7d" : "transparent" }}
           onMouseEnter={() => setHovered("profile")}
           onMouseLeave={() => setHovered(null)}
@@ -61,7 +71,13 @@ export default function Navbar() {
         </Link>
         <Link
           href="/history"
-          onClick={() => setDropdownOpen(false)}
+          onClick={async (e) => {
+            e.preventDefault();
+            setDropdownOpen(false);
+            window.dispatchEvent(new Event("dashboardExit"));
+            await new Promise((res) => setTimeout(res, 1500));
+            router.push("/history");
+          }}
           style={{ ...menuItemStyle, backgroundColor: hovered === "history" ? "#014b7d" : "transparent" }}
           onMouseEnter={() => setHovered("history")}
           onMouseLeave={() => setHovered(null)}
@@ -70,7 +86,13 @@ export default function Navbar() {
         </Link>
         <Link
           href="/statistics"
-          onClick={() => setDropdownOpen(false)}
+          onClick={async (e) => {
+            e.preventDefault();
+            setDropdownOpen(false);
+            window.dispatchEvent(new Event("dashboardExit"));
+            await new Promise((res) => setTimeout(res, 1500));
+            router.push("/statistics");
+          }}
           style={{ ...menuItemStyle, backgroundColor: hovered === "statistics" ? "#014b7d" : "transparent" }}
           onMouseEnter={() => setHovered("statistics")}
           onMouseLeave={() => setHovered(null)}
@@ -78,7 +100,12 @@ export default function Navbar() {
           <BookOutlined /> Statistics
         </Link>
         <div
-          onClick={() => { logout(); setDropdownOpen(false); }}
+          onClick={async () => {
+            setDropdownOpen(false);
+            window.dispatchEvent(new Event("dashboardExit"));
+            await new Promise((res) => setTimeout(res, 1500));
+            logout();
+          }}
           style={{ ...menuItemStyle, color: "#ff4d4f", backgroundColor: hovered === "logout" ? "#444" : "transparent" }}
           onMouseEnter={() => setHovered("logout")}
           onMouseLeave={() => setHovered(null)}
@@ -116,7 +143,16 @@ export default function Navbar() {
       <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
         {/* Leaderboard */}
         <Tooltip title="Leaderboard">
-          <Link href="/leaderboard">
+          <Link
+            href="/leaderboard"
+            onClick={async (e) => {
+              e.preventDefault();
+              setDropdownOpen(false);
+              window.dispatchEvent(new Event("dashboardExit"));
+              await new Promise((res) => setTimeout(res, 1500));
+              router.push("/leaderboard");
+            }}
+          >
             <TrophyOutlined
               style={{ fontSize: "24px", color: "#fff", cursor: "pointer" }}
               aria-label="Leaderboard"

@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux"; // Import useDispatch an
 import { logout } from "@/userSlice"; // Import the logout action from userSlice
 import { RootState } from "../"; // Import RootState to type the useSelector hook
 import { User } from "@/types/user";
+import { showSuccessToast } from "./showSuccessToast";
 
 export const useLogout = () => {
   const router = useRouter();
@@ -38,6 +39,7 @@ export const useLogout = () => {
       }
       , 500);
 
+      showSuccessToast("Logged Out!");
       router.push("/");
     } catch (error) {
       messageApi.error(`Error logging out: ${String(error)}`);
