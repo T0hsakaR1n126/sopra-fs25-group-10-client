@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Game } from './types/game';
 
 // Define the type for our slice's state
 interface GameHistory {

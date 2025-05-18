@@ -10,7 +10,6 @@ import { useSelector } from 'react-redux';
 import { Game } from '@/types/game';
 import { useDispatch } from "react-redux"; // Import useDispatch
 import { answerUpdate, clearGameState, gameStart, gameTimeInitialize, ownerUpdate } from '@/gameSlice';
-import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Luckiest_Guy } from "next/font/google";
 import { showSuccessToast } from '@/utils/showSuccessToast';
@@ -116,8 +115,8 @@ const GameStart = () => {
     fetchPlayers();
 
     const stompClient = new Client({
-      // brokerURL: "wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws",
-      brokerURL: "http://localhost:8080/ws",
+      brokerURL: "wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws",
+      // brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
         console.log("STOMP connected");
@@ -428,7 +427,6 @@ const GameStart = () => {
             <div className={styles.countdown} key={countDown}>{countDown === "0" ? "GO!" : countDown}</div>
           </div>
         )}
-        <ToastContainer />
       </div>
     </>
   );
