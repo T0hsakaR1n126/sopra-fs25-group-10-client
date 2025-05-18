@@ -150,7 +150,21 @@ export default function Navbar() {
     >
       {/* Logo */}
       <Tooltip title="Home">
-        <Link href="/game">
+        <Link 
+          href="/game"
+          onClick={async (e) => {
+            e.preventDefault();
+            setDropdownOpen(false);
+            // if (pathname === "/game") {
+            //   window.dispatchEvent(new Event("dashboardExit"));
+            //   await new Promise((res) => setTimeout(res, 1500));
+            // } else {
+              window.dispatchEvent(new Event("otherExit"));
+              await new Promise((res) => setTimeout(res, 600));
+            // }
+            router.push("/game");
+          }}
+        >
           <Image
             src="/mapmaster-logo.png"
             alt="Home"

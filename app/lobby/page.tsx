@@ -49,6 +49,16 @@ const Lobby: React.FC = () => {
     };
   }, []);
 
+  // animation
+  useEffect(() => {
+    const handleExit = () => {
+      document.querySelector(".page")?.classList.add("pageExit");
+    };
+
+    window.addEventListener("otherExit", handleExit);
+    return () => window.removeEventListener("otherExit", handleExit);
+  }, []);
+
   useEffect(() => {
     const client = new Client({
       brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
@@ -132,7 +142,10 @@ const Lobby: React.FC = () => {
           playersNumber: game.playersNumber ? parseInt(game.playersNumber, 10) : null,
         }
       ));
-      router.push(`/game/start/${game.gameId}`);
+
+      // exit animation
+      document.querySelector(".page")?.classList.add("pageExit");
+      setTimeout(() => router.push(`/game/start/${game.gameId}`), 600);
     } catch (error) {
       if (error instanceof Error) {
         alert(`Something went wrong during game joining:\n${error.message}`);
@@ -183,7 +196,7 @@ const Lobby: React.FC = () => {
   }, [chatMessages]);
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page pageEnter`}>
       {/* Chat Panel */}
       {showChat && (
         <div className={styles.chatBox}>

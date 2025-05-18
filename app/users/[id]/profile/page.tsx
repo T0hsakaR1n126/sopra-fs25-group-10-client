@@ -212,29 +212,6 @@ useEffect(() => {
                   </div>
                 )}
               </Form.Item>
-              <Form.Item label="Name">
-                {isEditing ? (
-                  <Form.Item name="name" noStyle rules={[
-                    { required: true, message: "Name cannot be empty!" },
-                    { whitespace: true, message: "Username cannot be just spaces!" },
-                  ]}>
-                    <Input placeholder="Not Set" />
-                  </Form.Item>
-                ) : (
-                  <div
-                    style={{
-                      padding: "6px 11px",
-                      minHeight: 32,
-                      border: "1px solid #666",
-                      borderRadius: 6,
-                      color: form.getFieldValue("name") ? "#fff" : "#888",
-                      backgroundColor: "#444",
-                    }}
-                  >
-                    {form.getFieldValue("name") || "Not Set"}
-                  </div>
-                )}
-              </Form.Item>
               {isEditing ? (
                 <Form.Item label="Password">
                   <Form.Item name="password" noStyle>
