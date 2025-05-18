@@ -31,6 +31,7 @@ const GameStart = () => {
   const username = useSelector((state: { user: { username: string } }) => state.user.username);
   const gameCode = useSelector((state: { game: { gameCode: string } }) => state.game.gameCode);
   const playersNumber = useSelector((state: { game: { playersNumber: number } }) => state.game.playersNumber);
+  const level = useSelector((state: { user: { level: number } }) => state.user.level);
 
   const [players, setPlayers] = useState<User[]>([]);
   const [gameCodeShown, setGameCodeShown] = useState<string | null>(null);
@@ -57,19 +58,7 @@ const GameStart = () => {
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const [selectedPlayerProfile, setSelectedPlayerProfile] = useState<miniProfile | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
-  const xp = selectedPlayerProfile ? (selectedPlayerProfile.level ?? 0) * 100 : 0;
-  let barPercent = 0;
-  let barColor = "";
-  if (xp < 5000) {
-    barPercent = (xp / 5000) * 100;
-    barColor = "linear-gradient(90deg, #73d13d, #52c41a)"; // MapAmateur
-  } else if (xp < 10000) {
-    barPercent = ((xp - 5000) / 5000) * 100;
-    barColor = "linear-gradient(90deg, #40a9ff, #1890ff)"; // MapExpert
-  } else {
-    barPercent = ((xp - 10000) / 5000) * 100;
-    barColor = "linear-gradient(90deg, #ffd700, #f4e542)"; // MapMaster
-  }
+  const xp = selectedPlayerProfile ? (selectedPlayerProfile.level ?? 0) * 100 : level * 100;
   const title = xp >= 10000
     ? "MapMaster"
     : xp >= 5000
