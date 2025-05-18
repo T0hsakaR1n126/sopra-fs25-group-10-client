@@ -39,11 +39,12 @@ const InteractiveMap = () => {
     const originalStyle = el.getAttribute("style") || "";
     const originalFillMatch = originalStyle.match(/fill:([^;]+);?/);
     const originalFill = originalFillMatch ? originalFillMatch[1] : "#fff6d5";
+    //rgb(11, 230, 11)
     
     let count = 0;
     const interval = setInterval(() => {
       const isEven = count % 2 === 0;
-      const color = isEven ? "blue" : originalFill;
+      const color = isEven ? "rgb(11, 230, 11)" : originalFill;
       
       const newStyle = originalStyle.replace(/fill:([^;]+);?/, `fill:${color};`);
       el.setAttribute("style", newStyle);
@@ -87,7 +88,7 @@ const InteractiveMap = () => {
               const computedStyle = window.getComputedStyle(country);
               country.setAttribute("data-original-fill", computedStyle.fill || "#fff6d5");
             }
-            country.style.fill = "blue";
+            country.style.fill = "grey";
             country.style.cursor = "pointer";
             
             const infoBox = document.getElementById("info-box");
@@ -314,6 +315,10 @@ const InteractiveMap = () => {
     <div id="svg-container" style={{
       width: "100%",
       height: "100%",
+      backgroundColor: "rgba(14, 55, 82, 0.64)",
+      // #40e0d0
+      //Light Ocean Blue:rgb(49, 114, 158)
+      // Deep Ocean Blue: #003366
       overflow: "hidden"
     }} />
     <ToastContainer />

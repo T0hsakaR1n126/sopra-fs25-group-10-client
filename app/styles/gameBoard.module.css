@@ -141,11 +141,6 @@
     position: relative;
 }
 
-.mapArea svg g:hover,
-.mapArea svg polygon:hover {
-  cursor: pointer;
-}
-
 .mapImage {
     width: 100%;
     max-width: 1200px;
