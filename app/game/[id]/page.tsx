@@ -37,6 +37,18 @@ const GameBoard: React.FC = () => {
   const [showRules, setShowRules] = useState(false);
   const [endMessage, setEndMessage] = useState('');
   const [nextLocked, setNextLocked] = useState(false);
+  const [showUnlockedHintsList, setShowUnlockedHintsList] = useState(false);
+  const [expandedHints, setExpandedHints] = useState<boolean[]>(
+    Array(unlockedHints).fill(false)
+  );
+
+  const toggleHint = (idx: number) => {
+    setExpandedHints(prev => {
+      const newState = [...prev];
+      newState[idx] = !newState[idx];
+      return newState;
+    });
+  };
 
   const currentHint = hints[hintIndex - 1];
   const handleHintClick = (index: number) => {
@@ -325,6 +337,14 @@ const GameBoard: React.FC = () => {
 
       <div className={styles.mainContent}>
         <div className={styles.sidebar}>
+          <div className={styles.rulesBox}>
+            <h3>Rules</h3>
+            <ul>
+              <li>Clicking on the map automatically records your answer.</li>
+              <li>Each hint is easier than the previous one.</li>
+              <li>You can unlock hints in sequential order only.</li>
+            </ul>
+          </div>
         <div className={styles.hintBox}>
           {currentHint ? (
             <div className={styles.hintText}>
@@ -340,24 +360,71 @@ const GameBoard: React.FC = () => {
           )}
           
         <div className={styles.hintIconsContainer}>
-          <div className={styles.hintLabel}>Hint Usage:</div>
+          <div className={styles.hintLabel}>Click for hints:</div>
           <div className={styles.hintIconsRow}>
             {hints.map((_, index) => {
               const isUsed = index < unlockedHints;
-
+              const isNext = index === unlockedHints;      // the next hint to unlock
               return (
-                <span
-                  key={index}
-                  onClick={() => handleHintClick(index)}
-                  className={`${styles.hintIcon} ${isUsed ? styles.hintUsed : styles.hintLocked}`}
+              <span
+                key={index}
+                onClick={() => handleHintClick(index)}
+                className={`${styles.hintIcon} ${
+                  isUsed ? styles.hintUsed : 
+                  isNext ? styles.hintUnlocked : 
+                  styles.hintLocked
+                }`}
+              >
+              {isUsed ? '✓' : isNext ? (
+                // unlocked green SVG
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#81c784" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-7h-1V7a5 5 0 00-10 0v3H6a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2v-7a2 2 0 00-2-2zm-7-3a3 3 0 016 0v3H11V7z"/>
+                </svg>
+              ) : (
+                // locked red SVG
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
                 >
-                  {isUsed ? '✓' : '🔒'}
-                </span>
+                  <rect x="7" y="11" width="10" height="9" rx="2" ry="2" fill="#b71c1c" />
+                  <path
+                    d="M7 11V7a5 5 0 0110 0v4"
+                    stroke="#ef5350"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="12" cy="15" r="1.5" fill="#ef5350" />
+                </svg>
+              )}         
+              </span>
               );
             })}
           </div>
-        </div>
+          <div className={styles.hintsContainer}>
+            <button 
+              onClick={() => setShowUnlockedHintsList(prev => !prev)} 
+              className={styles.collapsibleToggle}
+            >
+              {showUnlockedHintsList ? "Hide Unlocked Hints" : "Show All Unlocked Hints"}
+            </button>
 
+            {showUnlockedHintsList && (
+              <ul className={styles.unlockedHintsList}>
+                {hints.slice(0, unlockedHints).map((hint, idx) => (
+                  <li key={idx} className={styles.hintItem}>
+                    <strong className={styles.hintLabel}>Hint {idx + 1}:</strong> {hint.text}
+                    <div className={styles.hintDivider}></div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+        
         </div>
         </div>
         <div className={styles.mapArea}>
