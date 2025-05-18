@@ -32,7 +32,7 @@ const Authenticator = ({ children }: { children: React.ReactNode }) => {
 
         // If authentication is successful, you can update the Redux store
         if (response) {
-          console.log("Authentication Success!");
+
         }
       } catch (error) {
         if (error instanceof Error) {

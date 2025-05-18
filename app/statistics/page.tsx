@@ -68,6 +68,9 @@ const GuestPage: React.FC = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.heading}>User Statistics</h1>
+      <p className={styles.description}>
+        The flags below represent the number of correctly answered questions for each country across all game modes. If no flags are displayed, the player has not yet participated in any games.
+      </p>
 
       {loading ? (
         <p className={styles.loading}>Loading...</p>

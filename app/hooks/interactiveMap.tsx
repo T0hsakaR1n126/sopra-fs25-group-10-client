@@ -107,10 +107,9 @@ const InteractiveMap: React.FC = () => {
                 }
                 if (submitLocked.current) { return; }
                 submitLocked.current = true;
-                console.log(gameId, countryId, hintUsageRef.current)
                 apiService.put<submitResponse>(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
                   .then((response) => {
-                    console.log(response)
+
                     if (response.judgement) {
                       toast.success(`Your answer is correct! The answer is: ${countryIdMap[answerRef.current]}`, {
                         position: "top-center",
@@ -145,7 +144,6 @@ const InteractiveMap: React.FC = () => {
                     // }
                     // if (targetEl) {
                     if (ansCountryElement && !ansCountryElement.id.startsWith("path")) {
-                      console.log("Found matching SVG element:", ansCountryElement);
                       flashElement(ansCountryElement);
                     } else {
                       console.warn("No matching SVG element found for", ansCountryElement);

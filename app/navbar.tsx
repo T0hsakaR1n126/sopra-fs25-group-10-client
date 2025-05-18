@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux"; // Import Redux hooks
 import { UserOutlined, HistoryOutlined, TrophyOutlined, LogoutOutlined, BookOutlined } from "@ant-design/icons";
-import { RootState } from "./"; // Import RootState to type the useSelector hook
 import { useLogout } from "@/utils/useLogout"; // Import the logout function
 import { Avatar, Dropdown, Tooltip } from "antd";
 import { useState } from "react";
@@ -12,12 +11,13 @@ import { useRouter } from "next/navigation";
 
 export default function Navbar() {
   const router = useRouter();
-  const username = useSelector((state: RootState) => state.user.username);
-  const avatar = useSelector((state: RootState) => state.user.avatar);
-  const level = useSelector((state: RootState) => state.user.level);
+  const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
+  const username = useSelector((state: { user: { username: string } }) => state.user.username);
+  const avatar = useSelector((state: { user: { avatar: string } }) => state.user.avatar);
+  const level = useSelector((state: { user: { level: string } }) => state.user.level);
   const logout = useLogout();
 
-  const xp = (level ?? 0) * 100;
+  const xp = (Number(level) || 0) * 100;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -55,13 +55,13 @@ export default function Navbar() {
       {/* menu */}
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <Link
-          href="/users/profile"
+          href={`/users/${userId}/profile`}
           onClick={async (e) => {
             e.preventDefault();
             setDropdownOpen(false);
             window.dispatchEvent(new Event("dashboardExit"));
             await new Promise((res) => setTimeout(res, 1500));
-            router.push("/users/profile");
+            router.push(`/users/${userId}/profile`);
           }}
           style={{ ...menuItemStyle, backgroundColor: hovered === "profile" ? "#014b7d" : "transparent" }}
           onMouseEnter={() => setHovered("profile")}

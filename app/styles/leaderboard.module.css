@@ -19,7 +19,6 @@
   padding-top: 120px;
 }
 
-
 .leftPanel {
   display: flex;
   flex-direction: column;
@@ -27,10 +26,11 @@
   align-items: center;
 }
 
+/* 统一设置 5 列：Rank | Name | Avatar | Level | Score */
 .lobbyCard {
   width: 80%;
   display: grid;
-  grid-template-columns: 0.8fr 1.6fr 1.2fr 1fr;
+  grid-template-columns: 0.6fr 2fr 1fr 1fr;
   align-items: center;
   padding: 14px 20px;
   border-radius: 8px;
@@ -52,17 +52,10 @@
   background-color: #ea580c;
 }
 
-.scrollDownBtn {
-  font-size: 24px;
-  cursor: pointer;
-  color: #22c55e;
-  margin-top: 10px;
-}
-
 .headerRow {
   width: 80%;
   display: grid;
-  grid-template-columns: 0.8fr 1.6fr 1.2fr 1fr;
+  grid-template-columns: 0.6fr 2fr 1fr 1fr;
   font-weight: bold;
   color: #cccccc;
   margin: 0 auto 10px;
@@ -70,16 +63,35 @@
 }
 
 .cell {
-  font-size: 1rem;
+  min-width: 0;
+  text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.cellRank, .cellName {
+.cellRank {
+  text-align: left;
+}
+
+.cellName {
   text-align: left;
 }
 
 .cellLevel, .cellScore {
   text-align: right;
+}
+
+/* 确保头像在单元格中居中 */
+.cell img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.scrollDownBtn {
+  font-size: 24px;
+  cursor: pointer;
+  color: #22c55e;
+  margin-top: 10px;
 }
