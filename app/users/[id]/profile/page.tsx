@@ -72,12 +72,11 @@ useEffect(() => {
         level: Number(updatedUser.level) / 100,
       }));
       setIsEditing(false);
-    } catch (error) {
-      if (error instanceof Error) {
+    } catch (error: any) {
         console.error(error.message);
-        alert("Invalid update. Please try again.");
+        const message = error?.response?.data?.message || error.message || "Invalid update. Please try again.";
+        alert(message);
       }
-    }
   };
 
   return (
