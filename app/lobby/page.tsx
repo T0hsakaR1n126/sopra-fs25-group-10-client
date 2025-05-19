@@ -23,19 +23,29 @@ const Lobby: React.FC = () => {
   const apiService = useApi();
   const router = useRouter();
   const dispatch = useDispatch(); // Set up dispatch for Redux actions
-  const [showChat, setShowChat] = useState(true);
   const [games, setGames] = useState<Game[]>([]);
   const [listReveal, setListReveal] = useState(false);
   const [paginatedGames, setPaginatedGames] = useState<Game[]>([]);
   const [joinCode, setJoinCode] = useState("");
-  //for chat
-  const [chatMessages, setChatMessages] = useState<Message[]>([]); // Store chat messages with Message type
-  const [messageInput, setMessageInput] = useState(""); // Input state for new messages
-  const clientRef = useRef<Client | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const userName = useSelector((state: { user: { username: string } }) => state.user.username);
+
+  //for chat
+  const [showChat, setShowChat] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Message[]>([]); // Store chat messages with Message type
+  const [messageInput, setMessageInput] = useState(""); // Input state for new messages
+  const [hasUnread, setHasUnread] = useState(false);
+  const clientRef = useRef<Client | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+    if (chatMessages[chatMessages.length - 1]?.sender !== userName && !showChat) {
+      setHasUnread(true);
+    }
+  }, [chatMessages]);
 
   // paginate page
   const [currentPage, setCurrentPage] = useState(1);
@@ -214,63 +224,69 @@ const Lobby: React.FC = () => {
   return (
     <div className={`${styles.page} page pageEnter`}>
       {/* Chat Panel */}
-      <motion.div
-        className={styles.chatBox}
-        initial={false}
-        animate={showChat ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.95 }}
-        transition={{ duration: 0.4 }}
-        style={{ overflow: "hidden" }}
-      >
-        <div className={styles.chatHeader}>
-          <span>Lobby Chat</span>
-          <button className={styles.collapseBtn} onClick={() => setShowChat(false)}>
-            Fold
-          </button>
-        </div>
-        <div className={styles.chatMessages}>
-          {chatMessages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`${styles.chatLine} ${msg.sender === userName ? styles.ownMessage : styles.otherMessage}`}
-            >
-              <div className={styles.bubble}>
-                <div className={styles.sender}>
-                  {msg.sender}
-                </div>
-                <div className={styles.content}>
-                  {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
-                </div>
-                <div className={styles.time}>
-                  {new Date(msg.timestamp).toLocaleTimeString()}
-                </div>
-              </div>
+      <AnimatePresence mode="wait">
+        {showChat && (
+          <motion.div
+            // key="chatbox"
+            className={styles.chatBox}
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className={styles.chatHeader}>
+              <span>Lobby Chat</span>
+              <button className={styles.collapseBtn} onClick={() => { setShowChat(false); setHasUnread(false); }}>
+                Fold
+              </button>
             </div>
+            <div className={styles.chatMessages}>
+              {chatMessages.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`${styles.chatLine} ${msg.sender === userName ? styles.ownMessage : styles.otherMessage}`}
+                >
+                  <div className={styles.bubble}>
+                    <div className={styles.sender}>
+                      {msg.sender}
+                    </div>
+                    <div className={styles.content}>
+                      {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
+                    </div>
+                    <div className={styles.time}>
+                      {new Date(msg.timestamp).toLocaleTimeString()}
+                    </div>
+                  </div>
+                </div>
 
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-        <div className={styles.chatInputWrapper}>
-          <input
-            type="text"
-            placeholder="Type a message..."
-            className={styles.chatInput}
-            value={messageInput}
-            onChange={(e) => setMessageInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && messageInput.trim()) {
-                handleSendMessage();
-                e.preventDefault();
-              }
-            }}
-          />
-          <button className={styles.chatSendButton} onClick={handleSendMessage}>
-            Send
-          </button>
-        </div>
-      </motion.div>
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+            <div className={styles.chatInputWrapper}>
+              <input
+                type="text"
+                placeholder="Type a message..."
+                className={styles.chatInput}
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && messageInput.trim()) {
+                    handleSendMessage();
+                    e.preventDefault();
+                  }
+                }}
+              />
+              <button className={styles.chatSendButton} onClick={handleSendMessage}>
+                Send
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       {!showChat && (
-        <div className={styles.chatToggle} onClick={() => setShowChat(true)}>
+        <div className={styles.chatToggle} onClick={() => { setShowChat(true); setHasUnread(false); }}>
           💬
+          {hasUnread && <span className={styles.unreadDot} />}
         </div>
       )}
 
