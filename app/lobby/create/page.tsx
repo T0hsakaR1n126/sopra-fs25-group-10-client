@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { Game } from '@/types/game';
 import { gameInitialize } from '@/gameSlice';
+import { showErrorToast } from '@/utils/showErrorToast';
 
 const CreateForm: React.FC = () => {
   const apiService = useApi();
@@ -24,7 +25,7 @@ const CreateForm: React.FC = () => {
     e.preventDefault(); // Prevent default form submission
 
     if (!gameName.trim()) {
-      alert("Game name cannot be empty!");
+      showErrorToast("Game name cannot be empty!");
       return;
     }
 
@@ -73,7 +74,7 @@ const CreateForm: React.FC = () => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert(`Something went wrong during game creation:\n${error.message}`);
+        showErrorToast(error.message);
       } else {
         console.error("An unknown error occurred during game creation.");
       }

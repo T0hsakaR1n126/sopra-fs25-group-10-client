@@ -9,6 +9,9 @@ import CreateForm from './create/page';
 import { useDispatch, useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
 import { gameInitialize } from '@/gameSlice';
+import { showErrorToast } from '@/utils/showErrorToast';
+import { showPasswordPrompt } from '@/utils/showPasswordPrompt';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface Message {
   sender: string;
@@ -22,6 +25,7 @@ const Lobby: React.FC = () => {
   const dispatch = useDispatch(); // Set up dispatch for Redux actions
   const [showChat, setShowChat] = useState(true);
   const [games, setGames] = useState<Game[]>([]);
+  const [listReveal, setListReveal] = useState(false);
   const [paginatedGames, setPaginatedGames] = useState<Game[]>([]);
   const [joinCode, setJoinCode] = useState("");
   //for chat
@@ -50,6 +54,13 @@ const Lobby: React.FC = () => {
   }, []);
 
   // animation
+  const [gamesLoaded, setGamesLoaded] = useState(false);
+  useEffect(() => {
+    if (paginatedGames.length >= 0) {
+      setGamesLoaded(true);
+    }
+  }, [games]);
+
   useEffect(() => {
     const handleExit = () => {
       document.querySelector(".page")?.classList.add("pageExit");
@@ -57,6 +68,13 @@ const Lobby: React.FC = () => {
 
     window.addEventListener("otherExit", handleExit);
     return () => window.removeEventListener("otherExit", handleExit);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setListReveal(true);
+    }, 600); // delay the list reveal after entering animation
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -111,10 +129,8 @@ const Lobby: React.FC = () => {
 
   const handleJoinGame = async (game: Game, userId: string): Promise<void> => {
     if (game.password) {
-      const password = prompt("Enter the game password:");
-      if (password === null || password.trim() === "") {
-        return;
-      }
+      const password = await showPasswordPrompt();
+      if (password === null) return;
       game.password = password;
     } else {
       game.password = "";
@@ -148,7 +164,7 @@ const Lobby: React.FC = () => {
       setTimeout(() => router.push(`/game/start/${game.gameId}`), 600);
     } catch (error) {
       if (error instanceof Error) {
-        alert(`Something went wrong during game joining:\n${error.message}`);
+        showErrorToast(error.message);
       } else {
         console.error("An unknown error occurred during game joining.");
       }
@@ -157,7 +173,7 @@ const Lobby: React.FC = () => {
 
   const handleJoinWithCode = async () => {
     if (!joinCode.trim()) {
-      alert("Please enter a valid game code.");
+      showErrorToast("Please enter a valid game code.");
       return;
     }
 
@@ -165,7 +181,7 @@ const Lobby: React.FC = () => {
       const res: Game = await apiService.post<Game>(`/codejoin`, { gameCode: joinCode });
       await handleJoinGame(res, userId);
     } catch (error) {
-      alert("Invalid code or game not found.");
+      showErrorToast("Invalid code or game not found.");
       console.error(error);
     }
   };
@@ -198,56 +214,60 @@ const Lobby: React.FC = () => {
   return (
     <div className={`${styles.page} page pageEnter`}>
       {/* Chat Panel */}
-      {showChat && (
-        <div className={styles.chatBox}>
-          <div className={styles.chatHeader}>
-            <span>Chat</span>
-            <button className={styles.collapseBtn} onClick={() => setShowChat(false)}>
-              Fold
-            </button>
-          </div>
-          <div className={styles.chatMessages}>
-            {chatMessages.map((msg, idx) => (
-              <div
-                key={idx}
-                className={`${styles.chatLine} ${msg.sender === userName ? styles.ownMessage : styles.otherMessage}`}
-              >
-                <div className={styles.bubble}>
-                  <div className={styles.sender}>
-                    {msg.sender}
-                  </div>
-                  <div className={styles.content}>
-                    {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
-                  </div>
-                  <div className={styles.time}>
-                    {new Date(msg.timestamp).toLocaleTimeString()}
-                  </div>
+      <motion.div
+        className={styles.chatBox}
+        initial={false}
+        animate={showChat ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 10, scale: 0.95 }}
+        transition={{ duration: 0.4 }}
+        style={{ overflow: "hidden" }}
+      >
+        <div className={styles.chatHeader}>
+          <span>Lobby Chat</span>
+          <button className={styles.collapseBtn} onClick={() => setShowChat(false)}>
+            Fold
+          </button>
+        </div>
+        <div className={styles.chatMessages}>
+          {chatMessages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`${styles.chatLine} ${msg.sender === userName ? styles.ownMessage : styles.otherMessage}`}
+            >
+              <div className={styles.bubble}>
+                <div className={styles.sender}>
+                  {msg.sender}
+                </div>
+                <div className={styles.content}>
+                  {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
+                </div>
+                <div className={styles.time}>
+                  {new Date(msg.timestamp).toLocaleTimeString()}
                 </div>
               </div>
+            </div>
 
-            ))}
-            <div ref={messagesEndRef} />
-          </div>
-          <div className={styles.chatInputWrapper}>
-            <input
-              type="text"
-              placeholder="Type a message..."
-              className={styles.chatInput}
-              value={messageInput}
-              onChange={(e) => setMessageInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && messageInput.trim()) {
-                  handleSendMessage();
-                  e.preventDefault();
-                }
-              }}
-            />
-            <button className={styles.chatSendButton} onClick={handleSendMessage}>
-              Send
-            </button>
-          </div>
+          ))}
+          <div ref={messagesEndRef} />
         </div>
-      )}
+        <div className={styles.chatInputWrapper}>
+          <input
+            type="text"
+            placeholder="Type a message..."
+            className={styles.chatInput}
+            value={messageInput}
+            onChange={(e) => setMessageInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && messageInput.trim()) {
+                handleSendMessage();
+                e.preventDefault();
+              }
+            }}
+          />
+          <button className={styles.chatSendButton} onClick={handleSendMessage}>
+            Send
+          </button>
+        </div>
+      </motion.div>
       {!showChat && (
         <div className={styles.chatToggle} onClick={() => setShowChat(true)}>
           💬
@@ -258,55 +278,75 @@ const Lobby: React.FC = () => {
         <h1 className={styles.title}><span className={styles.icon}>🎮</span> Game Lobby</h1>
         <h2 className={styles.subtitle}>👇 Tap a card to join!</h2>
 
-        {paginatedGames.length === 0 ? (
+        {!gamesLoaded ? (
+          <div className={styles.emptyMessage}>Loading games...</div>
+        ) : !listReveal ? (
+          null // or spinner, or nothing
+        ) : paginatedGames.length === 0 ? (
           <div className={styles.emptyMessage}>No Available Game. Create one!</div>
         ) : (
-          <div className={styles.roomListScrollable}>
-            {paginatedGames.map((game, idx) => (
-              <div
-                key={idx}
-                className={styles.gameCard}
-                onClick={() => handleJoinGame(game, userId)}
+          <AnimatePresence>
+            {listReveal && (
+              <motion.div
+                key="gameList"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.5 }}
               >
-                <div className={styles.cardTop}>
-                  <span className={styles.gameName}>{game.gameName}</span>
-                  {game.password && <span className={styles.lockIcon}>🔒</span>}
+                <div className={styles.roomListScrollable}>
+                  {paginatedGames.map((game, idx) => (
+                    <motion.div
+                      key={game.gameId ?? idx}
+                      className={styles.gameCard}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: idx * 0.05 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      onClick={() => handleJoinGame(game, userId)}
+                    >
+                      <div className={styles.cardTop}>
+                        <span className={styles.gameName}>{game.gameName}</span>
+                        {game.password && <span className={styles.lockIcon}>🔒</span>}
+                      </div>
+                      <div className={styles.cardBottom}>
+                        <div className={styles.cardItem}>
+                          <span>👥</span>
+                          <span>{game.realPlayersNumber} / {game.playersNumber}</span>
+                        </div>
+                        <div className={styles.cardItem}>
+                          <span>🕒</span>
+                          <span>{Number(game.time) === 1 ? "1 min" : `${game.time ?? 60} mins`}</span>
+                        </div>
+                        <div className={styles.cardItem}>
+                          ⭐ {game.difficulty ?? "Easy"}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
-                <div className={styles.cardBottom}>
-                  <div className={styles.cardItem}>
-                    <span>👥</span>
-                    <span>{game.realPlayersNumber} / {game.playersNumber}</span>
-                  </div>
-                  <div className={styles.cardItem}>
-                    <span>🕒</span>
-                    <span>{Number(game.time) === 1 ? "1 min" : `${game.time ?? 60} mins`}</span>
-                  </div>
-                  <div className={styles.cardItem}>
-                    ⭐ {game.difficulty ?? "Easy"}
-                  </div>
+
+                <div className={styles.pagination}>
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                  >
+                    ◀ Prev
+                  </button>
+
+                  <span className={styles.currentPage}>Page {currentPage}</span>
+
+                  <button
+                    disabled={end >= games.length}
+                    onClick={() => setCurrentPage(p => p + 1)}
+                  >
+                    Next ▶
+                  </button>
                 </div>
-              </div>
-            ))}
-          </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         )}
-        <div className={styles.pagination}>
-          <button
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-          >
-            ◀ Prev
-          </button>
-
-          <span className={styles.currentPage}>Page {currentPage}</span>
-
-          <button
-            disabled={end >= games.length}
-            onClick={() => setCurrentPage(p => p + 1)}
-          >
-            Next ▶
-          </button>
-        </div>
-
       </div>
 
       {/* Toggle Button */}
@@ -315,7 +355,14 @@ const Lobby: React.FC = () => {
           {showCreateForm ? 'Close' : '+ Create Game'}
         </button>
 
-        {showCreateForm && <CreateForm />}
+        <motion.div
+          animate={showCreateForm ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+          initial={false}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          style={{ overflow: "hidden" }}
+        >
+          <CreateForm />
+        </motion.div>
 
         <form
           className={styles.joinForm}
@@ -336,7 +383,7 @@ const Lobby: React.FC = () => {
           </button>
         </form>
       </div>
-    </div>
+    </div >
   );
 };
 

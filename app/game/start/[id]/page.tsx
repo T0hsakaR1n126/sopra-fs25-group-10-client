@@ -229,7 +229,8 @@ const GameStart = () => {
     try {
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
-      router.push("/lobby");
+      document.querySelector(".roomWrapper")?.classList.add("roomWrapperExit");
+      setTimeout(() => router.push("/lobby"), 400);
     } catch (error) {
       console.error("Error leaving game:", error);
     }
@@ -280,7 +281,7 @@ const GameStart = () => {
 
   return (
     <>
-      <div className={styles.roomWrapper}>
+      <div className={`${styles.roomWrapper} roomWrapper roomWrapperEnter`}>
         <div className={styles.grid}>
           {Array.from({ length: playersNumber }).map((_, idx) => {
             const player = players[idx];
