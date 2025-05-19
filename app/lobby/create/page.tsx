@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
-import styles from "@/styles/lobby.module.css";
+import styles from "@/styles/createForm.module.css";
 import { useApi } from '@/hooks/useApi';
 import { useRouter } from 'next/navigation';
 import { useDispatch, useSelector } from 'react-redux';
 import { Game } from '@/types/game';
 import { gameInitialize } from '@/gameSlice';
+import { showErrorToast } from '@/utils/showErrorToast';
 
 const CreateForm: React.FC = () => {
   const apiService = useApi();
@@ -24,7 +25,7 @@ const CreateForm: React.FC = () => {
     e.preventDefault(); // Prevent default form submission
 
     if (!gameName.trim()) {
-      alert("Game name cannot be empty!");
+      showErrorToast("Game name cannot be empty!");
       return;
     }
 
@@ -73,7 +74,7 @@ const CreateForm: React.FC = () => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert(`Something went wrong during game creation:\n${error.message}`);
+        showErrorToast(error.message);
       } else {
         console.error("An unknown error occurred during game creation.");
       }
@@ -81,69 +82,57 @@ const CreateForm: React.FC = () => {
   };
 
   return (
-    <form className={styles.form} onSubmit={handleCreateGame}>
-      <h2 className={styles.createTitle}>Create Game Session</h2>
-      <label>
-        Game Name:
-        <input
-          type="text"
-          className={styles.input}
-          onChange={(e) => setGameName(e.target.value)}
-        />
-      </label>
-
-      <label>
-        Max Players:
-        <select className={styles.input} onChange={(e) => setMaxPlayers(e.target.value)}>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
-      </label>
-
-      <label>
-        Duration:
-        <select className={styles.input} onChange={(e) => setDuration(e.target.value)}>
-          <option value="1">1 Minutes</option>
-          <option value="2">2 Minutes</option>
-          <option value="5">5 Minutes</option>
-        </select>
-      </label>
-
-      {/* <div className={styles.inlineField}>
-        <span className={styles.labelText}>Private 🔒</span>
-
-        <label className={styles.switch}>
+    <div className="createForm">
+      <form className={styles.form} onSubmit={handleCreateGame}>
+        <label>
+          Game Name:
           <input
-            type="checkbox"
-            checked={isPrivate}
-            onChange={(e) => setIsPrivate(e.target.checked)}
+            type="text"
+            className={styles.input}
+            onChange={(e) => setGameName(e.target.value)}
           />
-          <span className={styles.slider}></span>
         </label>
-      </div> */}
 
-      <label>
-        Password:
-        <input
-          type="password"
-          className={styles.input}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </label>
+        <label>
+          Max Players:
+          <select className={styles.input} onChange={(e) => setMaxPlayers(e.target.value)}>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </label>
 
-      <label>
-        Difficulty:
-        <select className={styles.input} onChange={(e) => setDifficulty(e.target.value)}>
-          <option value="easy">easy</option>
-          <option value="hard">hard</option>
-        </select>
-      </label>
+        <label>
+          Duration:
+          <select className={styles.input} onChange={(e) => setDuration(e.target.value)}>
+            <option value="1">1 Minutes</option>
+            <option value="2">2 Minutes</option>
+            <option value="5">5 Minutes</option>
+          </select>
+        </label>
 
-      <button type="submit" className={styles.createButton}>Create</button>
-    </form>
+        <label>
+          Password (Optional):
+          <input
+            type="password"
+            className={styles.input}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+
+        <label>
+          Difficulty:
+          <select className={styles.input} onChange={(e) => setDifficulty(e.target.value)}>
+            <option value="easy">easy</option>
+            <option value="hard">hard</option>
+          </select>
+        </label>
+
+        <button type="submit" className={styles.createButton}>Create</button>
+      </form>
+    </div>
   );
 };
 

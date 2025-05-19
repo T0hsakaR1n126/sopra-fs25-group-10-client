@@ -9,7 +9,9 @@ import CreateForm from './create/page';
 import { useDispatch, useSelector } from 'react-redux';
 import { Client } from '@stomp/stompjs';
 import { gameInitialize } from '@/gameSlice';
-
+import { showErrorToast } from '@/utils/showErrorToast';
+import { showPasswordPrompt } from '@/utils/showPasswordPrompt';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface Message {
   sender: string;
@@ -21,25 +23,69 @@ const Lobby: React.FC = () => {
   const apiService = useApi();
   const router = useRouter();
   const dispatch = useDispatch(); // Set up dispatch for Redux actions
-  const [showSidebar, setShowSidebar] = useState(false);
   const [games, setGames] = useState<Game[]>([]);
+  const [listReveal, setListReveal] = useState(false);
   const [paginatedGames, setPaginatedGames] = useState<Game[]>([]);
   const [joinCode, setJoinCode] = useState("");
-  //for chat
-  const [chatMessages, setChatMessages] = useState<Message[]>([]); // Store chat messages with Message type
-  const [messageInput, setMessageInput] = useState(""); // Input state for new messages
-  const clientRef = useRef<Client | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-
 
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const userName = useSelector((state: { user: { username: string } }) => state.user.username);
 
-  // only for mock, remove when backend is ready
+  //for chat
+  const [showChat, setShowChat] = useState(false);
+  const [chatMessages, setChatMessages] = useState<Message[]>([]); // Store chat messages with Message type
+  const [messageInput, setMessageInput] = useState(""); // Input state for new messages
+  const [hasUnread, setHasUnread] = useState(false);
+  const clientRef = useRef<Client | null>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+    if (chatMessages[chatMessages.length - 1]?.sender !== userName && !showChat) {
+      setHasUnread(true);
+    }
+  }, [chatMessages]);
+
+  // paginate page
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 4;
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
+
+  // toggle create form
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const toggleCreate = () => setShowCreateForm((prev) => !prev);
+  useEffect(() => {
+    document.body.classList.add("lobby-no-scroll");
+    return () => {
+      document.body.classList.remove("lobby-no-scroll");
+    };
+  }, []);
+
+  // animation
+  const [gamesLoaded, setGamesLoaded] = useState(false);
+  useEffect(() => {
+    if (paginatedGames.length >= 0) {
+      setGamesLoaded(true);
+    }
+  }, [games]);
+
+  useEffect(() => {
+    const handleExit = () => {
+      document.querySelector(".page")?.classList.add("pageExit");
+    };
+
+    window.addEventListener("otherExit", handleExit);
+    return () => window.removeEventListener("otherExit", handleExit);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setListReveal(true);
+    }, 600); // delay the list reveal after entering animation
+    return () => clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const client = new Client({
@@ -93,10 +139,8 @@ const Lobby: React.FC = () => {
 
   const handleJoinGame = async (game: Game, userId: string): Promise<void> => {
     if (game.password) {
-      const password = prompt("Enter the game password:");
-      if (password === null || password.trim() === "") {
-        return;
-      }
+      const password = await showPasswordPrompt();
+      if (password === null) return;
       game.password = password;
     } else {
       game.password = "";
@@ -124,10 +168,13 @@ const Lobby: React.FC = () => {
           playersNumber: game.playersNumber ? parseInt(game.playersNumber, 10) : null,
         }
       ));
-      router.push(`/game/start/${game.gameId}`);
+
+      // exit animation
+      document.querySelector(".page")?.classList.add("pageExit");
+      setTimeout(() => router.push(`/game/start/${game.gameId}`), 600);
     } catch (error) {
       if (error instanceof Error) {
-        alert(`Something went wrong during game joining:\n${error.message}`);
+        showErrorToast(error.message);
       } else {
         console.error("An unknown error occurred during game joining.");
       }
@@ -136,7 +183,7 @@ const Lobby: React.FC = () => {
 
   const handleJoinWithCode = async () => {
     if (!joinCode.trim()) {
-      alert("Please enter a valid game code.");
+      showErrorToast("Please enter a valid game code.");
       return;
     }
 
@@ -144,7 +191,7 @@ const Lobby: React.FC = () => {
       const res: Game = await apiService.post<Game>(`/codejoin`, { gameCode: joinCode });
       await handleJoinGame(res, userId);
     } catch (error) {
-      alert("Invalid code or game not found.");
+      showErrorToast("Invalid code or game not found.");
       console.error(error);
     }
   };
@@ -175,117 +222,184 @@ const Lobby: React.FC = () => {
   }, [chatMessages]);
 
   return (
-    <div className={styles.page}>
+    <div className={`${styles.page} page pageEnter`}>
       {/* Chat Panel */}
-      <div className={styles.chatPanel}>
-        <h3 className={styles.chatTitle}>Lobby Chat</h3>
-        <div className={styles.chatMessages}>
-          {chatMessages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`${styles.chatMessage} ${msg.sender === userName ? styles.ownMessage : ''}`}
-            >
-              <div className={styles.messageContent}>
-                <span><strong>{msg.sender}</strong>: {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}</span>
-              </div>
-              <div className={styles.timestamp}>
-                {new Date(msg.timestamp).toLocaleTimeString()}
-              </div>
+      <AnimatePresence mode="wait">
+        {showChat && (
+          <motion.div
+            // key="chatbox"
+            className={styles.chatBox}
+            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+            transition={{ duration: 0.4 }}
+          >
+            <div className={styles.chatHeader}>
+              <span>Lobby Chat</span>
+              <button className={styles.collapseBtn} onClick={() => { setShowChat(false); setHasUnread(false); }}>
+                Fold
+              </button>
             </div>
-          ))}
-          {/* Empty div to act as a scroll anchor */}
-          <div ref={messagesEndRef} />
-        </div>
-        <div className={styles.chatInputBox}>
-          <input
-            type="text"
-            placeholder="Type a message..."
-            className={styles.chatInput}
-            value={messageInput}
-            onChange={(e) => setMessageInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && messageInput.trim()) {
-                handleSendMessage(); // Trigger send on Enter key press
-                e.preventDefault(); // Prevent form submission or other default Enter key behavior
-              }
-            }}
-          />
-          <button className={styles.chatSendButton} onClick={handleSendMessage}>
-            Send
-          </button>
-        </div>
-      </div>
+            <div className={styles.chatMessages}>
+              {chatMessages.map((msg, idx) => (
+                <div
+                  key={idx}
+                  className={`${styles.chatLine} ${msg.sender === userName ? styles.ownMessage : styles.otherMessage}`}
+                >
+                  <div className={styles.bubble}>
+                    <div className={styles.sender}>
+                      {msg.sender}
+                    </div>
+                    <div className={styles.content}>
+                      {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
+                    </div>
+                    <div className={styles.time}>
+                      {new Date(msg.timestamp).toLocaleTimeString()}
+                    </div>
+                  </div>
+                </div>
 
+              ))}
+              <div ref={messagesEndRef} />
+            </div>
+            <div className={styles.chatInputWrapper}>
+              <input
+                type="text"
+                placeholder="Type a message..."
+                className={styles.chatInput}
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && messageInput.trim()) {
+                    handleSendMessage();
+                    e.preventDefault();
+                  }
+                }}
+              />
+              <button className={styles.chatSendButton} onClick={handleSendMessage}>
+                Send
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {!showChat && (
+        <div className={styles.chatToggle} onClick={() => { setShowChat(true); setHasUnread(false); }}>
+          💬
+          {hasUnread && <span className={styles.unreadDot} />}
+        </div>
+      )}
 
       <div className={styles.leftPanel}>
-        <h1 className={styles.title}>Game Lobby</h1>
-        <p className={styles.subtitle}>Feel free to join!</p>
+        <h1 className={styles.title}><span className={styles.icon}>🎮</span> Game Lobby</h1>
+        <h2 className={styles.subtitle}>👇 Tap a card to join!</h2>
 
-        <div className={styles.headerRow}>
-          <div>Game Name</div>
-          <div>Player in Game</div>
-          <div>Private</div>
-        </div>
-
-        {paginatedGames.length === 0 ? (
-          <div className={styles.emptyMessage}>No Available Game</div>
+        {!gamesLoaded ? (
+          <div className={styles.emptyMessage}>Loading games...</div>
+        ) : !listReveal ? (
+          null // or spinner, or nothing
+        ) : paginatedGames.length === 0 ? (
+          <div className={styles.emptyMessage}>No Available Game. Create one!</div>
         ) : (
-          paginatedGames.map((game, idx) => (
-            <div key={idx} className={styles.lobbyCard} onClick={() => handleJoinGame(game, userId)}>
-              <div className={styles.teamName}>
-                {game.gameName}
-              </div>
-              <div className={styles.playerCount}>{game.realPlayersNumber} / {game.playersNumber}</div>
-              <div className={styles.ownerLink}>{game.password !== "" && <span title="Private game">🔒</span>}</div>
-            </div>
-          ))
+          <AnimatePresence>
+            {listReveal && (
+              <motion.div
+                key="gameList"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className={styles.roomListScrollable}>
+                  {paginatedGames.map((game, idx) => (
+                    <motion.div
+                      key={game.gameId ?? idx}
+                      className={styles.gameCard}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: idx * 0.05 }}
+                      exit={{ opacity: 0, y: 20 }}
+                      onClick={() => handleJoinGame(game, userId)}
+                    >
+                      <div className={styles.cardTop}>
+                        <span className={styles.gameName}>{game.gameName}</span>
+                        {game.password && <span className={styles.lockIcon}>🔒</span>}
+                      </div>
+                      <div className={styles.cardBottom}>
+                        <div className={styles.cardItem}>
+                          <span>👥</span>
+                          <span>{game.realPlayersNumber} / {game.playersNumber}</span>
+                        </div>
+                        <div className={styles.cardItem}>
+                          <span>🕒</span>
+                          <span>{Number(game.time) === 1 ? "1 min" : `${game.time ?? 60} mins`}</span>
+                        </div>
+                        <div className={styles.cardItem}>
+                          ⭐ {game.difficulty ?? "Easy"}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <div className={styles.pagination}>
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                  >
+                    ◀ Prev
+                  </button>
+
+                  <span className={styles.currentPage}>Page {currentPage}</span>
+
+                  <button
+                    disabled={end >= games.length}
+                    onClick={() => setCurrentPage(p => p + 1)}
+                  >
+                    Next ▶
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         )}
-        <div className={styles.pagination}>
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            disabled={currentPage === 1}
-          >
-            Prev
-          </button>
-
-          <span>Page {currentPage}</span>
-
-          <button
-            onClick={() => setCurrentPage((p) => p + 1)}
-            disabled={end >= games.length}
-          >
-            Next
-          </button>
-        </div>
-
-
       </div>
 
       {/* Toggle Button */}
-      <div className={styles.sidebarToggle} onClick={() => setShowSidebar(!showSidebar)}>
-        {showSidebar ? ">" : "+ Create New Game"}
-      </div>
-      <div className={styles.joinCodeBox}>
-        <h3>Join with Code?</h3>
-        <div style={{ display: "flex", gap: "8px", width: "100%" }}>
+      <div className={styles.sidePanel}>
+        <button className={styles.createButton} onClick={toggleCreate}>
+          {showCreateForm ? 'Close' : '+ Create Game'}
+        </button>
+
+        <motion.div
+          animate={showCreateForm ? { height: "auto", opacity: 1 } : { height: 0, opacity: 0 }}
+          initial={false}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          style={{ overflow: "hidden" }}
+        >
+          <CreateForm />
+        </motion.div>
+
+        <form
+          className={styles.joinForm}
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleJoinWithCode();
+          }}
+        >
           <input
+            className={styles.joinInput}
             type="text"
-            className={styles.input}
-            placeholder="Enter code..."
+            placeholder="Join Wih Code..."
             value={joinCode}
             onChange={(e) => setJoinCode(e.target.value)}
           />
-          <button className={styles.createButton} onClick={handleJoinWithCode}>
+          <button className={styles.joinButton} type="submit">
             Join
           </button>
-        </div>
+        </form>
       </div>
-
-      {/* Sidebar */}
-      <div className={`${styles.rightPanel} ${showSidebar ? styles.show : ""}`}>
-        <CreateForm />
-      </div>
-    </div>
+    </div >
   );
 };
 

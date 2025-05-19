@@ -113,14 +113,6 @@ const Register: React.FC = () => {
                 </Form.Item>
 
                 <Form.Item
-                  name="name"
-                  label="Name"
-                  rules={[{ required: true, message: "Please input your name!" }]}
-                >
-                  <Input placeholder="Enter name" />
-                </Form.Item>
-
-                <Form.Item
                   name="password"
                   label="password"
                   rules={[{ required: true, message: "Please input your password!" }]}

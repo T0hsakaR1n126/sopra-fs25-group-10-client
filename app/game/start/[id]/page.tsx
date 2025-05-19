@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import styles from '@/styles/gameStart.module.css';
+import "@/styles/globals.css";
 import { Client } from '@stomp/stompjs';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/types/user';
@@ -13,10 +14,12 @@ import { answerUpdate, clearGameState, gameStart, gameTimeInitialize, ownerUpdat
 import 'react-toastify/dist/ReactToastify.css';
 import { Luckiest_Guy } from "next/font/google";
 import { showSuccessToast } from '@/utils/showSuccessToast';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface Message {
   sender: string;
   content: string;
+  timestamp: string;
 }
 
 const luckiestGuy = Luckiest_Guy({ weight: "400", subsets: ['latin'] });
@@ -43,9 +46,19 @@ const GameStart = () => {
   const [client, setClient] = useState<Client | null>(null);
 
   // State for chat functionality
-  const [showChat, setShowChat] = useState(true); // Toggle chat visibility
+  const [showChat, setShowChat] = useState(false); // Toggle chat visibility
   const [chatMessages, setChatMessages] = useState<Message[]>([]); // Store chat messages with Message type
   const [chatInput, setChatInput] = useState(""); // Store current chat input
+  const [hasUnread, setHasUnread] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+    if (chatMessages[chatMessages.length - 1]?.sender !== username && !showChat) {
+      setHasUnread(true);
+    }
+  }, [chatMessages]);
 
   // mini profile
   interface miniProfile {
@@ -222,7 +235,8 @@ const GameStart = () => {
     try {
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
-      router.push("/lobby");
+      document.querySelector(".roomWrapper")?.classList.add("roomWrapperExit");
+      setTimeout(() => router.push("/lobby"), 400);
     } catch (error) {
       console.error("Error leaving game:", error);
     }
@@ -251,12 +265,13 @@ const GameStart = () => {
   };
 
   const handleCopyCode = () => {
+    navigator.clipboard.writeText(gameCodeShown ?? "");
     showSuccessToast("Game Code Copied!");
   };
 
   const handleSendMessage = () => {
     if (chatInput.trim() && client && client.connected) {
-      const message: Message = {
+      const message = {
         sender: username,
         content: chatInput,
       };
@@ -273,7 +288,7 @@ const GameStart = () => {
 
   return (
     <>
-      <div className={styles.roomWrapper}>
+      <div className={`${styles.roomWrapper} roomWrapper roomWrapperEnter`}>
         <div className={styles.grid}>
           {Array.from({ length: playersNumber }).map((_, idx) => {
             const player = players[idx];
@@ -326,37 +341,69 @@ const GameStart = () => {
         </div>
 
         {/* chatbox */}
-        {showChat && (
-          <div className={styles.chatBox}>
-            <div className={styles.chatHeader}>
-              <span>Chat 💬</span>
-              <button className={styles.collapseBtn} onClick={() => setShowChat(false)}>
-                Fold
-              </button>
-            </div>
-            <div className={styles.chatMessages}>
-              {chatMessages.map((msg, i) => (
-                <div key={i} className={styles.chatLine}>
-                  <b>{msg.sender}:</b> {msg.content}
-                </div>
-              ))}
-            </div>
-            <div className={styles.chatInputWrapper}>
-              <input
-                className={styles.chatInput}
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-              />
-              <button className={styles.chatSendButton} onClick={handleSendMessage}>
-                Send
-              </button>
-            </div>
-          </div>
-        )}
+        <AnimatePresence mode="wait">
+          {showChat && (
+            <motion.div
+              key="chatbox"
+              className={styles.chatBox}
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+              transition={{ duration: 0.4 }}
+            >
+              <div className={styles.chatHeader}>
+                <span>Game Chat</span>
+                <button className={styles.collapseBtn} onClick={() => { setShowChat(false); setHasUnread(false); }}>
+                  Fold
+                </button>
+              </div>
+              <div className={styles.chatMessages}>
+                {chatMessages.map((msg, idx) => (
+                  <div
+                    key={idx}
+                    className={`${styles.chatLine} ${msg.sender === username ? styles.ownMessage : styles.otherMessage}`}
+                  >
+                    <div className={styles.bubble}>
+                      <div className={styles.sender}>
+                        {msg.sender}
+                      </div>
+                      <div className={styles.content}>
+                        {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
+                      </div>
+                      <div className={styles.time}>
+                        {new Date(msg.timestamp).toLocaleTimeString()}
+                      </div>
+                    </div>
+                  </div>
+
+                ))}
+                <div ref={messagesEndRef} />
+              </div>
+              <div className={styles.chatInputWrapper}>
+                <input
+                  type="text"
+                  placeholder="Type a message..."
+                  className={styles.chatInput}
+                  value={chatInput}
+                  onChange={(e) => setChatInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && chatInput.trim()) {
+                      handleSendMessage();
+                      e.preventDefault();
+                    }
+                  }}
+                />
+                <button className={styles.chatSendButton} onClick={handleSendMessage}>
+                  Send
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         {!showChat && (
-          <div className={styles.chatToggle} onClick={() => setShowChat(true)}>
+          <div className={styles.chatToggle} onClick={() => { setShowChat(true); setHasUnread(false); }}>
             💬
+            {hasUnread && <span className={styles.unreadDot} />}
           </div>
         )}
 
