@@ -122,6 +122,8 @@ const Lobby: React.FC = () => {
           scoreBoard: null,
           answer: null,
           playersNumber: game.playersNumber ? parseInt(game.playersNumber, 10) : null,
+          correctCount:0,
+          questionCount:1,
         }
       ));
       router.push(`/game/start/${game.gameId}`);

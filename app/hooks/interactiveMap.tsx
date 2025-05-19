@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useApi } from "./useApi";
 import { useDispatch, useSelector } from "react-redux";
-import { answerUpdate, hintUpdate, hintUsageClear } from "@/gameSlice";
+import { answerUpdate, hintUpdate, hintUsageClear, incrementCorrectCount, incrementQuestionCount } from "@/gameSlice";
 import { toast, ToastContainer } from "react-toastify";
 import { countryIdMap } from "@/utils/idToCountryName";
 
@@ -172,8 +172,9 @@ const InteractiveMap = () => {
             submitLocked.current = true;
             apiService.put<submitResponse>(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
             .then((response) => {
-              
+              dispatch(incrementQuestionCount());
               if (response.judgement) {
+                dispatch(incrementCorrectCount()); 
                 toast.success(`Your answer is correct! The answer is: ${countryIdMap[answerRef.current]}`, {
                   position: "top-center",
                   autoClose: 1000,

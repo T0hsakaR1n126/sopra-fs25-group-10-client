@@ -40,6 +40,8 @@ interface GameState {
   scoreBoard: Map<string, number> | null; // Store the score board
   answer: string | null; // Store the answer
   playersNumber: number | null; // Store the number of players
+  questionCount: number; //Keeps individual user score
+  correctCount: number; //keeps correct answers of individual user
 }
 
 // Initial state setup for each game
@@ -61,6 +63,8 @@ const initialState: GameState = {
   scoreBoard: null, // Store the score board
   answer: null, // Store the answer
   playersNumber: null, // Store the number of players
+  questionCount: 1,
+  correctCount: 0,
 };
 
 // Create the game slice
@@ -130,12 +134,27 @@ const gameSlice = createSlice({
     answerUpdate: (state, action: PayloadAction<string>) => {
       state.answer = action.payload;
     },
+
+    incrementQuestionCount: (state) => {
+      state.questionCount += 1;
+    },
+
+    incrementCorrectCount: (state) => {
+      state.correctCount += 1;
+    },
+
+    resetQuestionStats: (state) => {
+      state.questionCount = 1;
+      state.correctCount = 0;
+    },
   },
 });
 
 // Export actions for use in components
 export const { 
-  gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, scoreBoardResultSet, gameIdUpdate, ownerUpdate, clearGameState, answerUpdate
+  gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, 
+  scoreBoardResultSet, gameIdUpdate, ownerUpdate, clearGameState, answerUpdate,
+  incrementQuestionCount, incrementCorrectCount, resetQuestionStats,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
