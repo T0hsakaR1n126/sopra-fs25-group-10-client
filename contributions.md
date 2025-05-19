@@ -159,6 +159,7 @@ Note: If a team member fails to show continuous progress after using their Joker
 |**@JaveyBae**| 15-05-2025  |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/dd73a39a97a05d3ae1415b4a6e75386369fb104f   https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/647278fdcbe567766a606b8e8789fc6faf6e584d  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/b55c35425bfecf3c812dbbfa6f3d7ffcf0402cf6  https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/f41073ab59f145fcd0007eadfd4605363c4640d2 |level-explanation and avatar display on leaderboard |add more user feature on leaderboard|
 |**@JaveyBae**| 14-05-2025  |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/7d06defeaee33c205e3ec34cf631521451a5149b   |Make the edit page scrollbale |add more user feature on leaderboard|
 |**@JaveyBae**| 15-05-2025 - 16-05-2025  |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/2db22cbd86b3f7e18a2c4fe4575bfdad6307d169   https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/a52f9acf1918336f00500e022d63f42523e928b1  |Implement ? button for game rule display |To clarify the rules in game section|
+|**@JaveyBae**| 18-05-2025  |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/dd73a39a97a05d3ae1415b4a6e75386369fb104f |Replace browser notifications with an in-interface "toaster" implementation for guess feedback. |To unify the notification format|
 
 
 
