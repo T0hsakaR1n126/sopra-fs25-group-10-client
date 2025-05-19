@@ -333,3 +333,8 @@ main,
     transform: translateY(30px);
   }
 }
+
+body.lobby-no-scroll {
+  overflow: hidden;
+  height: 100%;
+}
