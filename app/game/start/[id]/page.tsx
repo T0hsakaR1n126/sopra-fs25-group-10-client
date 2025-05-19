@@ -339,7 +339,7 @@ const GameStart = () => {
         {showChat && (
           <div className={styles.chatBox}>
             <div className={styles.chatHeader}>
-              <span>Chat</span>
+              <span>Game Chat</span>
               <button className={styles.collapseBtn} onClick={() => setShowChat(false)}>
                 Fold
               </button>
