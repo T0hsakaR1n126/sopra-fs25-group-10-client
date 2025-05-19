@@ -3,13 +3,13 @@
 import { useEffect, useRef } from "react";
 import { useApi } from "./useApi";
 import { useDispatch, useSelector } from "react-redux";
-import { answerUpdate, hintUpdate, hintUsageClear } from "@/gameSlice";
+import { answerUpdate, hintUpdate, hintUsageClear, incrementCorrectCount, incrementQuestionCount } from "@/gameSlice";
 import { toast, ToastContainer } from "react-toastify";
 import { countryIdMap } from "@/utils/idToCountryName";
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
-const InteractiveMap: React.FC = () => {
+const InteractiveMap = () => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const scaleRef = useRef(1);
   const movedRef = useRef(false);
@@ -23,250 +23,341 @@ const InteractiveMap: React.FC = () => {
   const hintUsageRef = useRef(hintUsingNumber);
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
   const modeType = useSelector((state: { game: { modeType: string } }) => state.game.modeType);
-
+  
   const answer = useSelector((state: { game: { answer: string } }) => state.game.answer);
   const answerRef = useRef(answer);
-
+  
   const submitLocked = useRef(false);
-
+  
   interface submitResponse {
     judgement: boolean;
     hints: Map<string, string>[];
     answer: string;
   }
-
+  
   function flashElement(el: SVGPathElement) {
     const originalStyle = el.getAttribute("style") || "";
-    const originalFill = "#fff6d5";
-
+    const originalFillMatch = originalStyle.match(/fill:([^;]+);?/);
+    const originalFill = originalFillMatch ? originalFillMatch[1] : "#fff6d5";
+    //rgb(11, 230, 11)
+    
     let count = 0;
     const interval = setInterval(() => {
       const isEven = count % 2 === 0;
-      const color = isEven ? "blue" : originalFill;
-
+      const color = isEven ? "rgb(11, 230, 11)" : originalFill;
+      
       const newStyle = originalStyle.replace(/fill:([^;]+);?/, `fill:${color};`);
       el.setAttribute("style", newStyle);
-
+      
       count++;
       if (count >= 6) {
         clearInterval(interval);
       }
     }, 200);
   }
-
+  
   useEffect(() => {
     answerRef.current = answer;
   }, [answer]);
-
+  
   useEffect(() => {
     fetch("/world_map.svg")
-      .then(response => response.text())
-      .then(svgContent => {
-        const container = document.getElementById("svg-container");
-        if (container) {
-          container.innerHTML = svgContent;
-          const svgElement = container.querySelector("svg");
+    .then(response => response.text())
+    .then(svgContent => {
+      const container = document.getElementById("svg-container");
+      if (container) {
+        container.innerHTML = svgContent;
+        const svgElement = container.querySelector("svg");
+        
+        if (svgElement) {
+          svgRef.current = svgElement;
+          svgElement.style.width = "100%";
+          svgElement.style.height = "120%";
+          svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
+          svgElement.style.cursor = "grab";
+          
+          const countries = svgElement.querySelectorAll("path");
+        countries.forEach(country => {
+          if (country.getAttribute("data-type") === "Indeterminate") return;
+          
+          const countryName = country.getAttribute("data-name_en") || "unknown";
+          const countryId = country.getAttribute("id") || "";
+          
+          country.addEventListener("mouseover", (event) => {
+            if (!country.hasAttribute("data-original-fill")) {
+              const computedStyle = window.getComputedStyle(country);
+              country.setAttribute("data-original-fill", computedStyle.fill || "#fff6d5");
+            }
+            country.style.fill = "grey";
+            country.style.cursor = "pointer";
+            
+            const infoBox = document.getElementById("info-box");
+            if (infoBox) {
+              infoBox.innerText = `Country: ${countryName}`;
+            }
+            
+            const hoverBox = document.getElementById("hover-info-box");
+            if (hoverBox) {
+              hoverBox.innerText = countryName;
+              hoverBox.style.display = "block";
+              
+              // Position near mouse pointer
+              const offset = 15;
+              const boxWidth = hoverBox.offsetWidth;
+              const boxHeight = hoverBox.offsetHeight;
+              const pageWidth = window.innerWidth;
+              const pageHeight = window.innerHeight;
 
-          if (svgElement) {
-            svgRef.current = svgElement;
-            svgElement.style.width = "100%";
-            svgElement.style.height = "120%";
-            svgElement.setAttribute("preserveAspectRatio", "xMidYMid meet");
-            svgElement.style.cursor = "grab";
+              let left = event.clientX + offset;
+              let top = event.clientY + offset;
 
-            const countries = svgElement.querySelectorAll("path");
-            countries.forEach(country => {
-              if (country.getAttribute("data-type") === "Indeterminate") return;
+              if (left + boxWidth > pageWidth) {
+                left = event.clientX - boxWidth - offset;
+              }
+              if (top + boxHeight > pageHeight) {
+                top = event.clientY - boxHeight - offset;
+              }
 
-              const countryName = country.getAttribute("data-name_en") || "unknown";
-              const countryId = country.getAttribute("id") || "";
+              hoverBox.style.left = `${Math.max(0, left)}px`;
+              hoverBox.style.top = `${Math.max(0, top)}px`;
 
-              country.addEventListener("mouseover", () => {
-                country.setAttribute("data-original-fill", "#fff6d5");
-                country.style.fill = "blue";
-                country.style.cursor = "pointer";
-                const infoBox = document.getElementById("info-box");
-                if (infoBox) {
-                  infoBox.innerText = `Country: ${countryName}`;
-                }
-              });
+            }
+          });
+          
+          country.addEventListener("mousemove", (event) => {
+            const hoverBox = document.getElementById("hover-info-box");
+            if (hoverBox) {
+              const offset = 15;
+              const boxWidth = hoverBox.offsetWidth;
+              const boxHeight = hoverBox.offsetHeight;
+              const pageWidth = window.innerWidth;
+              const pageHeight = window.innerHeight;
 
-              country.addEventListener("mouseout", () => {
-                const originalColor = country.getAttribute("data-original-fill") || "none";
-                country.style.fill = originalColor;
-                const infoBox = document.getElementById("info-box");
-                if (infoBox) {
-                  infoBox.innerText = "Country";
-                }
-              });
+              let left = event.clientX + offset;
+              let top = event.clientY + offset;
 
-              country.addEventListener("click", (event) => {
-                event.stopPropagation();
-                if (movedRef.current) {
-                  return;
-                }
-                if (submitLocked.current) { return; }
-                submitLocked.current = true;
-                apiService.put<submitResponse>(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
-                  .then((response) => {
+              if (left + boxWidth > pageWidth) {
+                left = event.clientX - boxWidth - offset;
+              }
+              if (top + boxHeight > pageHeight) {
+                top = event.clientY - boxHeight - offset;
+              }
 
-                    if (response.judgement) {
-                      toast.success(`Your answer is correct! The answer is: ${countryIdMap[answerRef.current]}`, {
-                        position: "top-center",
-                        autoClose: 1000,
-                        style: {
-                          width: '300px',
-                          padding: '30px',
-                          fontSize: '20px',
-                          marginTop: '50px',
-                          marginBottom: '10px',
-                        },
-                      });
-                    } else {
-                      toast.error(`Your answer is wrong! The answer is: ${countryIdMap[answerRef.current]}`, {
-                        position: "top-center",
-                        autoClose: 1000,
-                        style: {
-                          width: '300px',
-                          padding: '30px',
-                          fontSize: '20px',
-                          marginTop: '50px',
-                          marginBottom: '10px',
-                        },
-                      });
-                    }
+              hoverBox.style.left = `${Math.max(0, left)}px`;
+              hoverBox.style.top = `${Math.max(0, top)}px`;
+            }
+          });
+          
+          country.addEventListener("mouseout", () => {
+            const originalColor = country.getAttribute("data-original-fill") || "none";
+            country.style.fill = originalColor;
+            
+            const infoBox = document.getElementById("info-box");
+            if (infoBox) {
+              infoBox.innerText = "Country";
+            }
+            
+            const hoverBox = document.getElementById("hover-info-box");
+            if (hoverBox) {
+              hoverBox.style.display = "none";
+            }
+          });
 
-                    const currentAnswer = answerRef.current;
-                    const ansCountryElement = svgElement.querySelector(`path[id="${currentAnswer}"]`) as SVGPathElement | null;
-                    // let targetEl: SVGPathElement | null = null;
-                    // if (ansCountryElement.length > 0) {
-                    //   targetEl = Array.from(ansCountryElement).find(el => !el.id.startsWith("path")) as SVGPathElement || ansCountryElement[0] as SVGPathElement;
-                    // }
-                    // if (targetEl) {
-                    if (ansCountryElement && !ansCountryElement.id.startsWith("path")) {
-                      flashElement(ansCountryElement);
-                    } else {
-                      console.warn("No matching SVG element found for", ansCountryElement);
-                    }
-
-                    if (modeType !== "exercise") {
-                      dispatch(hintUpdate(response.hints));
-                      dispatch(hintUsageClear());
-                      dispatch(answerUpdate(response.answer));
-                    }
-                  })
-                  .catch(error => {
-                    console.error("Error submitting answer:", error);
-                  }).finally(() => {
-                    setTimeout(() => submitLocked.current = false, 1000);
-                  });
+          country.addEventListener("click", (event) => {
+            event.stopPropagation();
+            if (movedRef.current) {
+              return;
+            }
+            if (submitLocked.current) { return; }
+            submitLocked.current = true;
+            apiService.put<submitResponse>(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
+            .then((response) => {
+              dispatch(incrementQuestionCount());
+              if (response.judgement) {
+                dispatch(incrementCorrectCount()); 
+                toast.success(`Your answer is correct! The answer is: ${countryIdMap[answerRef.current]}`, {
+                  position: "top-center",
+                  autoClose: 1000,
+                  style: {
+                    width: '300px',
+                    padding: '30px',
+                    fontSize: '20px',
+                    marginTop: '50px',
+                    marginBottom: '10px',
+                  },
+                });
+              } else {
+                toast.error(`Your answer is wrong! The answer is: ${countryIdMap[answerRef.current]}`, {
+                  position: "top-center",
+                  autoClose: 1000,
+                  style: {
+                    width: '300px',
+                    padding: '30px',
+                    fontSize: '20px',
+                    marginTop: '50px',
+                    marginBottom: '10px',
+                  },
+                });
+              }
+              
+              const currentAnswer = answerRef.current;
+              const ansCountryElement = svgElement.querySelector(`path[id="${currentAnswer}"]`) as SVGPathElement | null;
+              if (ansCountryElement && !ansCountryElement.id.startsWith("path")) {
+                flashElement(ansCountryElement);
+              } else {
+                console.warn("No matching SVG element found for", ansCountryElement);
+              }
+              
+              if (modeType !== "exercise") {
+                dispatch(hintUpdate(response.hints));
                 dispatch(hintUsageClear());
-              });
-            });
-
-            const updateTransform = () => {
-              if (!svgRef.current) return;
-              svgRef.current.style.transform = `translate(${translateRef.current.x}px, ${translateRef.current.y}px) scale(${scaleRef.current})`;
-            };
-
-            svgElement.addEventListener("wheel", (event) => {
-              event.preventDefault();
-              if (!svgRef.current) return;
-
-              const zoomSpeed = 0.0015;
-              let newScale = scaleRef.current - event.deltaY * zoomSpeed;
-              newScale = clamp(newScale, 1, 5); // scope
-
-              const container = document.getElementById("svg-container");
-              if (container) {
-                const containerWidth = container.clientWidth;
-                const containerHeight = container.clientHeight;
-                const maxOffsetX = (newScale - 1) * containerWidth / 2;
-                const maxOffsetY = (newScale - 1) * containerHeight / 2;
-
-                translateRef.current.x = clamp(translateRef.current.x, -maxOffsetX, maxOffsetX);
-                translateRef.current.y = clamp(translateRef.current.y, -maxOffsetY, maxOffsetY);
+                dispatch(answerUpdate(response.answer));
               }
-
-              scaleRef.current = newScale;
-              updateTransform();
-            }, { passive: false });
-
-            svgElement.addEventListener("mousedown", (event) => {
-              isDraggingRef.current = true;
-              movedRef.current = false;
-              dragStartRef.current = { x: event.clientX, y: event.clientY };
-              svgElement.style.cursor = "grabbing";
+            })
+            .catch(error => {
+              console.error("Error submitting answer:", error);
+            }).finally(() => {
+              setTimeout(() => submitLocked.current = false, 1000);
             });
-
-            window.addEventListener("mousemove", (event) => {
-              if (!isDraggingRef.current || !svgRef.current) return;
-
-              const dx = event.clientX - dragStartRef.current.x;
-              const dy = event.clientY - dragStartRef.current.y;
-
-              if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
-                movedRef.current = true;
-              }
-
-              translateRef.current.x += dx;
-              translateRef.current.y += dy;
-              dragStartRef.current = { x: event.clientX, y: event.clientY };
-
-              const container = document.getElementById("svg-container");
-              if (container) {
-                const containerWidth = container.clientWidth;
-                const containerHeight = container.clientHeight;
-                const maxOffsetX = (scaleRef.current - 1) * containerWidth / 2;
-                const maxOffsetY = (scaleRef.current - 1) * containerHeight / 2;
-
-                translateRef.current.x = clamp(translateRef.current.x, -maxOffsetX, maxOffsetX);
-                translateRef.current.y = clamp(translateRef.current.y, -maxOffsetY, maxOffsetY);
-              }
-
-              updateTransform();
-            });
-
-            window.addEventListener("mouseup", () => {
-              isDraggingRef.current = false;
-              if (svgRef.current) svgRef.current.style.cursor = "grab";
-            });
-
-            window.addEventListener("mouseleave", () => {
-              isDraggingRef.current = false;
-              if (svgRef.current) svgRef.current.style.cursor = "grab";
-            });
+            dispatch(hintUsageClear());
+          });
+        });
+        
+        const updateTransform = () => {
+          if (!svgRef.current) return;
+          svgRef.current.style.transform = `translate(${translateRef.current.x}px, ${translateRef.current.y}px) scale(${scaleRef.current})`;
+        };
+        
+        svgElement.addEventListener("wheel", (event) => {
+          event.preventDefault();
+          if (!svgRef.current) return;
+          
+          const zoomSpeed = 0.0015;
+          let newScale = scaleRef.current - event.deltaY * zoomSpeed;
+          newScale = clamp(newScale, 1, 5); // scope
+          
+          const container = document.getElementById("svg-container");
+          if (container) {
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+            const maxOffsetX = (newScale - 1) * containerWidth / 2;
+            const maxOffsetY = (newScale - 1) * containerHeight / 2;
+            
+            translateRef.current.x = clamp(translateRef.current.x, -maxOffsetX, maxOffsetX);
+            translateRef.current.y = clamp(translateRef.current.y, -maxOffsetY, maxOffsetY);
           }
+          
+          scaleRef.current = newScale;
+          updateTransform();
+        }, { passive: false });
+        
+        svgElement.addEventListener("mousedown", (event) => {
+          isDraggingRef.current = true;
+          movedRef.current = false;
+          dragStartRef.current = { x: event.clientX, y: event.clientY };
+          svgElement.style.cursor = "grabbing";
+        });
+        
+        window.addEventListener("mousemove", (event) => {
+          if (!isDraggingRef.current || !svgRef.current) return;
+          
+          const dx = event.clientX - dragStartRef.current.x;
+          const dy = event.clientY - dragStartRef.current.y;
+          
+          if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
+            movedRef.current = true;
+          }
+          
+          translateRef.current.x += dx;
+          translateRef.current.y += dy;
+          dragStartRef.current = { x: event.clientX, y: event.clientY };
+          
+          // Move hover info box position while dragging
+          const hoverBox = document.getElementById("hover-info-box");
+          if (hoverBox) {
+            hoverBox.style.left = `${
+              event.clientX + 15}px; hoverBox.style.top = ${event.clientY + 15}px`;
+            }
+            
+            const container = document.getElementById("svg-container");
+            if (container) {
+              const containerWidth = container.clientWidth;
+              const containerHeight = container.clientHeight;
+              const maxOffsetX = (scaleRef.current - 1) * containerWidth / 2;
+              const maxOffsetY = (scaleRef.current - 1) * containerHeight / 2;
+              
+              translateRef.current.x = clamp(translateRef.current.x, -maxOffsetX, maxOffsetX);
+              translateRef.current.y = clamp(translateRef.current.y, -maxOffsetY, maxOffsetY);
+            }
+            
+            updateTransform();
+          });
+          
+          window.addEventListener("mouseup", () => {
+            isDraggingRef.current = false;
+            if (svgRef.current) svgRef.current.style.cursor = "grab";
+          });
+          
+          window.addEventListener("mouseleave", () => {
+            isDraggingRef.current = false;
+            if (svgRef.current) svgRef.current.style.cursor = "grab";
+          });
         }
-      })
-      .catch(error => console.error("Load failed: ", error));
+      }
+    })
+    .catch(error => console.error("Load failed: ", error));
   }, [apiService, dispatch, gameId, userId]);
-
+  
   useEffect(() => {
     hintUsageRef.current = hintUsingNumber;
   }, [hintUsingNumber]);
-
+  
   return (
-    <div style={{ width: "100%", height: "100%", position: "relative" }}>
-      <div id="info-box" style={{
-        color: "black",
-        position: "absolute",
-        top: "10px",
-        left: "10px",
-        padding: "8px 12px",
-        border: "1px solid #000",
-        backgroundColor: "white",
-        zIndex: 10,
-        pointerEvents: "none",
-      }}>
-        Country
-      </div>
-      <div id="svg-container" style={{
-        width: "100%",
-        height: "100%",
-        overflow: "hidden"
-      }} />
-      <ToastContainer />
+    <div style={{ width: "100%", height: "100%", position: "relative", backgroundColor: "black" }}>
+    {/* Comment info box */}
+    {/* <div id="info-box" style={{
+      color: "black",
+      position: "absolute",
+      top: "10px",
+      left: "10px",
+      padding: "8px 12px",
+      border: "1px solid #000",
+      backgroundColor: "white",
+      zIndex: 10,
+      pointerEvents: "none",
+    }}>
+    Country
+    </div> */}
+    <div
+    id="hover-info-box"
+    style={{
+      position: "fixed",
+      pointerEvents: "none",
+      padding: "2px 4px",
+      backgroundColor: "rgba(255, 255, 255, 0.9)",
+      border: "0px solid #999",
+      borderRadius: "10px",
+      fontSize: "14px",
+      color: "#333",
+      display: "none",
+      zIndex: 20,
+      top: 0,
+      left: 0,
+      whiteSpace: "nowrap",
+      userSelect: "none",
+    }}
+    />
+    <div id="svg-container" style={{
+      width: "100%",
+      height: "100%",
+      backgroundColor: "#052A51",
+      // #40e0d0
+      //Light Ocean Blue:rgb(49, 114, 158)
+      // Deep Ocean Blue:rgb(6, 46, 85)
+      borderRadius:"20px",
+      overflow: "hidden"
+    }} />
+    <ToastContainer />
     </div>
   );
 };
