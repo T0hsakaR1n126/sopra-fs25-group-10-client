@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import styles from '@/styles/gameStart.module.css';
+import "@/styles/globals.css";
 import { Client } from '@stomp/stompjs';
 import { useParams, useRouter } from 'next/navigation';
 import { User } from '@/types/user';
@@ -259,6 +260,7 @@ const GameStart = () => {
   };
 
   const handleCopyCode = () => {
+    navigator.clipboard.writeText(gameCodeShown ?? "");
     showSuccessToast("Game Code Copied!");
   };
 

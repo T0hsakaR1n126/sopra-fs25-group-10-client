@@ -250,3 +250,86 @@ main,
   position: relative;
   z-index: 1 !important;
 }
+
+/* createForm */
+.createForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* game start */
+.roomWrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.roomWrapperEnter {
+  animation: fadeInRoomwrapper 0.6s ease-out;
+}
+
+.roomWrapperExit {
+  animation: fadeOutRoomwrapper 0.6s ease-out;
+}
+
+@keyframes fadeInRoomwrapper {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutRoomwrapper {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
+
+/* lobby */
+.pageEnter {
+  animation: fadeInPage 0.6s ease-out;
+}
+
+.pageExit {
+  animation: fadeOutPage 0.6s ease-in forwards;
+}
+
+@keyframes fadeInPage {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOutPage {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+}
