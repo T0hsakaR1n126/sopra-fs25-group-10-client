@@ -338,11 +338,13 @@ const GameBoard: React.FC = () => {
       <div className={styles.mainContent}>
         <div className={styles.sidebar}>
           <div className={styles.rulesBox}>
-            <h3>Rules</h3>
+            <h3>Play Rules</h3>
             <ul>
-              <li>Clicking on the map automatically records your answer.</li>
+              <li>Hovering over country on the map shows its name.</li>
+              <li>Clicking on country immediately records your answer.</li>
               <li>Each hint is easier than the previous one.</li>
               <li>You can unlock hints in sequential order only.</li>
+              <li>Only next hint unlocks when you use current hint.</li>
             </ul>
           </div>
         <div className={styles.hintBox}>
