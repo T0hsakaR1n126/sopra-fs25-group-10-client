@@ -102,16 +102,49 @@ const InteractiveMap = () => {
               hoverBox.style.display = "block";
               
               // Position near mouse pointer
-              hoverBox.style.left = `${event.clientX + 15}px`;
-              hoverBox.style.top = `${event.clientY + 15}px`;
+              const offset = 15;
+              const boxWidth = hoverBox.offsetWidth;
+              const boxHeight = hoverBox.offsetHeight;
+              const pageWidth = window.innerWidth;
+              const pageHeight = window.innerHeight;
+
+              let left = event.clientX + offset;
+              let top = event.clientY + offset;
+
+              if (left + boxWidth > pageWidth) {
+                left = event.clientX - boxWidth - offset;
+              }
+              if (top + boxHeight > pageHeight) {
+                top = event.clientY - boxHeight - offset;
+              }
+
+              hoverBox.style.left = `${Math.max(0, left)}px`;
+              hoverBox.style.top = `${Math.max(0, top)}px`;
+
             }
           });
           
           country.addEventListener("mousemove", (event) => {
             const hoverBox = document.getElementById("hover-info-box");
             if (hoverBox) {
-              hoverBox.style.left = `${event.clientX + 15}px`;
-              hoverBox.style.top = `${event.clientY + 15}px`;
+              const offset = 15;
+              const boxWidth = hoverBox.offsetWidth;
+              const boxHeight = hoverBox.offsetHeight;
+              const pageWidth = window.innerWidth;
+              const pageHeight = window.innerHeight;
+
+              let left = event.clientX + offset;
+              let top = event.clientY + offset;
+
+              if (left + boxWidth > pageWidth) {
+                left = event.clientX - boxWidth - offset;
+              }
+              if (top + boxHeight > pageHeight) {
+                top = event.clientY - boxHeight - offset;
+              }
+
+              hoverBox.style.left = `${Math.max(0, left)}px`;
+              hoverBox.style.top = `${Math.max(0, top)}px`;
             }
           });
           
