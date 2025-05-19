@@ -38,17 +38,17 @@ const GameBoard: React.FC = () => {
   const [endMessage, setEndMessage] = useState('');
   const [nextLocked, setNextLocked] = useState(false);
   const [showUnlockedHintsList, setShowUnlockedHintsList] = useState(false);
-  const [expandedHints, setExpandedHints] = useState<boolean[]>(
-    Array(unlockedHints).fill(false)
-  );
+  // const [expandedHints, setExpandedHints] = useState<boolean[]>(
+  //   Array(unlockedHints).fill(false)
+  // );
 
-  const toggleHint = (idx: number) => {
-    setExpandedHints(prev => {
-      const newState = [...prev];
-      newState[idx] = !newState[idx];
-      return newState;
-    });
-  };
+  // const toggleHint = (idx: number) => {
+  //   setExpandedHints(prev => {
+  //     const newState = [...prev];
+  //     newState[idx] = !newState[idx];
+  //     return newState;
+  //   });
+  // };
 
   const currentHint = hints[hintIndex - 1];
   const handleHintClick = (index: number) => {
