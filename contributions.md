@@ -158,6 +158,10 @@ Note: If a team member fails to show continuous progress after using their Joker
 | **@fuxinyu01**  |  18-05-2025         | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/a30ca3efd8622ce2fcb2ba0b498ccc5366ea218a https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/3fddbb1ae0dae9217946673fba530171642c3ff9 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/0ef2bbf4d6dd8f6ab6059d63092fe1c1fc46722b|fix bugs | fix bugs of game service |
 |             **@fuxinyu01**              |18-05-2025        | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/5f892f1752c273a3e4c16cfa5037daf3d537d513 |ux improvement|update error message of duplicate username|
 |             **@fuxinyu01**              |19-05-2025        | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/bcd5384a48ada679d1a2034c2bc8d382baaf8cc8 |update tests|write tests for uncovered endpoint|
+|**@yzq0325**| 17-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/pull/95/commits/3de796ef0c4fd9e4c8454d89c7d6f25dfdeef214|Persistant Combat Mode|Keep combat mode groups intact after a game ends until manually deleted or everyone leaves.|
+|**@yzq0325**| 19-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/pull/95/commits/9c4dd0a165de076da3bfd48234a6cdabf801f0dd|UI improvement|UI improvement of home, login, register and hall|
+|**@yzq0325**| 17-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/pull/95/commits/de4376573319bde5a550f834ba17cb9db004eacd|fix country name display in exercise mode|Show country name but not country ID in exercise mode.|
  ---
+
 
 *Continue with the same table format as above.*
