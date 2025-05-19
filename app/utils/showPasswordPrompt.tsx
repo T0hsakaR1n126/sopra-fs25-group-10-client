@@ -1,18 +1,18 @@
-import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import React, { useState, useEffect, useRef } from "react";
 
 export const showPasswordPrompt = (): Promise<string | null> => {
   return new Promise((resolve) => {
     let toastId: string | number = "";
 
-    const ToastContent = ({ toastIdRef }: { toastIdRef: React.MutableRefObject<string | number>; }) => {
+    const ToastContent = () => {
       const [password, setPassword] = useState("");
       const containerRef = useRef<HTMLDivElement>(null);
 
       useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
           if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-            toast.dismiss(toastIdRef.current);
+            toast.dismiss(toastId);
             resolve(null);
           }
         };
@@ -21,12 +21,12 @@ export const showPasswordPrompt = (): Promise<string | null> => {
       }, []);
 
       const handleSubmit = () => {
-        toast.dismiss(toastIdRef.current);
+        toast.dismiss(toastId);
         resolve(password.trim() === "" ? null : password);
       };
 
       const handleCancel = () => {
-        toast.dismiss(toastIdRef.current);
+        toast.dismiss(toastId);
         resolve(null);
       };
 
@@ -72,8 +72,7 @@ export const showPasswordPrompt = (): Promise<string | null> => {
       );
     };
 
-    const toastIdRef = { current: "" as string | number };
-    toastIdRef.current = toast(<ToastContent toastIdRef={toastIdRef} />, {
+    toastId = toast(<ToastContent />, {
       position: "top-center",
       autoClose: false,
       closeOnClick: false,
