@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Luckiest_Guy } from "next/font/google";
 import { showSuccessToast } from '@/utils/showSuccessToast';
 import { showErrorToast } from "@/utils/showErrorToast";
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, mapEasingToNativeEasing, motion } from 'framer-motion';
 
 interface Message {
   sender: string;
@@ -101,14 +101,6 @@ const GameStart = () => {
         setPlayers(response);
         setOwnerName(response[0].username ?? "");
         dispatch(ownerUpdate(response[0].userId ?? ""));
-
-        const initialReady: Record<string, boolean> = {};
-        response.forEach(player => {
-          if (player.userId != null) {
-            initialReady[player.userId.toString()] = player.isReady ?? false;
-          }
-        });
-        setReadyStatus(initialReady);
       } catch (error) {
         console.error("Failed to fetch players:", error);
         showErrorToast(`${error}`);
@@ -134,6 +126,7 @@ const GameStart = () => {
 
         stompClient.subscribe(`/topic/ready/${gameId}/status`, (message) => {
           const map: Record<string, boolean> = JSON.parse(message.body);
+          console.log(">> STATUS RECEIVED:", map); 
 
           const normalizedMap: Record<string, boolean> = {};
           for (const [k, v] of Object.entries(map)) {
@@ -145,7 +138,7 @@ const GameStart = () => {
 
         stompClient.subscribe(`/topic/ready/${gameId}/canStart`, (message) => {
           const can: boolean = JSON.parse(message.body);
-
+          console.log(">> STATUS RECEIVED:", can); 
           setCanStart(can);
         });
 
