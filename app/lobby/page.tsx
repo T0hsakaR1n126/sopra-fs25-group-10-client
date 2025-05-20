@@ -42,14 +42,14 @@ const Lobby: React.FC = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    if (chatMessages[chatMessages.length - 1]?.sender !== userName && !showChat) {
+    if (chatMessages.length > 0 && chatMessages[chatMessages.length - 1]?.sender !== userName && !showChat) {
       setHasUnread(true);
     }
   }, [chatMessages]);
 
   // paginate page
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 5;
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
 

@@ -55,7 +55,7 @@ const GameStart = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    if (chatMessages[chatMessages.length - 1]?.sender !== username && !showChat) {
+    if (chatMessages.length > 0 && chatMessages[chatMessages.length - 1]?.sender !== username && !showChat) {
       setHasUnread(true);
     }
   }, [chatMessages]);

@@ -335,6 +335,6 @@ main,
 }
 
 body.lobby-no-scroll {
-  overflow: hidden;
+  /* overflow: hidden; */
   height: 100%;
 }
