@@ -62,10 +62,10 @@ export default function Navbar() {
             setDropdownOpen(false);
             if (pathname === "/game") {
               window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
+              await new Promise((res) => setTimeout(res, 1200));
             } else {
               window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+              await new Promise((res) => setTimeout(res, 300));
             }
             router.push(`/users/${userId}/profile`);
           }}
@@ -82,7 +82,7 @@ export default function Navbar() {
             setDropdownOpen(false);
             if (pathname === "/game") {
               window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
+              await new Promise((res) => setTimeout(res, 1200));
             } else {
               window.dispatchEvent(new Event("otherExit"));
               await new Promise((res) => setTimeout(res, 300));
@@ -102,7 +102,7 @@ export default function Navbar() {
             setDropdownOpen(false);
             if (pathname === "/game") {
               window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
+              await new Promise((res) => setTimeout(res, 1200));
             } else {
               window.dispatchEvent(new Event("otherExit"));
               await new Promise((res) => setTimeout(res, 300));
@@ -120,7 +120,7 @@ export default function Navbar() {
             setDropdownOpen(false);
             if (pathname === "/game") {
               window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
+              await new Promise((res) => setTimeout(res, 1200));
             } else {
               window.dispatchEvent(new Event("otherExit"));
               await new Promise((res) => setTimeout(res, 300));
@@ -160,7 +160,7 @@ export default function Navbar() {
             //   await new Promise((res) => setTimeout(res, 1500));
             // } else {
             window.dispatchEvent(new Event("otherExit"));
-            await new Promise((res) => setTimeout(res, 300));
+            await new Promise((res) => setTimeout(res, 100));
             // }
             router.push("/game");
           }}
@@ -185,7 +185,7 @@ export default function Navbar() {
               setDropdownOpen(false);
               if (pathname === "/game") {
                 window.dispatchEvent(new Event("dashboardExit"));
-                await new Promise((res) => setTimeout(res, 1500));
+                await new Promise((res) => setTimeout(res, 1200));
               } else {
                 window.dispatchEvent(new Event("otherExit"));
                 await new Promise((res) => setTimeout(res, 300));

@@ -270,11 +270,11 @@ main,
 }
 
 .roomWrapperEnter {
-  animation: fadeInRoomwrapper 0.3s ease-out;
+  animation: fadeInRoomwrapper 0.4s ease-out;
 }
 
 .roomWrapperExit {
-  animation: fadeOutRoomwrapper 0.3s ease-out;
+  animation: fadeOutRoomwrapper 0.4s ease-out;
 }
 
 @keyframes fadeInRoomwrapper {

@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
 import { useApi } from "./useApi";
 import { useDispatch, useSelector } from "react-redux";
 import { answerUpdate, hintUpdate, hintUsageClear, incrementCorrectCount, incrementQuestionCount } from "@/gameSlice";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import { countryIdMap } from "@/utils/idToCountryName";
 import Particles from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
 import { loadSlim } from "tsparticles-slim";
 import { countryCodeMap } from "@/utils/countryCodeMap";
+import { showSuccessToast } from "@/utils/showSuccessToast";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 
@@ -263,29 +265,31 @@ const InteractiveMap = () => {
                     dispatch(incrementQuestionCount());
                     if (response.judgement) {
                       dispatch(incrementCorrectCount());
-                      toast.success(`Your answer is correct! The answer is: ${countryIdMap[answerRef.current]}`, {
-                        position: "top-center",
-                        autoClose: 1000,
-                        style: {
-                          width: '300px',
-                          padding: '30px',
-                          fontSize: '20px',
-                          marginTop: '50px',
-                          marginBottom: '10px',
-                        },
-                      });
+                      // toast.success(`Your answer is correct! The answer is: ${countryIdMap[answerRef.current]}`, {
+                      //   position: "top-center",
+                      //   autoClose: 1000,
+                      //   style: {
+                      //     width: '300px',
+                      //     padding: '30px',
+                      //     fontSize: '20px',
+                      //     marginTop: '50px',
+                      //     marginBottom: '10px',
+                      //   },
+                      // });
+                      showSuccessToast(`Your answer is correct! The answer is: ${countryIdMap[answerRef.current]}`);
                     } else {
-                      toast.error(`Your answer is wrong! The answer is: ${countryIdMap[answerRef.current]}`, {
-                        position: "top-center",
-                        autoClose: 1000,
-                        style: {
-                          width: '300px',
-                          padding: '30px',
-                          fontSize: '20px',
-                          marginTop: '50px',
-                          marginBottom: '10px',
-                        },
-                      });
+                      // toast.error(`Your answer is wrong! The answer is: ${countryIdMap[answerRef.current]}`, {
+                      //   position: "top-center",
+                      //   autoClose: 1000,
+                      //   style: {
+                      //     width: '300px',
+                      //     padding: '30px',
+                      //     fontSize: '20px',
+                      //     marginTop: '50px',
+                      //     marginBottom: '10px',
+                      //   },
+                      // });
+                      showErrorToast(`Your answer is wrong! The answer is: ${countryIdMap[answerRef.current]}`);
                     }
 
                     const currentAnswer = answerRef.current;
@@ -493,7 +497,6 @@ const InteractiveMap = () => {
           userSelect: "none",
         }}
       />
-      <ToastContainer />
     </div>
   );
 };

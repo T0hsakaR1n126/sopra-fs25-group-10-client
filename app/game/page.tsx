@@ -9,6 +9,7 @@ import { useApi } from "@/hooks/useApi";
 import { Client } from "@stomp/stompjs";
 import { gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from "@/gameSlice";
 import { motion, AnimatePresence } from "framer-motion";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const Dashboard: React.FC = () => {
   const router = useRouter();
@@ -44,8 +45,8 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const client = new Client({
-      brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
-      // brokerURL: "http://localhost:8080/ws",
+      // brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
+      brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
         client.subscribe(`/topic/startsolo/${userId}/gameId`, (message) => {
@@ -124,7 +125,7 @@ const Dashboard: React.FC = () => {
 
         setTimeout(() => {
           setCountDown(null);
-          requestAnimationFrame(() => {
+          requestAnimationFrame(async () => {
             setShowButtons(false);
             setTimeout(async () => {
               window.dispatchEvent(new Event("navbarExit"));
@@ -158,7 +159,6 @@ const Dashboard: React.FC = () => {
     };
 
     try {
-
       if (!isExercise) {
         await apiService.post<Game>("/startsolo", newGame);
       } else {
@@ -254,7 +254,7 @@ const Dashboard: React.FC = () => {
                   setShowButtons(false);
                   setTimeout(() => {
                     router.push("/lobby");
-                  }, 1500);
+                  }, 1200);
                 }}>
                   <div className="button-inner">
                     <img src="/combat.png" alt="Combat Icon" className="button-icon" />

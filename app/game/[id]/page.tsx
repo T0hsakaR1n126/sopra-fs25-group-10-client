@@ -44,25 +44,13 @@ const GameBoard: React.FC = () => {
   const [showRules, setShowRules] = useState(false);
   const [endMessage, setEndMessage] = useState('');
   const [nextLocked, setNextLocked] = useState(false);
-  const [showUnlockedHintsList, setShowUnlockedHintsList] = useState(false);
 
-  //for individual score in the game
-  const questionCount = useSelector((state: { game: {questionCount : number} }) =>  state.game.questionCount);
-  const correctCount = useSelector((state: { game: {correctCount : number} }) =>  state.game.correctCount);
+  // for individual score in the game
+  const questionCount = useSelector((state: { game: { questionCount: number } }) => state.game.questionCount);
+  const correctCount = useSelector((state: { game: { correctCount: number } }) => state.game.correctCount);
+  const hintUsage = useSelector((state: { game: { hintUsage: number } }) => state.game.hintUsage);
 
   const score = scoreBoard.get(username) ?? 0;
-
-  // const [expandedHints, setExpandedHints] = useState<boolean[]>(
-  //   Array(unlockedHints).fill(false)
-  // );
-
-  // const toggleHint = (idx: number) => {
-  //   setExpandedHints(prev => {
-  //     const newState = [...prev];
-  //     newState[idx] = !newState[idx];
-  //     return newState;
-  //   });
-  // };
 
   const currentHint = hints[hintIndex - 1];
   const handleHintClick = (index: number) => {
@@ -99,8 +87,8 @@ const GameBoard: React.FC = () => {
     }
 
     const client = new Client({
-      brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
-      // brokerURL: "http://localhost:8080/ws",
+      // brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
+      brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected');
@@ -132,7 +120,7 @@ const GameBoard: React.FC = () => {
             const data: string = message.body;
             setGameEnded(true);
             setEndMessage(data);
-            dispatch(resetQuestionStats());            
+            dispatch(resetQuestionStats());
             setTimeout(() => {
               if (String(userId) === String(ownerId)) {
                 apiService.put(`/save/${gameId}`, {})
@@ -352,98 +340,90 @@ const GameBoard: React.FC = () => {
 
       <div className={styles.mainContent}>
         <div className={styles.sidebar}>
-                  <div className={styles.hintBox}>
-          {currentHint ? (
-            <div className={styles.hintText}>
-              <p>
-                <strong>Hint {hintIndex}:</strong><br />
-                {currentHint.text}
-              </p>
-            </div>
-          ) : (
-            <div className={styles.hintText}>
-              <p>No hints available</p>
-            </div>
-          )}
-          
-        <div className={styles.hintIconsContainer}>
-          <div className={styles.hintLabel}>Click for hints:</div>
-          <div className={styles.hintIconsRow}>
-            {hints.map((_, index) => {
-              const isUsed = index < unlockedHints;
-              const isNext = index === unlockedHints;      // the next hint to unlock
-              return (
-              <span
-                key={index}
-                onClick={() => handleHintClick(index)}
-                className={`${styles.hintIcon} ${
-                  isUsed ? styles.hintUsed : 
-                  isNext ? styles.hintUnlocked : 
-                  styles.hintLocked
-                }`}
-              >
-              {isUsed ? '✓' : isNext ? (
-                // unlocked green SVG
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="#81c784" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-7h-1V7a5 5 0 00-10 0v3H6a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2v-7a2 2 0 00-2-2zm-7-3a3 3 0 016 0v3H11V7z"/>
-                </svg>
-              ) : (
-                // locked red SVG
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect x="7" y="11" width="10" height="9" rx="2" ry="2" fill="#b71c1c" />
-                  <path
-                    d="M7 11V7a5 5 0 0110 0v4"
-                    stroke="#ef5350"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <circle cx="12" cy="15" r="1.5" fill="#ef5350" />
-                </svg>
-              )}         
-              </span>
-              );
-            })}
-          </div>
-          <div className={styles.hintsContainer}>
-            <button 
-              onClick={() => setShowUnlockedHintsList(prev => !prev)} 
-              className={styles.collapsibleToggle}
-            >
-              {showUnlockedHintsList ? "Hide Unlocked Hints" : "Show All Unlocked Hints"}
-            </button>
 
-            {showUnlockedHintsList && (
-              <ul className={styles.unlockedHintsList}>
+          <div className={styles.hintIconsContainer}>
+            <div className={styles.hintIconsRow}>
+              {hints.map((_, index) => {
+                const isUsed = index < unlockedHints;
+                const isNext = index === unlockedHints;      // the next hint to unlock
+                return (
+                  <span
+                    key={index}
+                    className={`${styles.hintIcon} ${isUsed ? styles.hintUsed :
+                      isNext ? styles.hintUnlocked :
+                        styles.hintLocked
+                      }`}
+                  >
+                    {isUsed ? '✓' : isNext ? (
+                      // unlocked green SVG
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#81c784" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-7h-1V7a5 5 0 00-10 0v3H6a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2v-7a2 2 0 00-2-2zm-7-3a3 3 0 016 0v3H11V7z" />
+                      </svg>
+                    ) : (
+                      // locked red SVG
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <rect x="7" y="11" width="10" height="9" rx="2" ry="2" fill="#b71c1c" />
+                        <path
+                          d="M7 11V7a5 5 0 0110 0v4"
+                          stroke="#ef5350"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <circle cx="12" cy="15" r="1.5" fill="#ef5350" />
+                      </svg>
+                    )}
+                  </span>
+                );
+              })}
+            </div>
+
+            {currentHint ? (
+              <div className={styles.hintText}>
                 {hints.slice(0, unlockedHints).map((hint, idx) => (
-                  <li key={idx} className={styles.hintItem}>
-                    <strong className={styles.hintLabel}>Hint {idx + 1}:</strong> {hint.text}
+                  <React.Fragment key={idx}>
+                    <p><strong className={styles.hintLabel}>Hint {idx + 1}:</strong> {hint.text}</p>
                     <div className={styles.hintDivider}></div>
-                  </li>
+                  </React.Fragment>
                 ))}
-              </ul>
+              </div>
+            ) : (
+              <div className={styles.hintText}>
+                <p>No hints available</p>
+              </div>
             )}
-          </div>
-          <div className={styles.ownScoreBox}>
-            <h3>My Score: {score}</h3>
-            <div className={styles.scoreStat}>
-              <span className={styles.label}>Total:</span>
-              <span className={styles.attempted}>{questionCount}</span>
+
+            <div className={styles.hitButtonWrapper}>
+              <button
+                onClick={() => handleHintClick(hintUsage)}
+                className={styles.collapsibleToggle}
+                disabled={hintUsage >= 5}
+              >
+                GET A HINT!
+              </button>
             </div>
-            <div className={styles.scoreStat}>
-              <span className={styles.label}>Correct:</span>
-              <span className={styles.correct}>{correctCount}</span>
-            </div>
+
+            {gameMode !== "exercise" && (<div className={styles.ownScoreBox}>
+              <h3>My Score: {score}</h3>
+              <div className={styles.scoreStat}>
+                <span className={styles.label}>Total:</span>
+                <span className={styles.attempted}>{questionCount}</span>
+              </div>
+              <div className={styles.scoreStat}>
+                <span className={styles.label}>Correct:</span>
+                <span className={styles.correct}>{correctCount}</span>
+              </div>
+            </div>)}
           </div>
-        </div>
-        </div>
-          <div className={styles.scoreboardWrapper}>
+
+
+          {/* <div className={styles.scoreboardWrapper}>
             <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               Play Rules
               <button
@@ -490,7 +470,7 @@ const GameBoard: React.FC = () => {
                 </ul>
 
                 <strong style={{ textDecoration: 'underline', display: 'block', marginTop: '20px', marginBottom: '8px' }}>
-                  Scoring System 
+                  Scoring System
                 </strong>
                 <p>(Solo & Combat)</p>
                 <ul style={{ textAlign: 'left', paddingLeft: '10px', marginTop: 0 }}>
@@ -500,8 +480,9 @@ const GameBoard: React.FC = () => {
                 </ul>
               </div>
             </h3>
-          </div>
-          <div className={styles.rulesBox}>
+          </div> */}
+
+          {/* <div className={styles.rulesBox}>
             <ul>
               <li>Hovering over a country on the map shows its name.</li>
               <li>Clicking on a country immediately records your answer.</li>
@@ -511,12 +492,16 @@ const GameBoard: React.FC = () => {
               <li>Only the next hint unlocks when you use the current hint.</li>
               <li>In exercise mode, click on &quot;Next&quot; to move to the following question instead of automatic progression.</li>
             </ul>
-          </div>
+          </div> */}
         </div>
+
+        {/* map area */}
         <div className={styles.mapArea}>
           <InteractiveMap />
         </div>
-        </div>
+      </div>
+
+      {/* overlay */}
       {gameEnded && (
         <div className={styles.endOverlay}>
           <div className={styles.endMessage}>

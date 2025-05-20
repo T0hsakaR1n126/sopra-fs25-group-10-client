@@ -89,8 +89,8 @@ const Lobby: React.FC = () => {
 
   useEffect(() => {
     const client = new Client({
-      brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
-      // brokerURL: "http://localhost:8080/ws",
+      // brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
+      brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
         clientRef.current = client;
@@ -166,14 +166,14 @@ const Lobby: React.FC = () => {
           scoreBoard: null,
           answer: null,
           playersNumber: game.playersNumber ? parseInt(game.playersNumber, 10) : null,
-          correctCount:0,
-          questionCount:1,
+          correctCount: 0,
+          questionCount: 1,
         }
       ));
 
       // exit animation
       document.querySelector(".page")?.classList.add("pageExit");
-      setTimeout(() => router.push(`/game/start/${game.gameId}`), 300);
+      setTimeout(() => router.push(`/game/start/${game.gameId}`), 100);
     } catch (error) {
       if (error instanceof Error) {
         showErrorToast(error.message);
@@ -301,7 +301,15 @@ const Lobby: React.FC = () => {
         ) : !listReveal ? (
           null // or spinner, or nothing
         ) : paginatedGames.length === 0 ? (
-          <div className={styles.emptyMessage}>No Available Game. Create one!</div>
+          <motion.div
+            key="gameList"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className={styles.emptyMessage}>No Available Game. Create one!</div>
+          </motion.div>
         ) : (
           <AnimatePresence>
             {listReveal && (
