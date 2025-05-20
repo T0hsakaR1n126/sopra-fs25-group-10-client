@@ -29,7 +29,6 @@ const ProfilePage = () => {
     const fetchUser = async () => {
       try {
         const response: User = await apiService.get<User>(`/users/${viewedUserId}`);
-        showErrorToast(`Something went wrong while fetching user:`);
         setUser(response);
       } catch (error) {
         if (error instanceof Error) {
