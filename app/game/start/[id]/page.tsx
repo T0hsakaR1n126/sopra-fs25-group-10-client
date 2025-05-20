@@ -233,6 +233,14 @@ const GameStart = () => {
 
   const handleExitGame = async () => {
     try {
+
+          // 新增 ↓↓↓
+        if (client && client.connected) {
+          client.publish({
+            destination: `/app/game/${gameId}/ready`,
+            body: JSON.stringify({ userId, ready: false }),
+          });
+        }
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
       document.querySelector(".roomWrapper")?.classList.add("roomWrapperExit");
@@ -321,7 +329,7 @@ const GameStart = () => {
                       {player.userId?.toString() === players[0]?.userId?.toString() && "👑 "}{player.username}
                     </div>
                     <div className={styles.readyStampWrapper}>
-                      {readyStatus[player.userId?.toString() ?? ""] && (
+                      {readyStatus[player.userId?.toString() ?? ""] && player.userId !== players[0]?.userId && (
                         <div className={styles.readyStamp}>
                           READY
                         </div>
