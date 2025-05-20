@@ -2,15 +2,15 @@
 import { useEffect, useState } from "react";
 import { Input, Button, Form } from "antd";
 import { useApi } from "@/hooks/useApi";
-import { User } from "@/types/user"
+import { User } from "@/types/user";
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserInfo } from "@/userSlice";
-// import Authenticator from "@/auth/authenticator";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const ProfilePage = () => {
   const router = useRouter();
-  const params = useParams(); // 获取 URL 参数
+  const params = useParams();
   const apiService = useApi();
   const dispatch = useDispatch();
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
@@ -22,26 +22,27 @@ const ProfilePage = () => {
   const avatar = ["/avatar_1.png", "/avatar_2.png", "/avatar_3.png", "/avatar_4.png", "/avatar_5.png", "/avatar_6.png"];
   const currentAvatar = Form.useWatch("avatar", form);
 
-    useEffect(() => {
-    }, [params]);
+  useEffect(() => {
+  }, [params]);
 
-useEffect(() => {
-  const fetchUser = async () => {
-    try {
-      const response: User = await apiService.get<User>(`/users/${viewedUserId}`);
-      setUser(response);
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(`Something went wrong while fetching user:\n${error.message}`);
-        router.push("/game");
-      } else {
-        console.error("An unknown error occurred while fetching user.");
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response: User = await apiService.get<User>(`/users/${viewedUserId}`);
+        showErrorToast(`Something went wrong while fetching user:`);
+        setUser(response);
+      } catch (error) {
+        if (error instanceof Error) {
+          showErrorToast(`Something went wrong while fetching user: ${error.message}`);
+          router.push("/game");
+        } else {
+          console.error("An unknown error occurred while fetching user.");
+        }
       }
-    }
-  };
+    };
 
-  fetchUser();
-}, [apiService, viewedUserId, router]);
+    fetchUser();
+  }, [apiService, viewedUserId, router]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -75,25 +76,22 @@ useEffect(() => {
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
-        alert("Invalid update. Please try again.");
+        showErrorToast("Invalid update. Please try again.");
       }
     }
   };
 
   return (
-    // <Authenticator>
-    <div style={{ minHeight: "100vh", paddingTop: "80px", padding: "80px 16px",       overflowY: "auto", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}>
+    <div style={{ minHeight: "100vh", paddingTop: "80px", padding: "80px 16px", overflowY: "auto", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}>
       <div style={{ width: "100%", maxWidth: "500px", margin: "auto", padding: "20px", background: "#333", color: "#fff", borderRadius: "8px", boxSizing: "border-box" }}>
         <h2 style={{ textAlign: "center" }}>User Profile</h2>
-        {/* Profile Form */}
-        {/* {!user && ( // only for test */}
         {user && (
           <>
             <Form
               form={form}
               layout="vertical"
               onFinish={handleSave}
-              initialValues={user} // only for test
+              initialValues={user}
               style={{ marginTop: "20px", color: "#fff", width: "100%" }}
             >
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
@@ -154,40 +152,6 @@ useEffect(() => {
                     )}
                   </Form.Item>
                 </Form.Item>
-                {/* <Form.Item>
-                  {(() => {
-                    const level = form.getFieldValue("level");
-
-                    let label = "No Level";
-                    if (level != null) {
-                      if (level < 5000) label = "MapAmateur";
-                      else if (level < 10000) label = "MapExpert";
-                      else label = "MapMaster";
-                    }
-
-                    return (
-                      <div
-                        style={{
-                          padding: "6px 16px",
-                          backgroundColor:
-                            label === "MapMaster"
-                              ? "#d4af37"
-                              : label === "MapExpert"
-                                ? "#40a9ff"
-                                : "#73d13d",
-                          color: "#000",
-                          fontWeight: "bold",
-                          borderRadius: "999px",
-                          fontSize: "14px",
-                          textAlign: "center",
-                          boxShadow: "0 0 6px rgba(0,0,0,0.2)",
-                        }}
-                      >
-                        {label}
-                      </div>
-                    );
-                  })()}
-                </Form.Item> */}
               </div>
               <Form.Item label="Username">
                 {isEditing ? (
@@ -217,18 +181,6 @@ useEffect(() => {
                   <Form.Item name="password" noStyle>
                     <Input.Password visibilityToggle={true} placeholder="input your new password" />
                   </Form.Item>
-                  {/* <div
-                    style={{
-                      padding: "6px 11px",
-                      minHeight: 32,
-                      border: "1px solid #666",
-                      borderRadius: 6,
-                      color: form.getFieldValue("email") ? "#fff" : "#888",
-                      backgroundColor: "#444",
-                    }}
-                  >
-                    {form.getFieldValue("email") || "Not Set"}
-                  </div> */}
                 </Form.Item>
               ) : (
                 <></>
@@ -278,11 +230,9 @@ useEffect(() => {
                   </div>
                 )}
               </Form.Item>
-
             </Form>
             <br />
             {user.token === token ? (
-              // {!user ? ( // only for test
               !isEditing ? (
                 <>
                   <Button type="primary" onClick={handleEdit} style={{ marginRight: '20px' }}>
@@ -306,7 +256,6 @@ useEffect(() => {
         )}
       </div>
     </div>
-    // </Authenticator>
   );
 };
 

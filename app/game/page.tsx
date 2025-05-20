@@ -9,6 +9,8 @@ import { useApi } from "@/hooks/useApi";
 import { Client } from "@stomp/stompjs";
 import { gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from "@/gameSlice";
 import { motion, AnimatePresence } from "framer-motion";
+import { showErrorToast } from "@/utils/showErrorToast";
+import { showSuccessToast } from "@/utils/showSuccessToast";
 
 const Dashboard: React.FC = () => {
   const router = useRouter();
@@ -166,7 +168,7 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert(`Something went wrong during game creation:\n${error.message}`);
+        showErrorToast(`Something went wrong during game creation:\n${error.message}`);
       } else {
         console.error("An unknown error occurred during game creation.");
       }

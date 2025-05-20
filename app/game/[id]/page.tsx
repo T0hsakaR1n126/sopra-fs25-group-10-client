@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { useApi } from '@/hooks/useApi';
 import { Game } from '@/types/game';
 import { countryIdMap } from '@/utils/idToCountryName';
+import { showErrorToast } from "@/utils/showErrorToast";
 
 // interface GameState {
 //   questionCount: number;
@@ -138,7 +139,7 @@ const GameBoard: React.FC = () => {
                 apiService.put(`/save/${gameId}`, {})
                   .then()
                   .catch((error) => {
-                    alert(`Error saving game: ${error.message}`);
+                    showErrorToast(`Error saving game: ${error.message}`);
                     router.push("/game");
                   });
               }

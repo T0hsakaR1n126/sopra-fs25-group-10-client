@@ -7,6 +7,7 @@ import styles from "@/styles/results.module.css";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import { updateUserInfo } from "@/userSlice";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const Results = () => {
   const router = useRouter();
@@ -41,7 +42,7 @@ const Results = () => {
         }));
       } catch (error) {
         if (error instanceof Error) {
-          alert(`Something went wrong while fetching user:\n${error.message}`);
+          showErrorToast(`Something went wrong while fetching user:\n${error.message}`);
           router.push("/game");
         } else {
           console.error("An unknown error occurred while fetching user.");
