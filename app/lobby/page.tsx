@@ -104,6 +104,7 @@ const Lobby: React.FC = () => {
             setPaginatedGames(filteredData.slice(start, start + itemsPerPage));
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -113,12 +114,14 @@ const Lobby: React.FC = () => {
             setChatMessages((prevMessages) => [...prevMessages, newMessage]);
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
 
         apiService.put("/lobby", {}).catch((err) => {
           console.error('Error fetching lobby data: ', err);
+          showErrorToast(`${err}`);     
         });
       },
       onDisconnect: () => {
@@ -179,6 +182,7 @@ const Lobby: React.FC = () => {
         showErrorToast(error.message);
       } else {
         console.error("An unknown error occurred during game joining.");
+        showErrorToast("An unknown error occurred during game joining.");
       }
     }
   };

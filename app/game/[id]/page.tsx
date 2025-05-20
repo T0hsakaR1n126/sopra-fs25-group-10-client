@@ -114,6 +114,7 @@ const GameBoard: React.FC = () => {
             dispatch(scoreBoardResultSet(data));
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -124,6 +125,7 @@ const GameBoard: React.FC = () => {
             setCurrentTime(data);
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -139,7 +141,7 @@ const GameBoard: React.FC = () => {
                 apiService.put(`/save/${gameId}`, {})
                   .then()
                   .catch((error) => {
-                    showErrorToast(`Error saving game: ${error.message}`);
+                    showErrorToast(`${error.message}`);
                     router.push("/game");
                   });
               }
@@ -147,6 +149,7 @@ const GameBoard: React.FC = () => {
             }, 1000);
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -157,6 +160,7 @@ const GameBoard: React.FC = () => {
             dispatch(ownerUpdate(data));
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
       },
@@ -183,6 +187,7 @@ const GameBoard: React.FC = () => {
       router.push(`/game`);
     } catch (error) {
       console.error('Error finishing game:', error);
+      showErrorToast(`${error}`);
     }
   };
 
@@ -207,6 +212,7 @@ const GameBoard: React.FC = () => {
                   dispatch(answerUpdate(response.answer ?? ""));
                 } catch (err) {
                   console.error('error', err);
+                  showErrorToast(`${err}`);
                 } finally {
                   setTimeout(() => setNextLocked(false), 500);
                 }
@@ -232,6 +238,7 @@ const GameBoard: React.FC = () => {
                         }
                       } catch (error) {
                         console.error('Error leaving game:', error);
+                        showErrorToast(`${error}`);
                       }
                     }}
                   >

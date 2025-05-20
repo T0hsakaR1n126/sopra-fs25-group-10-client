@@ -14,6 +14,7 @@ import { answerUpdate, clearGameState, gameStart, gameTimeInitialize, ownerUpdat
 import 'react-toastify/dist/ReactToastify.css';
 import { Luckiest_Guy } from "next/font/google";
 import { showSuccessToast } from '@/utils/showSuccessToast';
+import { showErrorToast } from "@/utils/showErrorToast";
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface Message {
@@ -110,6 +111,7 @@ const GameStart = () => {
         setReadyStatus(initialReady);
       } catch (error) {
         console.error("Failed to fetch players:", error);
+        showErrorToast(`${error}`);
         router.push("/lobby");
       }
     };
@@ -162,6 +164,7 @@ const GameStart = () => {
             }
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -191,6 +194,7 @@ const GameStart = () => {
             setChatMessages((prevMessages) => [...prevMessages, data]);
           } catch (err) {
             console.error('Invalid chat message:', err);
+            showErrorToast(`${err}`);
           }
         });
       },
@@ -241,12 +245,14 @@ const GameStart = () => {
             body: JSON.stringify({ userId, ready: false }),
           });
         }
+
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
       document.querySelector(".roomWrapper")?.classList.add("roomWrapperExit");
       setTimeout(() => router.push("/lobby"), 400);
     } catch (error) {
       console.error("Error leaving game:", error);
+      showErrorToast(`${error}`);
     }
   };
 
@@ -255,6 +261,7 @@ const GameStart = () => {
       await apiService.put(`/start/${gameId}`, {});
     } catch (error) {
       console.error("Error starting game:", error);
+      showErrorToast(`${error}`);
     }
   };
 

@@ -32,10 +32,11 @@ const ProfilePage = () => {
         setUser(response);
       } catch (error) {
         if (error instanceof Error) {
-          showErrorToast(`Something went wrong while fetching user: ${error.message}`);
+          showErrorToast(`${error.message}`);
           router.push("/game");
         } else {
           console.error("An unknown error occurred while fetching user.");
+          showErrorToast("An unknown error occurred while fetching user.");
         }
       }
     };
@@ -75,7 +76,7 @@ const ProfilePage = () => {
     } catch (error) {
       if (error instanceof Error) {
         console.error(error.message);
-        showErrorToast("Invalid update. Please try again.");
+        showErrorToast(`${error}`);
       }
     }
   };

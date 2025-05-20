@@ -18,9 +18,10 @@ export const handleJoinGame = async (game: Game, userId: string, apiService: Api
     router.push(`/game/start/${game.gameId}`);
   } catch (error) {
     if (error instanceof Error) {
-      showErrorToast(`Something went wrong during game joining:\n${error.message}`);
+      showErrorToast(`${error.message}`);
     } else {
       console.error("An unknown error occurred during game joining.");
+      showErrorToast("An unknown error occurred during game joining.");
     }
   }
 };

@@ -6,6 +6,7 @@ import { useApi } from "@/hooks/useApi";
 import { useParams } from "next/navigation";
 import styles from "@/styles/GuestStatsGrid.module.css";
 import { useSelector } from "react-redux";
+import { showErrorToast } from '@/utils/showErrorToast';
 
 interface Country {
   name: string;
@@ -45,6 +46,7 @@ const GuestPage: React.FC = () => {
       } catch (error) {
         if (error instanceof Error) {
           console.error("Failed to fetch user data:", error.message);
+          showErrorToast(`${error}`)
           setError("Failed to load user country statistics. Showing mock data.");
         } else {
           setError("Unknown error occurred.");

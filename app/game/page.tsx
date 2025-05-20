@@ -55,6 +55,7 @@ const Dashboard: React.FC = () => {
             dispatch(gameIdUpdate(data));
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -64,6 +65,7 @@ const Dashboard: React.FC = () => {
             dispatch(gameIdUpdate(data));
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -75,6 +77,7 @@ const Dashboard: React.FC = () => {
             setButtonDisabled(true);
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -94,6 +97,7 @@ const Dashboard: React.FC = () => {
             }
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
       },
@@ -167,9 +171,10 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        showErrorToast(`Something went wrong during game creation:\n${error.message}`);
+        showErrorToast(`${error.message}`);
       } else {
         console.error("An unknown error occurred during game creation.");
+        showErrorToast(`An unknown error occurred during game creation.`);
       }
     }
   };

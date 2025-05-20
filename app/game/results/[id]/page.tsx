@@ -42,10 +42,11 @@ const Results = () => {
         }));
       } catch (error) {
         if (error instanceof Error) {
-          showErrorToast(`Something went wrong while fetching user:\n${error.message}`);
+          showErrorToast(`${error.message}`);
           router.push("/game");
         } else {
           console.error("An unknown error occurred while fetching user.");
+          showErrorToast(`An unknown error occurred while fetching user.`);
         }
       }
 

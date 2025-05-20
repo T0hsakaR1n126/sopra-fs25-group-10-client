@@ -37,9 +37,10 @@ const Authenticator = ({ children }: { children: React.ReactNode }) => {
         }
       } catch (error) {
         if (error instanceof Error) {
-          showErrorToast(`Something went wrong while authenticating:\n${error.message}`);
+          showErrorToast(`${error.message}`);
         } else {
           console.error("An unknown error occurred while authenticating.");
+          showErrorToast("An unknown error occurred while authenticating.");
         }
         dispatch(logout()); // Clear token from Redux if authentication fails
         router.push("/login");

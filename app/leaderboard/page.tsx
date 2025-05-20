@@ -5,6 +5,7 @@ import { useApi } from "@/hooks/useApi";
 import styles from "@/styles/leaderboard.module.css";
 import { User } from "@/types/user";
 import Link from "next/link";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const LeaderboardPage: React.FC = () => {
   const apiService = useApi();
@@ -19,6 +20,7 @@ const LeaderboardPage: React.FC = () => {
         setPaginatedEntries(data.slice(0, itemsPerPage));
       } catch (e) {
         console.error(e);
+        showErrorToast(`${e}`);
       } finally {
         setLoading(false);
       }
