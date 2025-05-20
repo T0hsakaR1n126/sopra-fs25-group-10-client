@@ -173,7 +173,7 @@ const Lobby: React.FC = () => {
 
       // exit animation
       document.querySelector(".page")?.classList.add("pageExit");
-      setTimeout(() => router.push(`/game/start/${game.gameId}`), 600);
+      setTimeout(() => router.push(`/game/start/${game.gameId}`), 300);
     } catch (error) {
       if (error instanceof Error) {
         showErrorToast(error.message);

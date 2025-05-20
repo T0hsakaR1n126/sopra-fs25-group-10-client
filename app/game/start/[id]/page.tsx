@@ -71,7 +71,7 @@ const GameStart = () => {
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const [selectedPlayerProfile, setSelectedPlayerProfile] = useState<miniProfile | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
-  const xp = selectedPlayerProfile ? (selectedPlayerProfile.level ?? 0) * 100 : level * 100;
+  const xp = selectedPlayerProfile ? (selectedPlayerProfile.level ?? 0) : -1;
   const title = xp >= 10000
     ? "MapMaster"
     : xp >= 5000
@@ -236,7 +236,8 @@ const GameStart = () => {
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
       document.querySelector(".roomWrapper")?.classList.add("roomWrapperExit");
-      setTimeout(() => router.push("/lobby"), 400);
+      // setTimeout(() => router.push("/lobby"), 400);
+      router.push("/lobby");
     } catch (error) {
       console.error("Error leaving game:", error);
     }
@@ -289,6 +290,10 @@ const GameStart = () => {
   return (
     <>
       <div className={`${styles.roomWrapper} roomWrapper roomWrapperEnter`}>
+        <div className={`${styles.gameCode} ${luckiestGuy.className}`} onClick={handleCopyCode}>
+          Click to Copy the Game Code: {gameCodeShown}
+        </div>
+
         <div className={styles.grid}>
           {Array.from({ length: playersNumber }).map((_, idx) => {
             const player = players[idx];
@@ -334,10 +339,6 @@ const GameStart = () => {
               </div>
             );
           })}
-        </div>
-
-        <div className={`${styles.gameCode} ${luckiestGuy.className}`} onClick={handleCopyCode}>
-          Click to Copy the Game Code: {gameCodeShown}
         </div>
 
         {/* chatbox */}

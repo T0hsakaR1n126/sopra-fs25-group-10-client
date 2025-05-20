@@ -85,7 +85,7 @@ export default function Navbar() {
               await new Promise((res) => setTimeout(res, 1500));
             } else {
               window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+              await new Promise((res) => setTimeout(res, 300));
             }
             router.push("/history");
           }}
@@ -105,7 +105,7 @@ export default function Navbar() {
               await new Promise((res) => setTimeout(res, 1500));
             } else {
               window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+              await new Promise((res) => setTimeout(res, 300));
             }
             router.push("/statistics");
           }}
@@ -123,7 +123,7 @@ export default function Navbar() {
               await new Promise((res) => setTimeout(res, 1500));
             } else {
               window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+              await new Promise((res) => setTimeout(res, 300));
             }
             logout();
           }}
@@ -159,8 +159,8 @@ export default function Navbar() {
             //   window.dispatchEvent(new Event("dashboardExit"));
             //   await new Promise((res) => setTimeout(res, 1500));
             // } else {
-              window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+            window.dispatchEvent(new Event("otherExit"));
+            await new Promise((res) => setTimeout(res, 300));
             // }
             router.push("/game");
           }}
@@ -188,7 +188,7 @@ export default function Navbar() {
                 await new Promise((res) => setTimeout(res, 1500));
               } else {
                 window.dispatchEvent(new Event("otherExit"));
-                await new Promise((res) => setTimeout(res, 600));
+                await new Promise((res) => setTimeout(res, 300));
               }
               router.push("/leaderboard");
             }}
