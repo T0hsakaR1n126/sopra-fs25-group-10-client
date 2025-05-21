@@ -12,6 +12,8 @@ import { Game } from '@/types/game';
 import { countryIdMap } from '@/utils/idToCountryName';
 import { AnimatePresence, motion } from 'framer-motion';
 import { showSuccessToast } from '@/utils/showSuccessToast';
+import { showErrorToast } from '@/utils/showErrorToast';
+import { LoadingOutlined } from '@ant-design/icons';
 
 // interface GameState {
 //   questionCount: number;
@@ -44,7 +46,19 @@ const GameBoard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState<string | null>(null);
   const [gameEnded, setGameEnded] = useState(false);
   const [endMessage, setEndMessage] = useState('');
+
+  // button lock
   const [nextLocked, setNextLocked] = useState(false);
+  const [lastNextTime, setLastNextTime] = useState<number | null>(null);
+  const [answerLocked, setAnswerLocked] = useState(false);
+  const [lastAnswerTime, setLastAnswerTime] = useState<number | null>(null);
+
+  // animation
+  const [transitionDirection, setTransitionDirection] = useState<"none" | "in" | "out">("in");
+  useEffect(() => {
+    const timer = setTimeout(() => setTransitionDirection("none"), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const answerRef = useRef(answer);
   useEffect(() => {
@@ -132,11 +146,12 @@ const GameBoard: React.FC = () => {
                 apiService.put(`/save/${gameId}`, {})
                   .then()
                   .catch((error) => {
-                    alert(`Error saving game: ${error.message}`);
+                    showErrorToast("Error saving game: " + (error as Error).message);
                     router.push("/game");
                   });
               }
-              router.push(`/game/results/${gameId}`);
+              setTransitionDirection("out");
+              setTimeout(() => router.push(`/game/results/${gameId}`), 800);
             }, 1000);
           } catch (err) {
             console.error('Invalid message:', err);
@@ -168,141 +183,183 @@ const GameBoard: React.FC = () => {
   const handleFinishGame = async () => {
     try {
       await apiService.put(`/finishexercise/${gameId}`, {});
-      dispatch(resetQuestionStats())
+      setTransitionDirection("out");
       setTimeout(() => {
         dispatch(hintUsageClear());
         dispatch(clearGameState());
-      }, 1000);
-      router.push(`/game`);
+        router.push(`/game`);
+      }, 800);
     } catch (error) {
       console.error('Error finishing game:', error);
     }
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.topBar}>
-        <div className={styles.topLeft}>
-          {gameMode !== "exercise" ? (
-            <div className={styles.instructionWrapper}>
-              <button className={styles.userBoxRed} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
-            </div>
-          ) : (
-            <div className={styles.instructionWrapper}>
-              <button className={styles.userBoxGreen} onClick={async () => {
-                if (nextLocked) return;
-                setNextLocked(true);
+    <>
+      {transitionDirection !== "none" && (
+        <motion.div
+          className={styles.transitionOverlay}
+          initial={{ scaleY: transitionDirection === "in" ? 1 : 0 }}
+          animate={{ scaleY: transitionDirection === "in" ? 0 : 1 }}
+          exit={{ scaleY: 1 }}
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+        />
+      )}
+      <div className={styles.container}>
+        <div className={styles.topBar}>
+          <div className={styles.topLeft}>
+            {gameMode !== "exercise" ? (
+              <div className={styles.instructionWrapper}>
+                <button className={styles.userBoxRed} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
+              </div>
+            ) : (
+              <div className={styles.instructionWrapper}>
+                <button className={styles.userBoxGreen} disabled={nextLocked} onClick={async () => {
+                  const now = Date.now();
 
-                try {
-                  const response: Game = await apiService.post(`/next/${gameId}`, {});
-                  dispatch(hintUpdate(response.hints ?? []));
-                  dispatch(hintUsageClear());
-                  dispatch(answerUpdate(response.answer ?? ""));
-                } catch (err) {
-                  console.error('error', err);
-                } finally {
-                  setTimeout(() => setNextLocked(false), 500);
-                }
-              }}>
-                Next
-              </button>
-            </div>
-          )}
-          {showExitWindow && (
-            <div className={styles.modalOverlay}>
-              <div className={styles.exitModalWrapper}>
-                <div className={styles.exitModal}>
-                  <p>The game is still ongoing.<br />Are you sure you want to exit?</p>
-                  <div className={styles.exitButtons}>
-                    <button
-                      className={styles.exitButton}
-                      onClick={async () => {
-                        try {
-                          await apiService.put(`/giveup/${userId}`, {});
-                          if (gameMode === "combat") {
-                            router.push('/lobby');
-                          } else {
-                            router.push('/game');
-                          }
-                        } catch (error) {
-                          console.error('Error leaving game:', error);
-                        }
-                      }}
-                    >
-                      Give Up & Exit
-                    </button>
-                    <button
-                      className={styles.exitButton}
-                      onClick={() => setShowExitWindow(false)}
-                    >
-                      Cancel & Go Back to Game
-                    </button>
+                  if (nextLocked) {
+                    showErrorToast("You are clicking too fast. Please wait...");
+                    return;
+                  }
+
+                  if (lastNextTime && now - lastNextTime < 1000) {
+                    showErrorToast("Please wait a bit before clicking again...");
+                    return;
+                  }
+
+                  setNextLocked(true);
+                  setLastNextTime(now);
+
+                  try {
+                    const response: Game = await apiService.post(`/next/${gameId}`, {});
+                    dispatch(hintUpdate(response.hints ?? []));
+                    dispatch(hintUsageClear());
+                    dispatch(answerUpdate(response.answer ?? ""));
+                  } catch (err) {
+                    showErrorToast("Error fetching next question: " + (err as Error).message);
+                  } finally {
+                    setTimeout(() => setNextLocked(false), 1000);
+                  }
+                }}>
+                  {nextLocked ? <LoadingOutlined spin /> : "Next"}
+                </button>
+              </div>
+            )}
+            {showExitWindow && (
+              <div className={styles.modalOverlay}>
+                <div className={styles.exitModalWrapper}>
+                  <div className={styles.exitModal}>
+                    <p>The game is still ongoing.<br />Are you sure you want to exit?</p>
+                    <div className={styles.exitButtons}>
+                      <button
+                        className={styles.exitButton}
+                        onClick={async () => {
+                          setTransitionDirection("out");
+                          setTimeout(async () => {
+                            try {
+                              await apiService.put(`/giveup/${userId}`, {});
+                              if (gameMode === "combat") {
+                                router.push('/lobby');
+                              } else {
+                                router.push('/game');
+                              }
+                            } catch (error) {
+                              console.error('Error leaving game:', error);
+                            }
+                          }, 800);
+                        }}
+                      >
+                        Give Up & Exit
+                      </button>
+                      <button
+                        className={styles.exitButton}
+                        onClick={() => setShowExitWindow(false)}
+                      >
+                        Cancel & Go Back to Game
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
-
-        <div className={styles.topCenter}>
-          <div className={styles.instructionWrapper}>
-            {gameMode !== "exercise" ? (
-              <>
-                <button
-                  className={styles.userBoxBlue}
-                  onClick={() => setShowInstruction(prev => !prev)}
-                >
-                  Instruction
-                </button>
-
-                <div
-                  className={`${styles.instructionPopup} ${showInstruction ? styles.popupVisible : styles.popupHidden
-                    }`}
-                >
-                  <h3>How to Play</h3>
-                  <ul className={styles.instructionList}>
-                    <li>🗺 Hover a country to see its name.</li>
-                    <li>🖱 Click a country to submit your guess.</li>
-                    <li>💡 Use hints to reach the answer.</li>
-                    <li>🔒 The initial score is 100.</li>
-                    <li>🚫 Every hint deducts 20 scores.</li>
-                    <li>❗ You have a maximum of 5 hints.</li>
-                  </ul>
-                </div>
-              </>
-            ) : (
-              <>
-                <button
-                  className={styles.userBoxBlue}
-                  onClick={() => {
-                    apiService.put(`/submit/${userId}`, { gameId: gameId, submitAnswer: answerRef.current, hintUsingNumber: hintUsageRef.current })
-                      .then((response) => {
-                        // dispatch(incrementQuestionCount());
-                        if ((response as { judgement: boolean }).judgement) {
-                          // dispatch(incrementCorrectCount());
-                          showSuccessToast(`The answer is: ${countryIdMap[answerRef.current]}`);
-                        }
-                      })
-                  }
-                  }
-                >
-                  Answer
-                </button>
-
-                <div
-                  className={`${styles.instructionPopup} ${showInstruction ? styles.popupVisible : styles.popupHidden
-                    }`}
-                >
-                  <h3>{countryIdMap[answer]}</h3>
-                </div>
-              </>
             )}
           </div>
-        </div>
 
-        <div className={styles.topRight}>
-          <div className={styles.instructionWrapper}>
-            {/* <button
+          <div className={styles.topCenter}>
+            <div className={styles.instructionWrapper}>
+              {gameMode !== "exercise" ? (
+                <>
+                  <button
+                    className={styles.userBoxBlue}
+                    onClick={() => setShowInstruction(prev => !prev)}
+                  >
+                    Instruction
+                  </button>
+
+                  <div
+                    className={`${styles.instructionPopup} ${showInstruction ? styles.popupVisible : styles.popupHidden
+                      }`}
+                  >
+                    <h3>How to Play</h3>
+                    <ul className={styles.instructionList}>
+                      <li>🗺 Hover a country to see its name.</li>
+                      <li>🖱 Click a country to submit your guess.</li>
+                      <li>💡 Use hints to reach the answer.</li>
+                      <li>🔒 The initial score for each country is 100.</li>
+                      <li>🚫 Every hint deducts 20 scores.</li>
+                      <li>❗ You can use a maximum of 5 hints.</li>
+                    </ul>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <button
+                    className={styles.userBoxBlue}
+                    disabled={answerLocked}
+                    onClick={async () => {
+                      const now = Date.now();
+
+                      if (answerLocked) {
+                        showErrorToast("You are clicking too fast. Please wait...");
+                        return;
+                      }
+
+                      if (lastAnswerTime && now - lastAnswerTime < 1000) {
+                        showErrorToast("Please wait a bit before clicking again...");
+                        return;
+                      }
+
+                      setAnswerLocked(true);
+                      setLastAnswerTime(now);
+
+                      try {
+                        const response = await apiService.put(`/submit/${userId}`, { gameId: gameId, submitAnswer: answerRef.current, hintUsingNumber: hintUsageRef.current });
+                        if ((response as { judgement: boolean }).judgement) {
+                          showSuccessToast(`The answer is: ${countryIdMap[answerRef.current]}`);
+                        }
+                      } catch (err) {
+                        showErrorToast("Error fetching next question: " + (err as Error).message);
+                      } finally {
+                        setTimeout(() => setAnswerLocked(false), 1000);
+                      }
+                    }}
+                  >
+                    {answerLocked ? <LoadingOutlined spin /> : "Answer"}
+                  </button>
+
+                  <div
+                    className={`${styles.instructionPopup} ${showInstruction ? styles.popupVisible : styles.popupHidden
+                      }`}
+                  >
+                    <h3>{countryIdMap[answer]}</h3>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className={styles.topRight}>
+            <div className={styles.instructionWrapper}>
+              {/* <button
               className={styles.userBoxQuestion}
               onClick={() => setShowRules(prev => !prev)}
               aria-label="Show game rules"
@@ -323,7 +380,7 @@ const GameBoard: React.FC = () => {
             </button> */}
 
 
-            {/* <div
+              {/* <div
               className={`${styles.instructionPopup} ${showRules ? styles.popupVisible : styles.popupHidden}`}
               style={{ width: '280px', textAlign: 'left',padding: '10px' }}
             >
@@ -339,99 +396,99 @@ const GameBoard: React.FC = () => {
                 5 hints max — using all results in 0 points.
               </p>
             </div> */}
-          </div>
-          <div className={styles.instructionWrapper}>
-            {String(restTime) !== "-1" ? (
-              <div
-                className={`${styles.timerValue} ${currentTime && currentTime <= "00:10"
-                  ? styles.timerDanger
-                  : currentTime && currentTime <= "00:30"
-                    ? styles.timerWarning
-                    : ''
-                  }`}
-              >
-                ⏱ {currentTime}
-              </div>
-            ) : (
-              <button className={styles.userBoxRed} onClick={handleFinishGame}>Finish</button>
-            )}
+            </div>
+            <div className={styles.instructionWrapper}>
+              {String(restTime) !== "-1" ? (
+                <div
+                  className={`${styles.timerValue} ${currentTime && currentTime <= "00:10"
+                    ? styles.timerDanger
+                    : currentTime && currentTime <= "00:30"
+                      ? styles.timerWarning
+                      : ''
+                    }`}
+                >
+                  ⏱ {currentTime}
+                </div>
+              ) : (
+                <button className={styles.userBoxRed} onClick={handleFinishGame}>Finish</button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className={styles.mainContent}>
-        <div className={styles.sidebar}>
+        <div className={styles.mainContent}>
+          <div className={styles.sidebar}>
 
-          <div className={styles.hintIconsContainer}>
-            <div className={styles.hintIconsRow}>
-              {hints.map((_, index) => {
-                const isUsed = index < unlockedHints;
-                const isNext = index === unlockedHints;      // the next hint to unlock
-                return (
-                  <span
-                    key={index}
-                    className={`${styles.hintIcon} ${isUsed ? styles.hintUsed :
-                      isNext ? styles.hintUnlocked :
-                        styles.hintLocked
-                      }`}
-                  >
-                    {isUsed ? '✓' : isNext ? (
-                      // unlocked green SVG
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="#81c784" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-7h-1V7a5 5 0 00-10 0v3H6a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2v-7a2 2 0 00-2-2zm-7-3a3 3 0 016 0v3H11V7z" />
-                      </svg>
-                    ) : (
-                      // locked red SVG
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <rect x="7" y="11" width="10" height="9" rx="2" ry="2" fill="#b71c1c" />
-                        <path
-                          d="M7 11V7a5 5 0 0110 0v4"
-                          stroke="#ef5350"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <circle cx="12" cy="15" r="1.5" fill="#ef5350" />
-                      </svg>
-                    )}
-                  </span>
-                );
-              })}
+            <div className={styles.hintIconsContainer}>
+              <div className={styles.hintIconsRow}>
+                {hints.map((_, index) => {
+                  const isUsed = index < unlockedHints;
+                  const isNext = index === unlockedHints;      // the next hint to unlock
+                  return (
+                    <span
+                      key={index}
+                      className={`${styles.hintIcon} ${isUsed ? styles.hintUsed :
+                        isNext ? styles.hintUnlocked :
+                          styles.hintLocked
+                        }`}
+                    >
+                      {isUsed ? '✓' : isNext ? (
+                        // unlocked green SVG
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#81c784" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M12 17a2 2 0 100-4 2 2 0 000 4zm6-7h-1V7a5 5 0 00-10 0v3H6a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2v-7a2 2 0 00-2-2zm-7-3a3 3 0 016 0v3H11V7z" />
+                        </svg>
+                      ) : (
+                        // locked red SVG
+                        <svg
+                          width="20"
+                          height="20"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <rect x="7" y="11" width="10" height="9" rx="2" ry="2" fill="#b71c1c" />
+                          <path
+                            d="M7 11V7a5 5 0 0110 0v4"
+                            stroke="#ef5350"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <circle cx="12" cy="15" r="1.5" fill="#ef5350" />
+                        </svg>
+                      )}
+                    </span>
+                  );
+                })}
+              </div>
+
+              {currentHint ? (
+                <div className={styles.hintText}>
+                  {hints.slice(0, unlockedHints).map((hint, idx) => (
+                    <React.Fragment key={idx}>
+                      <p><strong className={styles.hintLabel}>Hint {idx + 1}:</strong> {hint.text}</p>
+                      <div className={styles.hintDivider}></div>
+                    </React.Fragment>
+                  ))}
+                  <div className={styles.hintButtonWrapper}>
+                    <button
+                      onClick={() => handleHintClick(hintUsage)}
+                      className={styles.collapsibleToggle}
+                      disabled={hintUsage >= 5}
+                    >
+                      GET A HINT!
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className={styles.hintText}>
+                  <p>No hints available</p>
+                </div>
+              )}
             </div>
 
-            {currentHint ? (
-              <div className={styles.hintText}>
-                {hints.slice(0, unlockedHints).map((hint, idx) => (
-                  <React.Fragment key={idx}>
-                    <p><strong className={styles.hintLabel}>Hint {idx + 1}:</strong> {hint.text}</p>
-                    <div className={styles.hintDivider}></div>
-                  </React.Fragment>
-                ))}
-                <div className={styles.hintButtonWrapper}>
-                  <button
-                    onClick={() => handleHintClick(hintUsage)}
-                    className={styles.collapsibleToggle}
-                    disabled={hintUsage >= 5}
-                  >
-                    GET A HINT!
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div className={styles.hintText}>
-                <p>No hints available</p>
-              </div>
-            )}
-          </div>
-
-          {gameMode !== "exercise" ? (<div className={styles.ownScoreBox}>
-            {/* <h3>My Score: {score}</h3>
+            {gameMode !== "exercise" ? (<div className={styles.ownScoreBox}>
+              {/* <h3>My Score: {score}</h3>
             <div className={styles.scoreStat}>
               <span className={styles.label}>Total:</span>
               <span className={styles.attempted}>{questionCount}</span>
@@ -440,52 +497,52 @@ const GameBoard: React.FC = () => {
               <span className={styles.label}>Correct:</span>
               <span className={styles.correct}>{correctCount}</span>
             </div> */}
-            {scoreBoard
-              ? (
-                <AnimatePresence>
-                  <motion.div layout className={styles.scoreList}>
-                    <div className={styles.scoreTitle}>Scoreboard</div>
-                    {Array.from(scoreBoard.entries())
-                      .sort(([, a], [, b]) => b - a)
-                      .map(([player, score], idx) => {
-                        const isSelf = player === username;
-                        return (
-                          <motion.div
-                            layout
-                            key={player}
-                            className={`${styles.scoreRow} ${isSelf ? styles.currentUser : ""}`}
-                            transition={{ type: "spring", stiffness: 700, damping: 20 }}
-                          >
-                            <span className={styles.rank}>{idx + 1}.</span>
-                            <span className={styles.username}>
-                              {player} {isSelf && <span className={styles.youTag}>👈 You</span>}
-                            </span>
-                            <span className={styles.userScore}>
-                              {score === -1 ? "❌" : score}
-                            </span>
-                          </motion.div>
-                        );
-                      })}
-                  </motion.div>
-                </AnimatePresence>
-              )
-              : <div>Loading...</div>
-            }
-          </div>) : (
-            <div className={styles.ownScoreBox}>
-              <h3>How to Play</h3>
-              <ul className={styles.instructionList}>
-                <li>🗺 Hover a country to see its name.</li>
-                <li>🖱 Click a country to submit your guess.</li>
-                <li>💡 Use hints to reach the answer.</li>
-                <li>🔒 The initial score is 100.</li>
-                <li>🚫 Every hint deducts 20 scores.</li>
-                <li>❗ You have a maximum of 5 hints.</li>
-              </ul>
-            </div>
-          )}
+              {scoreBoard
+                ? (
+                  <AnimatePresence>
+                    <motion.div layout className={styles.scoreList}>
+                      <div className={styles.scoreTitle}>Scoreboard</div>
+                      {Array.from(scoreBoard.entries())
+                        .sort(([, a], [, b]) => b - a)
+                        .map(([player, score], idx) => {
+                          const isSelf = player === username;
+                          return (
+                            <motion.div
+                              layout
+                              key={player}
+                              className={`${styles.scoreRow} ${isSelf ? styles.currentUser : ""}`}
+                              transition={{ type: "spring", stiffness: 700, damping: 20 }}
+                            >
+                              <span className={styles.rank}>{idx + 1}.</span>
+                              <span className={styles.username}>
+                                {player} {isSelf && <span className={styles.youTag}>👈 You</span>}
+                              </span>
+                              <span className={styles.userScore}>
+                                {score === -1 ? "❌" : score}
+                              </span>
+                            </motion.div>
+                          );
+                        })}
+                    </motion.div>
+                  </AnimatePresence>
+                )
+                : <div>Loading...</div>
+              }
+            </div>) : (
+              <div className={styles.ownScoreBox}>
+                <h3>How to Play</h3>
+                <ul className={styles.instructionList}>
+                  <li>🗺 Hover a country to see its name.</li>
+                  <li>🖱 Click a country to submit your guess.</li>
+                  <li>💡 Use hints to reach the answer.</li>
+                  <li>🔒 The initial score for each country is 100.</li>
+                  <li>🚫 Every hint deducts 20 scores.</li>
+                  <li>❗ You can use a maximum of 5 hints.</li>
+                </ul>
+              </div>
+            )}
 
-          {/* <div className={styles.rulesBox}>
+            {/* <div className={styles.rulesBox}>
             <ul>
               <li>Hovering over a country on the map shows its name.</li>
               <li>Clicking on a country immediately records your answer.</li>
@@ -496,23 +553,24 @@ const GameBoard: React.FC = () => {
               <li>In exercise mode, click on &quot;Next&quot; to move to the following question instead of automatic progression.</li>
             </ul>
           </div> */}
-        </div>
+          </div>
 
-        {/* map area */}
-        <div className={styles.mapArea}>
-          <InteractiveMap />
-        </div>
-      </div>
-
-      {/* overlay */}
-      {gameEnded && (
-        <div className={styles.endOverlay}>
-          <div className={styles.endMessage}>
-            {endMessage}
+          {/* map area */}
+          <div className={styles.mapArea}>
+            <InteractiveMap />
           </div>
         </div>
-      )}
-    </div>
+
+        {/* overlay */}
+        {gameEnded && (
+          <div className={styles.endOverlay}>
+            <div className={styles.endMessage}>
+              {endMessage}
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 
 }

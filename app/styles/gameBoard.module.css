@@ -484,6 +484,8 @@ font-weight: bold;
 
 .popupHidden {
   opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
   transform: translateY(-8px);
   transition: all 0.4s ease-in-out;
 }
@@ -755,4 +757,16 @@ font-weight: bold;
   }
 }
 
+/* animation */
+.transitionOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  pointer-events: none;
+  background: url('/world.png') center center no-repeat;
+  background-size: cover;
+}
 

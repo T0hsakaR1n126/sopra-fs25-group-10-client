@@ -286,7 +286,7 @@ const InteractiveMap = () => {
                   .catch(error => {
                     console.error("Error submitting answer:", error);
                   }).finally(() => {
-                    setTimeout(() => submitLocked.current = false, 1000);
+                    setTimeout(() => submitLocked.current = false, 1500);
                   });
                 // dispatch(hintUsageClear());
               });
