@@ -1,0 +1,139 @@
+/* GuestStatsGrid.module.css */
+
+.container {
+  min-height: 100vh;
+  background-color: transparent;
+  color: white;
+  padding: 2.5rem;
+}
+
+.heading {
+  font-size: 2.1rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 6rem;
+  margin-bottom: 0.4rem;
+  letter-spacing: 1.6px;
+  color: #ffd76d;
+  text-shadow: 0 2px 20px #fff39933, 0 1px 3px #0006;
+}
+
+.subheading, .description {
+  font-size: 1.09rem;
+  color: #8bc2e7;
+  text-align: center;
+  margin-bottom: 2rem;
+  margin-top: 0.2rem;
+  font-family: 'Quicksand', 'Montserrat', Arial, sans-serif;
+  letter-spacing: 0.3px;
+}
+
+.loading {
+  text-align: center;
+  color: #cbd5e1;
+}
+
+.error {
+  text-align: center;
+  color: #ff6666;
+  margin-bottom: 1.2rem;
+  font-size: 1.12em;
+  font-weight: 600;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(192px, 1fr));
+  gap: 1.7rem 1.2rem;
+  justify-items: center;
+  padding: 1.6rem 1.2rem 2.4rem 1.2rem;
+  max-width: 1050px;
+  margin: 0 auto;
+}
+
+.card {
+  background: linear-gradient(120deg, #233871 70%, #2d447a 100%);
+  box-shadow: 0 4px 16px 0 #1e3a8a66, 0 1px 10px 0 #fff39918;
+  padding: 1.1rem 0.7rem 1.1rem 0.7rem;
+  border-radius: 0.85rem;
+  text-align: center;
+  width: 192px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: box-shadow 0.22s, transform 0.18s;
+  position: relative;
+  border: 2.2px solid #2247c4;
+}
+
+.card:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow: 0 8px 34px 0 #ffe18790, 0 2px 12px 0 #33ffe733;
+  border-color: #ffd700;
+  z-index: 2;
+}
+
+.flag {
+  width: 192px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 0.375rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 12px 0 #ffe08344;
+  background: #fff;
+  border: 2.5px solid #eeeeee;
+  transition: box-shadow 0.17s, border-color 0.14s;
+}
+
+/* 高分国家 flag 特效（用行内style更灵活，建议用class也可） */
+.flag.gold {
+  border-color: #ffd700cc !important;
+  box-shadow: 0 2px 16px 0 #ffd70055, 0 2px 20px 0 #fff4;
+}
+
+/* label 分数渐变加粗 */
+.label {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  margin-top: 2px;
+  color: #fff;
+  text-shadow: 0 1px 3px #0008;
+  transition: color 0.18s, font-size 0.12s;
+  line-height: 1.5;
+}
+
+/* 金牌、亮眼国家字体加强 */
+.label.gold {
+  color: #ffd76d;
+  text-shadow: 0 1px 7px #ffe399cc, 0 0px 2px #fff4;
+  font-size: 1.13em;
+  font-weight: 900;
+}
+
+.label.silver {
+  color: #b8dbff;
+  font-weight: 800;
+}
+
+/* 响应式 */
+@media (max-width: 600px) {
+  .container {
+    padding: 0.7rem;
+  }
+  .grid {
+    padding: 0.3rem;
+    gap: 1rem 0.4rem;
+  }
+  .card {
+    width: 99vw;
+    min-width: 160px;
+    max-width: 97vw;
+    padding: 0.6rem 0.2rem 1rem 0.2rem;
+  }
+  .flag {
+    width: 94vw;
+    min-width: 110px;
+    height: 44px;
+  }
+}
