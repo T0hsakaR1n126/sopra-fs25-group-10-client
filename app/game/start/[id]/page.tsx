@@ -448,12 +448,12 @@ const GameStart = () => {
             >
               {title}
             </div>
-            <div className={styles.email}>
-              <strong>Email:</strong> {selectedPlayer.email ?? 'Not Set'}
-            </div>
-            <div className={styles.bio}>
-              <strong>Bio:</strong> {selectedPlayer.bio ?? 'Not Set'}
-            </div>
+            {selectedPlayer.email && (<div className={styles.email}>
+              <strong>Email:</strong> {selectedPlayer.email}
+            </div>)}
+            {selectedPlayer.bio && (<div className={styles.bio}>
+              <strong>Bio:</strong> {selectedPlayer.bio}
+            </div>)}
           </div>
         )}
 

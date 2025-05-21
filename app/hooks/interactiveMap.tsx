@@ -3,8 +3,7 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useApi } from "./useApi";
 import { useDispatch, useSelector } from "react-redux";
-import { answerUpdate, hintUpdate, hintUsageClear, incrementCorrectCount, incrementQuestionCount } from "@/gameSlice";
-import { toast } from "react-toastify";
+import { answerUpdate, hintUpdate, hintUsageClear, } from "@/gameSlice";
 import { countryIdMap } from "@/utils/idToCountryName";
 import Particles from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
@@ -262,33 +261,11 @@ const InteractiveMap = () => {
                 submitLocked.current = true;
                 apiService.put<submitResponse>(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
                   .then((response) => {
-                    dispatch(incrementQuestionCount());
                     if (response.judgement) {
-                      dispatch(incrementCorrectCount());
-                      // toast.success(`Your answer is correct! The answer is: ${countryIdMap[answerRef.current]}`, {
-                      //   position: "top-center",
-                      //   autoClose: 1000,
-                      //   style: {
-                      //     width: '300px',
-                      //     padding: '30px',
-                      //     fontSize: '20px',
-                      //     marginTop: '50px',
-                      //     marginBottom: '10px',
-                      //   },
-                      // });
+                      // should be modified
                       showSuccessToast(`Your answer is correct! The answer is: ${countryIdMap[answerRef.current]}`);
                     } else {
-                      // toast.error(`Your answer is wrong! The answer is: ${countryIdMap[answerRef.current]}`, {
-                      //   position: "top-center",
-                      //   autoClose: 1000,
-                      //   style: {
-                      //     width: '300px',
-                      //     padding: '30px',
-                      //     fontSize: '20px',
-                      //     marginTop: '50px',
-                      //     marginBottom: '10px',
-                      //   },
-                      // });
+                      // should be modified
                       showErrorToast(`Your answer is wrong! The answer is: ${countryIdMap[answerRef.current]}`);
                     }
 
@@ -311,7 +288,7 @@ const InteractiveMap = () => {
                   }).finally(() => {
                     setTimeout(() => submitLocked.current = false, 1000);
                   });
-                dispatch(hintUsageClear());
+                // dispatch(hintUsageClear());
               });
             });
 

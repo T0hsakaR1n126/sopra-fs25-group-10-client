@@ -260,7 +260,7 @@ export default function Navbar() {
                       fontWeight: 600,
                     }}
                   >
-                    {xp} / {title === "MapMaster" ? xp : title === "MapExpert" ? "10000" : "5000"}
+                    {Math.round(xp)}/ {title === "MapMaster" ? xp : title === "MapExpert" ? "10000" : "5000"}
                   </div>
                 </div>
               </div>

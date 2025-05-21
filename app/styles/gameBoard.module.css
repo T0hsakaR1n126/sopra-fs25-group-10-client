@@ -55,6 +55,12 @@
   /* or suitable min-width */
 }
 
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .topCenter {
   flex: 1 1 auto;
   /* take remaining space */
@@ -106,14 +112,14 @@
   background: rgba(10, 20, 40, 0.6);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(0, 188, 212, 0.3);
-  border-radius: 16px;
+  /* border-radius: 16px; */
   box-shadow:
     0 4px 12px rgba(0, 188, 212, 0.1),
     inset 0 0 4px rgba(0, 188, 212, 0.15);
   color: #d0e6e8;
   font-size: 16px;
   line-height: 1.6;
-  max-width: 320px;
+  max-width: 400px;
   overflow-y: auto;
   gap: 1rem;
 }
@@ -173,12 +179,21 @@
 
 /* Hint Text */
 .hintText {
-  margin-bottom: 2rem;
-  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-height: 500px;
+  flex-grow: 1;
+  overflow: hidden;
+  padding-bottom: 16px;
 }
 
 .hintText p {
-  opacity: 0;
+  font-size: clamp(12px, 1.5vw, 16px);
+  line-height: 1.4;
+  word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
   animation: fadeSlideIn 0.5s forwards;
 }
 
@@ -197,12 +212,10 @@
 .hintIconsContainer {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 0.5rem;
+  align-items: center;
+  gap: 1.5rem;
   width: 100%;
-  /* fill parent */
   max-width: 320px;
-  /* consistent max width */
 }
 
 /* Hint Label */
@@ -219,6 +232,7 @@
   display: flex;
   flex-direction: row;
   gap: 20px;
+  justify-content: center;
 }
 
 /* Individual Hint Icon */
@@ -267,14 +281,14 @@
 
 /* Toggle Button */
 .collapsibleToggle {
-  margin-top: 20px;
+  width: fit-content;
   padding: 8px 16px;
+  font-weight: bold;
+  border-radius: 20px;
   background: linear-gradient(to right, #1a2a3a, #0c121b);
   color: #a0d5f8;
   border: 1px solid #00bcd4;
-  border-radius: 20px;
-  font-weight: bold;
-  box-shadow: 0 0 10px rgba(0, 188, 212, 0.2);
+  box-shadow: 0 0 8px rgba(0, 188, 212, 0.2);
   transition: all 0.2s ease-in-out;
   cursor: pointer;
 }
@@ -294,13 +308,14 @@
 .hintButtonWrapper {
   display: flex;
   justify-content: center;
-  margin-top: 1rem;
+  margin-top: auto;
 }
 
 /* Divider */
 .hintDivider {
+  margin-top: 4px;
+  margin-bottom: 4px;
   border-top: 1px dashed rgba(0, 188, 212, 0.2);
-  margin: 10px 0;
 }
 
 /* Rules Box */
@@ -331,55 +346,74 @@
   margin-bottom: 6px;
 }
 
-/* Scoreboard Wrapper */
-.scoreboardWrapper {
+.instructionWrapper {
   position: relative;
   display: inline-block;
 }
 
-/* Scoreboard Popup */
-.scoreboardPopup {
+.instructionPopup {
   position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  transform: translateX(-50%);
-  width: 220px;
-  background: rgba(46, 125, 50, 0.8);
-  border-radius: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  /* padding: 15px; */
-  color: white;
-  z-index: 100;
-  text-align: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  backdrop-filter: blur(4px);
-  animation: fadeInPopup 0.3s ease-in-out;
+  top: 3.5rem;
+  left: -39%;
+  background: rgba(10, 20, 40, 0.85);
+  border: 1px solid rgba(0, 188, 212, 0.3);
+  backdrop-filter: blur(10px);
+  padding: 1.2rem 1.6rem;
+  border-radius: 16px;
+  color: #d0e6e8;
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  z-index: 1000;
+  box-shadow:
+    0 4px 20px rgba(0, 255, 255, 0.1),
+    inset 0 0 10px rgba(0, 188, 212, 0.05);
+  width: 300px;
+  text-align: left;
+  animation: fadeInUp 0.4s ease;
 }
 
-@keyframes fadeInPopup {
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translate(-50%, -60%);
   }
-
   to {
-    opacity: 1;
-    transform: translateY(0);
+    display: none;
+    transform: translate(-50%, -50%);
   }
+}
+
+.instructionPopup h3 {
+  font-size: 18px;
+  font-weight: bold;
+  color: #66ccff;
+  text-align: center;
+  margin-bottom: 0.8rem;
+  text-shadow: 0 0 6px rgba(0, 255, 255, 0.4);
+  border-bottom: 1px dashed rgba(0, 188, 212, 0.2);
+  padding-bottom: 0.4rem;
 }
 
 /* Own Score Box */
 .ownScoreBox {
-  background-color: #000;
-  color: #fff;
-  padding: 8px;
-  border-radius: 20px;
-  margin-top: 8px;
+  margin-top: auto;
+  padding: 1rem 1.2rem;
+  border-radius: 14px;
+  background: rgba(10, 20, 40, 0.5);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(0, 188, 212, 0.3);
+  box-shadow:
+    0 0 12px rgba(0, 188, 212, 0.1),
+    inset 0 0 8px rgba(0, 255, 255, 0.05);
+  color: #a0d5f8;
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
   text-align: center;
-  /* min-width: 16vw; */
-  /* height: 5vw; */
+  transition: box-shadow 0.3s ease;
+}
+
+.ownScoreBox:hover {
+  box-shadow:
+    0 0 16px rgba(0, 188, 212, 0.3),
+    inset 0 0 10px rgba(0, 255, 255, 0.08);
 }
 
 /* Score Stat */
@@ -413,6 +447,7 @@ font-weight: bold;
   justify-content: center;
   align-items: center;
   position: relative;
+  min-width: 0;
 }
 
 .mapImage {
@@ -443,31 +478,14 @@ font-weight: bold;
 
 .popupVisible {
   opacity: 1;
-  visibility: visible;
+  transform: translateY(0px);
+  transition: all 0.4s ease-in-out;
 }
 
 .popupHidden {
   opacity: 0;
-  visibility: hidden;
-}
-
-
-.scoreboardPopup ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(-50%) translateY(-5px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0);
-  }
+  transform: translateY(-8px);
+  transition: all 0.4s ease-in-out;
 }
 
 .modalOverlay {
@@ -483,15 +501,40 @@ font-weight: bold;
   z-index: 999;
 }
 
+.exitModalWrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .exitModal {
-  background-color: #2e7d32;
-  color: white;
-  padding: 30px 20px;
-  border-radius: 20px;
-  width: 450px;
+  opacity: 0;
+  animation: fadeInHUD 0.3s ease forwards;
+  background: rgba(10, 20, 40, 0.9);
+  color: #d0e6e8;
+  padding: 30px 24px;
+  border-radius: 16px;
+  width: 420px;
   max-width: 90%;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.1),
+    inset 0 0 12px rgba(0, 255, 255, 0.08);
+  border: 1px solid rgba(0, 188, 212, 0.3);
+  backdrop-filter: blur(8px);
+}
+
+@keyframes fadeInHUD {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .exitButtons {
@@ -499,22 +542,27 @@ font-weight: bold;
   justify-content: center;
   gap: 10px;
   margin-top: 20px;
+  flex-wrap: nowrap;
+  max-width: 100%;
   cursor: pointer;
 }
 
 .exitButton {
-  background-color: white;
-  color: #2e7d32;
-  border: none;
-  padding: 10px 12px;
-  border-radius: 8px;
-  cursor: pointer;
+  background: rgba(0, 188, 212, 0.15);
+  color: #00e5ff;
+  border: 1px solid rgba(0, 188, 212, 0.4);
+  padding: 10px 16px;
+  border-radius: 10px;
   font-weight: bold;
-  transition: background 0.2s;
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  white-space: nowrap;
 }
 
 .exitButton:hover {
-  background-color: #e0e0e0;
+  background: rgba(0, 188, 212, 0.3);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
 }
 
 .endOverlay {
@@ -553,3 +601,158 @@ font-weight: bold;
   display: block;
   background: transparent;
 }
+
+/* scoreboard */
+.scoreTitle {
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.6rem;
+  color: #66ccff;
+  text-shadow: 0 0 4px rgba(0, 188, 212, 0.5);
+  letter-spacing: 0.8px;
+  /* border-bottom: 1px dashed rgba(0, 188, 212, 0.2); */
+  padding-bottom: 0.4rem;
+}
+
+.youTag {
+  font-size: 12px;
+  color: #00ffff;
+  margin-left: 6px;
+  opacity: 0.8;
+}
+
+.currentUser {
+  background: rgba(0, 255, 255, 0.1);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.15);
+  font-weight: bold;
+}
+
+.scoreList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  font-size: 14px;
+  margin-top: 0.5rem;
+}
+
+.scoreRow {
+  display: flex;
+  justify-content: space-between;
+  background: rgba(0, 188, 212, 0.05);
+  border: 1px solid rgba(0, 188, 212, 0.2);
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: #a0d5f8;
+  transition: background 0.3s;
+}
+
+.scoreRow:hover {
+  background: rgba(0, 188, 212, 0.15);
+}
+
+.rank {
+  width: 1.5rem;
+  font-weight: bold;
+  color: #66ccff;
+}
+
+.username {
+  flex: 1;
+  text-align: left;
+}
+
+.userScore {
+  min-width: 3rem;
+  text-align: right;
+  font-weight: bold;
+  color: #00e5ff;
+}
+
+/* instruction */
+.instructionList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.instructionList li {
+  margin-bottom: 0.6rem;
+  /* padding-left: 1.2rem; */
+  position: relative;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #cceeff;
+}
+
+/* time box */
+.timerBox {
+  background: rgba(10, 20, 40, 0.85);
+  border: 1px solid rgba(0, 188, 212, 0.4);
+  border-radius: 12px;
+  padding: 0.6rem 1.2rem;
+  text-align: center;
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  box-shadow:
+    0 0 12px rgba(0, 255, 255, 0.08),
+    inset 0 0 4px rgba(0, 255, 255, 0.1);
+  z-index: 999;
+  min-width: 100px;
+  margin-right: 1.2rem;
+  max-width: 120px;
+  white-space: nowrap;
+}
+
+.timerLabel {
+  font-size: 13px;
+  color: #88ddee;
+  margin-bottom: 4px;
+  text-shadow: 0 0 3px #00ffff;
+}
+
+.timerValue {
+  font-size: 22px;
+  font-weight: bold;
+  color: #00e5ff;
+  animation: pulseTime 1s infinite;
+  transition: color 0.3s ease;
+  white-space: nowrap;
+  font-family: 'Orbitron', 'Segoe UI', sans-serif;
+  padding: 0.4rem 0.8rem;
+  margin-right: 1rem;
+  display: inline-block;
+}
+
+.timerWarning {
+  color: #ff9800;
+  border-color: rgba(255, 152, 0, 0.4);
+  animation: pulseTimeFast 1s infinite;
+}
+
+.timerDanger {
+  color: #ff3d3d;
+  border-color: rgba(255, 61, 61, 0.5);
+  animation: pulseTimeFast 0.6s infinite;
+}
+
+@keyframes pulseTime {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes pulseTimeFast {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+
