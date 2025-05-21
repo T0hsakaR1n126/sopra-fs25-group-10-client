@@ -74,8 +74,14 @@ const ProfilePage = () => {
       }));
       setIsEditing(false);
     } catch (error: unknown) {
-      if (error && typeof error === "object" && "response" in error) {
-        const statusCode = (error as any)?.response?.status ?? (error as any)?.status;
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error &&
+        typeof (error as { response?: any }).response === "object"
+      ) {
+        const err = error as { response?: { status?: number }, status?: number };
+        const statusCode = err.response?.status ?? err.status;
 
         if (statusCode === 400) {
           showErrorToast("Username already exists. Please choose another.");
