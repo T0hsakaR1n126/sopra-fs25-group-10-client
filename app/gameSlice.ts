@@ -118,23 +118,9 @@ const gameSlice = createSlice({
     ownerUpdate: (state, action: PayloadAction<string>) => {
       state.ownerId = action.payload;
     },
-    clearGameState: (state) => {
-      state.gameId = null;
-      state.gameCode = null;
-      state.gamename = null;
-      state.gameStarted = false;
-      state.modeType = null;
-      state.time = null;
-      state.hints = [];
-      state.ownerId = null;
-      state.gameHistory = [];
-      state.learningProgress = [];
-      state.currentGameMode = null;
-      state.currentTeamId = null;
-      state.gameResults = null;
-      state.hintUsage = 1; // Reset hint usage when a new game starts
-      state.scoreBoard = null; // Reset score board
-    },
+
+    clearGameState: () => initialState,
+
     answerUpdate: (state, action: PayloadAction<string>) => {
       state.answer = action.payload;
     },
@@ -151,6 +137,7 @@ const gameSlice = createSlice({
       state.questionCount = 1;
       state.correctCount = 0;
       state.lastSubmitTime = 0;
+      state.guessTimeList = [];
     },
 
     setLastSubmitTime: (state, action) => {
