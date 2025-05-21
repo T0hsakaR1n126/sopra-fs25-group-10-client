@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { toast, Slide } from "react-toastify";
 import React, { useState, useEffect, useRef } from "react";
 
 export const showPasswordPrompt = (): Promise<string | null> => {
@@ -78,6 +78,7 @@ export const showPasswordPrompt = (): Promise<string | null> => {
       closeOnClick: false,
       closeButton: false,
       draggable: false,
+      transition: Slide,
       style: {
         width: "320px",
         padding: "20px 25px",

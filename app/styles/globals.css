@@ -270,11 +270,11 @@ main,
 }
 
 .roomWrapperEnter {
-  animation: fadeInRoomwrapper 0.6s ease-out;
+  animation: fadeInRoomwrapper 0.4s ease-out;
 }
 
 .roomWrapperExit {
-  animation: fadeOutRoomwrapper 0.6s ease-out;
+  animation: fadeOutRoomwrapper 0.4s ease-out;
 }
 
 @keyframes fadeInRoomwrapper {
@@ -303,11 +303,11 @@ main,
 
 /* lobby */
 .pageEnter {
-  animation: fadeInPage 0.6s ease-out;
+  animation: fadeInPage 0.3s ease-out;
 }
 
 .pageExit {
-  animation: fadeOutPage 0.6s ease-in forwards;
+  animation: fadeOutPage 0.3s ease-in forwards;
 }
 
 @keyframes fadeInPage {
@@ -335,6 +335,6 @@ main,
 }
 
 body.lobby-no-scroll {
-  overflow: hidden;
+  /* overflow: hidden; */
   height: 100%;
 }

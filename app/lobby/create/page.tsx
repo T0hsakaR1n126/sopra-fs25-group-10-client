@@ -70,6 +70,8 @@ const CreateForm: React.FC = () => {
             playersNumber: response.playersNumber ? parseInt(response.playersNumber, 10) : null,
             questionCount: 1, 
             correctCount: 0,
+            lastSubmitTime: Date.now(),
+            guessTimeList: [],
           }
         ));
         router.push(`/game/start/${response.gameId}`);

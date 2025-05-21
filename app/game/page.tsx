@@ -124,7 +124,7 @@ const Dashboard: React.FC = () => {
 
         setTimeout(() => {
           setCountDown(null);
-          requestAnimationFrame(() => {
+          requestAnimationFrame(async () => {
             setShowButtons(false);
             setTimeout(async () => {
               window.dispatchEvent(new Event("navbarExit"));
@@ -158,7 +158,6 @@ const Dashboard: React.FC = () => {
     };
 
     try {
-
       if (!isExercise) {
         await apiService.post<Game>("/startsolo", newGame);
       } else {
@@ -254,7 +253,7 @@ const Dashboard: React.FC = () => {
                   setShowButtons(false);
                   setTimeout(() => {
                     router.push("/lobby");
-                  }, 1500);
+                  }, 1200);
                 }}>
                   <div className="button-inner">
                     <img src="/combat.png" alt="Combat Icon" className="button-icon" />
