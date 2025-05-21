@@ -6,6 +6,7 @@ import { User } from "@/types/user"
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserInfo } from "@/userSlice";
+import { showErrorToast } from "@/utils/showErrorToast";
 // import Authenticator from "@/auth/authenticator";
 
 const ProfilePage = () => {
@@ -73,9 +74,14 @@ useEffect(() => {
       }));
       setIsEditing(false);
     } catch (error: any) {
-        console.error(error.message);
-        const message = error?.response?.data?.message || error.message || "Invalid update. Please try again.";
-        alert(message);
+        const statusCode = error?.response?.status ?? error?.status;
+        if (statusCode === 400) {
+          showErrorToast("Username already exists. Please choose another.");
+          return;
+        }
+
+        console.error(error);
+        showErrorToast("Invalid update. Please try again.");
       }
   };
 
