@@ -73,24 +73,11 @@ const ProfilePage = () => {
         level: Number(updatedUser.level) / 100,
       }));
       setIsEditing(false);
-    } catch (error: unknown) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "response" in error &&
-        typeof (error as { response?: any }).response === "object"
-      ) {
-        const err = error as { response?: { status?: number }, status?: number };
-        const statusCode = err.response?.status ?? err.status;
-
-        if (statusCode === 400) {
-          showErrorToast("Username already exists. Please choose another.");
-          return;
-        }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+        alert("Invalid update. Please try again.");
       }
-
-      console.error(error);
-      showErrorToast("Invalid update. Please try again.");
     }
   };
 
