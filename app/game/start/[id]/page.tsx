@@ -34,7 +34,6 @@ const GameStart = () => {
   const username = useSelector((state: { user: { username: string } }) => state.user.username);
   const gameCode = useSelector((state: { game: { gameCode: string } }) => state.game.gameCode);
   const playersNumber = useSelector((state: { game: { playersNumber: number } }) => state.game.playersNumber);
-  const level = useSelector((state: { user: { level: number } }) => state.user.level);
 
   const [players, setPlayers] = useState<User[]>([]);
   const [gameCodeShown, setGameCodeShown] = useState<string | null>(null);

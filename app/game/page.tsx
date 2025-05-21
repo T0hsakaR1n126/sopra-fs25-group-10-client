@@ -9,7 +9,6 @@ import { useApi } from "@/hooks/useApi";
 import { Client } from "@stomp/stompjs";
 import { gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from "@/gameSlice";
 import { motion, AnimatePresence } from "framer-motion";
-import { showErrorToast } from "@/utils/showErrorToast";
 
 const Dashboard: React.FC = () => {
   const router = useRouter();

@@ -518,7 +518,11 @@ const GameBoard: React.FC = () => {
                                 {player} {isSelf && <span className={styles.youTag}>👈 You</span>}
                               </span>
                               <span className={styles.userScore}>
-                                {score === -1 ? "❌" : score}
+                                {typeof score === "number"
+                                  ? score === -1
+                                    ? "❌"
+                                    : score
+                                  : "?"}
                               </span>
                             </motion.div>
                           );
