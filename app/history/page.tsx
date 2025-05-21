@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
 import styles from "@/styles/gameHistory.module.css";
 import { useSelector } from "react-redux";
-import { Luckiest_Guy, Orbitron } from "next/font/google";
+
 
 
 

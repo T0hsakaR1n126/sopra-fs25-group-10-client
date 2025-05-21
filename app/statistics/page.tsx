@@ -35,7 +35,7 @@ const GuestPage: React.FC = () => {
           Object.entries(learningTracking).every(([k, v]) => typeof k === "string" && typeof v === "number")
         ) {
           const formattedData: Country[] = Object.entries(learningTracking)
-            .filter(([_, answered]) => answered > 0)
+            .filter(([, answered]) => answered > 0)
             .map(([name, answered]) => ({ name, answered }));
           // 排序：数量多的在前
           formattedData.sort((a, b) => b.answered - a.answered);
