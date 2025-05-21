@@ -95,7 +95,7 @@ const GameHistoryPage: React.FC = () => {
   const paginated = filtered.slice(start, end);
 
   function formatTimestampToYMDHM(timestamp: string): string {
-    const iso = timestamp.split(".")[0];
+    const iso = timestamp.split(".")[0] + "Z";
     const date = new Date(iso);
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;

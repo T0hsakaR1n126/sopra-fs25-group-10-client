@@ -22,6 +22,13 @@ interface Message {
   timestamp: string;
 }
 
+function formatChatTimestamp(timestamp: string): string {
+  const iso = timestamp.split(".")[0] + "Z";
+  const date = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
 const luckiestGuy = Luckiest_Guy({ weight: "400", subsets: ['latin'] });
 
 const GameStart = () => {
@@ -371,7 +378,7 @@ const GameStart = () => {
                         {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
                       </div>
                       <div className={styles.time}>
-                        {new Date(msg.timestamp).toLocaleTimeString()}
+                        {formatChatTimestamp(msg.timestamp)}
                       </div>
                     </div>
                   </div>
