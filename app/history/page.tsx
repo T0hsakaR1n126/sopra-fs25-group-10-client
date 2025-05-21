@@ -6,8 +6,7 @@ import styles from "@/styles/gameHistory.module.css";
 import { useSelector } from "react-redux";
 import { Luckiest_Guy, Orbitron } from "next/font/google";
 
-const luckiestGuy = Luckiest_Guy({ weight: "400", subsets: ['latin'] });
-const orbitron = Orbitron({ weight: "500", subsets: ['latin'] });
+
 
 type MatchHistoryItem = {
   score: number;
@@ -106,12 +105,14 @@ const GameHistoryPage: React.FC = () => {
   return (
     <div style={{ paddingTop: "80px" }}>
       <div className={styles.container}>
-          <h2 className={`${styles.title} ${luckiestGuy.className}`}>
-            <span role="img" aria-label="trophy">🏆</span> Game History
-          </h2>
-          <h2 className={`${styles.subtitle} ${orbitron.className}`}>
-            <span style={{color: "#f7c325"}}>★</span> Record all your performance!
-          </h2>
+<h1 className={styles.title}>
+  <span className={styles.icon}>🏆</span>
+  Game History
+</h1>
+<h2 className={styles.subtitle}>
+  <span style={{ color: "#f7c325" }}>★</span>
+  &nbsp;Record all your performance!
+</h2>
         {loading ? (
           <p>Loading...</p>
         ) : (

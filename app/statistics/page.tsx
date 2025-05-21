@@ -6,10 +6,6 @@ import { useApi } from "@/hooks/useApi";
 import { useParams } from "next/navigation";
 import styles from "@/styles/Statistics.module.css";
 import { useSelector } from "react-redux";
-import { Luckiest_Guy, Orbitron } from "next/font/google";
-
-const luckiestGuy = Luckiest_Guy({ weight: "400", subsets: ['latin'] });
-const orbitron = Orbitron({ weight: "500", subsets: ['latin'] });
 
 interface Country {
   name: string;
@@ -73,37 +69,15 @@ const GuestPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-<h1 className={`${styles.heading} ${luckiestGuy.className}`}>
-  <span style={{
-    display: "inline-block",
-    marginRight: 8,
-    fontSize: "1.25em",
-    verticalAlign: "middle"
-  }}>📈</span>
-  <span
-    style={{
-      background: "linear-gradient(90deg,#32d1ff,#3fffa8 60%,#fff46c 100%)",
-      WebkitBackgroundClip: "text",
-      WebkitTextFillColor: "transparent",
-      display: "inline-block",
-      fontWeight: 900,
-      letterSpacing: "1.7px"
-    }}
-  >
-    User Statistics
-  </span>
-</h1>
-<p className={`${styles.description} ${orbitron.className}`}>
-  The flags below represent the number of correctly answered questions for each country across all game modes.<br />
-  <span style={{ color: "#ffc63f", fontWeight: 600 }}>
-    Total correct: {totalAnswered} | Countries: {countryData.length}
-  </span>
-  <br />
-  <span style={{ color: "#54e1f7" }}>
-    📈 If no flags are displayed, the player has not yet participated in any games.
-  </span>
-</p>
-
+        <h2 className={styles.title}>
+          📈 User Statistics
+        </h2>
+        <h2 className={styles.subtitle}>
+          The flags below represent the number of correctly answered questions for each country across all game modes.
+        </h2>
+        <p style={{ textAlign: "center", color: "#ffc63f", fontSize: "16px", fontWeight: 600 }}>
+          Total correct: {totalAnswered} | Countries: {countryData.length}
+        </p>
       {loading ? (
         <p className={styles.loading}>Loading...</p>
       ) : error ? (

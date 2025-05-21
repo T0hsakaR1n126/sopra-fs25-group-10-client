@@ -5,6 +5,7 @@
   background-color: transparent;
   color: white;
   padding: 2.5rem;
+  padding-top: 200px;  /* 你可以改成80px/100px, 看效果 */
 }
 
 .heading {
@@ -16,6 +17,25 @@
   letter-spacing: 1.6px;
   color: #ffd76d;
   text-shadow: 0 2px 20px #fff39933, 0 1px 3px #0006;
+}
+
+.title {
+  font-size: 48px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow:
+    0 0 6px #22d3ee,
+    0 0 12px #0ea5e9;
+  letter-spacing: 1px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  text-align: center;
+  align-items: center;
 }
 
 .subheading, .description {

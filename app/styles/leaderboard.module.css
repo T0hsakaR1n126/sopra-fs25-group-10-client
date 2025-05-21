@@ -1,12 +1,14 @@
 .containerPage {
-  background: linear-gradient(120deg, #243B55 0%, #141E30 100%);
+  background: transparent;           /* 主体透明 */
   border-radius: 22px;
   padding: 38px 12px 36px 12px;
   max-width: 800px;
   margin: 100px auto 38px auto;
-  box-shadow: 0 8px 36px 0 rgba(36,59,85,0.23);
+  /* box-shadow: 0 8px 36px 0 rgba(36,59,85,0.23); */ /* 可选：如需淡淡的阴影可保留或改淡 */
   min-height: 80vh;
   transition: box-shadow 0.25s;
+  /* border: 2.5px solid rgba(255,255,255,0.09); 可选：加个极淡边框，让内容更聚焦 */
+  /* 可选：可加 backdrop-filter: blur(2px); 显示毛玻璃 */
 }
 
 .levelLabel {
@@ -46,20 +48,22 @@
 }
 
 .title {
-  font-size: 2.35rem;
-  font-weight: bold;
+  font-size: 48px;
+  font-weight: 800;
   color: #fff;
-  letter-spacing: 2px;
+  text-shadow:
+    0 0 6px #22d3ee,
+    0 0 12px #0ea5e9;
+  letter-spacing: 1px;
   text-align: center;
-  margin-bottom: 2px;
-  text-shadow: 0 2px 14px #19304b77;
+  margin-bottom: 12px;
 }
+
 .subtitle {
-  font-size: 1.13rem;
-  color: #c7e1ef;
+  font-size: 1.2rem;
+  margin-bottom: 30px;
   text-align: center;
-  margin-bottom: 13px;
-  text-shadow: 0 1px 8px #19304b44;
+  align-items: center;
 }
 .leftPanel {
   margin: 0 auto;
