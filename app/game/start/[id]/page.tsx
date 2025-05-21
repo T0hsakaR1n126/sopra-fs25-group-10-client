@@ -15,7 +15,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Luckiest_Guy } from "next/font/google";
 import { showSuccessToast } from '@/utils/showSuccessToast';
 import { showErrorToast } from "@/utils/showErrorToast";
-import { AnimatePresence, mapEasingToNativeEasing, motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface Message {
   sender: string;
