@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useCallback } from "react";
 import { useApi } from "./useApi";
 import { useDispatch, useSelector } from "react-redux";
-import { answerUpdate, hintUpdate, hintUsageClear, } from "@/gameSlice";
+import { answerUpdate, collectGuessTime, hintUpdate, hintUsageClear, incrementCorrectCount, incrementQuestionCount, setLastSubmitTime } from "@/gameSlice";
 import { countryIdMap } from "@/utils/idToCountryName";
 import Particles from "react-tsparticles";
 import type { Engine } from "tsparticles-engine";
@@ -31,6 +31,10 @@ const InteractiveMap = () => {
 
   const answer = useSelector((state: { game: { answer: string } }) => state.game.answer);
   const answerRef = useRef(answer);
+  const lastSubmitTime = useSelector((state: { game: { lastSubmitTime: number } }) => state.game.lastSubmitTime);
+  const lastSubmitTimeRef = useRef(lastSubmitTime);
+  const questionCount = useSelector((state: { game: { questionCount: number } }) => state.game.questionCount);
+  const questionCountRef = useRef(questionCount);
 
   const submitLocked = useRef(false);
 
@@ -106,6 +110,18 @@ const InteractiveMap = () => {
   useEffect(() => {
     answerRef.current = answer;
   }, [answer]);
+
+  useEffect(() => {
+    questionCountRef.current = questionCount;
+  }, [questionCount]);
+
+  useEffect(() => {
+    lastSubmitTimeRef.current = lastSubmitTime;
+  }, [lastSubmitTime]);
+
+  useEffect(() => {
+    dispatch(setLastSubmitTime(Date.now()));
+  }, []);
 
   useEffect(() => {
     fetch("/world_map.svg")
@@ -261,13 +277,21 @@ const InteractiveMap = () => {
                 submitLocked.current = true;
                 apiService.put<submitResponse>(`/submit/${userId}`, { gameId: gameId, submitAnswer: countryId, hintUsingNumber: hintUsageRef.current })
                   .then((response) => {
+                    const now = Date.now();
+                    const elapsed = now - lastSubmitTimeRef.current;
+
+                    dispatch(collectGuessTime(elapsed));
+                    dispatch(setLastSubmitTime(now));
+
                     if (response.judgement) {
+                      dispatch(incrementCorrectCount());
                       // should be modified
                       showSuccessToast(`Your answer is correct! The answer is: ${countryIdMap[answerRef.current]}`);
                     } else {
                       // should be modified
                       showErrorToast(`Your answer is wrong! The answer is: ${countryIdMap[answerRef.current]}`);
                     }
+                    dispatch(incrementQuestionCount());
 
                     const currentAnswer = answerRef.current;
                     const ansCountryElement = svgElement.querySelector(`path[id="${currentAnswer}"]`) as SVGPathElement | null;

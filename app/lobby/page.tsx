@@ -168,6 +168,8 @@ const Lobby: React.FC = () => {
           playersNumber: game.playersNumber ? parseInt(game.playersNumber, 10) : null,
           correctCount: 0,
           questionCount: 1,
+          lastSubmitTime: Date.now(),
+          guessTimeList: [],
         }
       ));
 

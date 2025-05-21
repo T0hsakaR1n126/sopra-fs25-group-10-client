@@ -14,6 +14,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { showSuccessToast } from '@/utils/showSuccessToast';
 import { showErrorToast } from '@/utils/showErrorToast';
 import { LoadingOutlined } from '@ant-design/icons';
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+
 
 // interface GameState {
 //   questionCount: number;
@@ -46,6 +49,12 @@ const GameBoard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState<string | null>(null);
   const [gameEnded, setGameEnded] = useState(false);
   const [endMessage, setEndMessage] = useState('');
+  const guessTimes = useSelector((state: { game: { guessTimeList: number[] } }) => state.game.guessTimeList);
+  const guessTimesRef = useRef(guessTimes);
+  const questionCount = useSelector((state: { game: { questionCount: number } }) => state.game.questionCount);
+  const questionCountRef = useRef(questionCount);
+  const correctCount = useSelector((state: { game: { correctCount: number } }) => state.game.correctCount);
+  const correctCountRef = useRef(correctCount);
 
   // button lock
   const [nextLocked, setNextLocked] = useState(false);
@@ -64,6 +73,22 @@ const GameBoard: React.FC = () => {
   useEffect(() => {
     answerRef.current = answer;
   }, [answer]);
+  useEffect(() => {
+    guessTimesRef.current = guessTimes;
+  }, [guessTimes]);
+  useEffect(() => {
+    questionCountRef.current = questionCount;
+  }, [questionCount]);
+  useEffect(() => {
+    correctCountRef.current = correctCount;
+  }, [correctCount]);
+  const accuracyValue = questionCountRef.current > 0
+    ? Math.round((correctCountRef.current / questionCountRef.current) * 100)
+    : 0;
+  const avgTime =
+    guessTimes.length > 0
+      ? (guessTimes.reduce((a, b) => a + b, 0) / guessTimes.length / 1000).toFixed(1)
+      : "0.0";
 
   // for individual score in the game
   const hintUsage = useSelector((state: { game: { hintUsage: number } }) => state.game.hintUsage);
@@ -187,6 +212,7 @@ const GameBoard: React.FC = () => {
       setTimeout(() => {
         dispatch(hintUsageClear());
         dispatch(clearGameState());
+        dispatch(resetQuestionStats());
         router.push(`/game`);
       }, 800);
     } catch (error) {
@@ -255,6 +281,8 @@ const GameBoard: React.FC = () => {
                         className={styles.exitButton}
                         onClick={async () => {
                           setTransitionDirection("out");
+                          dispatch(clearGameState());
+                          dispatch(resetQuestionStats());
                           setTimeout(async () => {
                             try {
                               await apiService.put(`/giveup/${userId}`, {});
@@ -498,8 +526,8 @@ const GameBoard: React.FC = () => {
               <span className={styles.correct}>{correctCount}</span>
             </div> */}
               {scoreBoard
-                ? (
-                  <AnimatePresence>
+                ? (scoreBoard.size !== 1 ?
+                  (<AnimatePresence>
                     <motion.div layout className={styles.scoreList}>
                       <div className={styles.scoreTitle}>Scoreboard</div>
                       {Array.from(scoreBoard.entries())
@@ -528,7 +556,31 @@ const GameBoard: React.FC = () => {
                           );
                         })}
                     </motion.div>
-                  </AnimatePresence>
+                  </AnimatePresence>)
+                  : (
+                    <>
+                      <div className={styles.statPanelTitle}>🧠 Game Stats</div>
+                      <div className={styles.statBlock}>
+                        <div className={styles.statLabel}>Accuracy</div>
+                        <div style={{ width: 80, height: 80, margin: "0.5rem auto" }}>
+                          <CircularProgressbar
+                            value={accuracyValue}
+                            text={`${accuracyValue}%`}
+                            styles={buildStyles({
+                              textColor: "#00e5ff",
+                              pathColor: "#00e5ff",
+                              trailColor: "rgba(255, 255, 255, 0.1)",
+                              textSize: "16px",
+                            })}
+                          />
+                        </div>
+                      </div>
+                      <div className={styles.statBlock}>
+                        <div className={styles.statLabel}>Average Time</div>
+                        <div className={styles.statValue}>{avgTime}s</div>
+                      </div>
+                    </>
+                  )
                 )
                 : <div>Loading...</div>
               }
@@ -545,18 +597,6 @@ const GameBoard: React.FC = () => {
                 </ul>
               </div>
             )}
-
-            {/* <div className={styles.rulesBox}>
-            <ul>
-              <li>Hovering over a country on the map shows its name.</li>
-              <li>Clicking on a country immediately records your answer.</li>
-              <li>The answer is checked and the game moves to the next question immediately.</li>
-              <li>Each hint has lesser difficulty than the previous one.</li>
-              <li>You can unlock hints only in sequential order.</li>
-              <li>Only the next hint unlocks when you use the current hint.</li>
-              <li>In exercise mode, click on &quot;Next&quot; to move to the following question instead of automatic progression.</li>
-            </ul>
-          </div> */}
           </div>
 
           {/* map area */}
