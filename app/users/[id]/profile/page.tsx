@@ -6,7 +6,6 @@ import { User } from "@/types/user"
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserInfo } from "@/userSlice";
-import { showErrorToast } from "@/utils/showErrorToast";
 // import Authenticator from "@/auth/authenticator";
 
 const ProfilePage = () => {
