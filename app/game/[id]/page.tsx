@@ -49,7 +49,9 @@ const GameBoard: React.FC = () => {
   const [currentTime, setCurrentTime] = useState<string | null>(null);
   const [gameEnded, setGameEnded] = useState(false);
   const [endMessage, setEndMessage] = useState('');
-  const guessTimes = useSelector((state: { game: { guessTimeList: number[] } }) => state.game.guessTimeList);
+  const guessTimes = useSelector((state: { game: { guessTimeList?: number[] } }) =>
+    state.game.guessTimeList ?? []
+  );
   const guessTimesRef = useRef(guessTimes);
   const questionCount = useSelector((state: { game: { questionCount: number } }) => state.game.questionCount);
   const questionCountRef = useRef(questionCount);
