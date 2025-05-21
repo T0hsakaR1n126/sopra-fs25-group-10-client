@@ -134,8 +134,8 @@ const GameBoard: React.FC = () => {
     }
 
     const client = new Client({
-      brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
-      // brokerURL: "http://localhost:8080/ws",
+      // brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
+      brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
         console.log('STOMP connected');
