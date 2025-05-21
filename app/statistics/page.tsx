@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { countryCodeMap } from "@/utils/countryCodeMap";
 import { useApi } from "@/hooks/useApi";
 import { useParams } from "next/navigation";
-import styles from "@/styles/GuestStatsGrid.module.css";
+import styles from "@/styles/Statistics.module.css";
 import { useSelector } from "react-redux";
 
 interface Country {
@@ -34,10 +34,11 @@ const GuestPage: React.FC = () => {
           typeof learningTracking === "object" &&
           Object.entries(learningTracking).every(([k, v]) => typeof k === "string" && typeof v === "number")
         ) {
-          const formattedData: Country[] = Object.entries(learningTracking).map(([name, answered]) => ({
-            name,
-            answered,
-          }));
+          const formattedData: Country[] = Object.entries(learningTracking)
+            .filter(([, answered]) => answered > 0)
+            .map(([name, answered]) => ({ name, answered }));
+          // 排序：数量多的在前
+          formattedData.sort((a, b) => b.answered - a.answered);
           setCountryData(formattedData);
         } else {
           throw new Error("Invalid learningTracking data.");
@@ -49,8 +50,6 @@ const GuestPage: React.FC = () => {
         } else {
           setError("Unknown error occurred.");
         }
-
-        // fallback mock data
         setCountryData([
           { name: "Switzerland", answered: 25 },
           { name: "United States", answered: 30 },
@@ -63,15 +62,22 @@ const GuestPage: React.FC = () => {
     };
 
     fetchUserData();
-  }, [apiService, id]);
+  }, [apiService, id, userId]);
+
+  // 总答题数统计
+  const totalAnswered = countryData.reduce((sum, c) => sum + c.answered, 0);
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.heading}>User Statistics</h1>
-      <p className={styles.description}>
-        The flags below represent the number of correctly answered questions for each country across all game modes. If no flags are displayed, the player has not yet participated in any games.
-      </p>
-
+        <h2 className={styles.title}>
+          📈 User Statistics
+        </h2>
+        <h2 className={styles.subtitle}>
+          The flags below represent the number of correctly answered questions for each country across all game modes.
+        </h2>
+        <p style={{ textAlign: "center", color: "#ffc63f", fontSize: "16px", fontWeight: 600 }}>
+          Total correct: {totalAnswered} | Countries: {countryData.length}
+        </p>
       {loading ? (
         <p className={styles.loading}>Loading...</p>
       ) : error ? (
@@ -79,17 +85,44 @@ const GuestPage: React.FC = () => {
       ) : null}
 
       <div className={styles.grid}>
+        {countryData.length === 0 && !loading && (
+          <div style={{ color: "#888", fontSize: "1.15em", margin: "32px 0" }}>
+            No answered questions yet.<br />Start your first game!
+          </div>
+        )}
         {countryData.map((country, index) => {
           const countryCode = countryCodeMap[country.name] || "unknown";
           return (
             <div key={index} className={styles.card}>
               <img
-                src={`/flag/${countryCode}.svg`}
+                src={countryCode !== "unknown"
+                  ? `/flag/${countryCode}.svg`
+                  : `/flag/world.svg`}
                 alt={country.name}
                 className={styles.flag}
+                style={{
+                  filter: country.answered >= 20 ? "drop-shadow(0 0 8px #ffd70066)" : undefined,
+                  border: country.answered >= 20 ? "2.5px solid #ffd700cc" : "2.5px solid #eee",
+                  background: "#fff"
+                }}
               />
               <p className={styles.label}>
-                {country.name}: {country.answered} questions
+                <span style={{
+                  fontWeight: country.answered >= 20 ? "bold" : "normal",
+                  color: country.answered >= 20 ? "#f7b924" : "#3faff7",
+                  fontSize: country.answered >= 30 ? "1.1em" : "1em"
+                }}>
+                  {country.name}
+                </span>
+                <span style={{
+                  marginLeft: 8,
+                  fontWeight: "bold"
+                }}>
+                  {country.answered >= 50 ? "🏆" : country.answered >= 30 ? "🌟" : ""}
+                  {country.answered}
+                  {" "}
+                  <span style={{ color: "#95de64" }}>✔</span>
+                </span>
               </p>
             </div>
           );

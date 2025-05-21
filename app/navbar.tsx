@@ -166,7 +166,7 @@ export default function Navbar() {
           }}
         >
           <Image
-            src="/mapmaster-logo.png"
+            src="/home-icon.png"
             alt="Home"
             width={70}
             height={60}
