@@ -9,6 +9,7 @@ import { useApi } from "@/hooks/useApi";
 import { Client } from "@stomp/stompjs";
 import { gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from "@/gameSlice";
 import { motion, AnimatePresence } from "framer-motion";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const Dashboard: React.FC = () => {
   const router = useRouter();
@@ -44,8 +45,8 @@ const Dashboard: React.FC = () => {
 
   useEffect(() => {
     const client = new Client({
-      brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
-      // brokerURL: "http://localhost:8080/ws",
+      // brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
+      brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
         client.subscribe(`/topic/startsolo/${userId}/gameId`, (message) => {
@@ -54,6 +55,7 @@ const Dashboard: React.FC = () => {
             dispatch(gameIdUpdate(data));
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -63,6 +65,7 @@ const Dashboard: React.FC = () => {
             dispatch(gameIdUpdate(data));
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -74,6 +77,7 @@ const Dashboard: React.FC = () => {
             setButtonDisabled(true);
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -93,6 +97,7 @@ const Dashboard: React.FC = () => {
             }
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
       },
@@ -166,9 +171,10 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert(`Something went wrong during game creation:\n${error.message}`);
+        showErrorToast(`${error.message}`);
       } else {
         console.error("An unknown error occurred during game creation.");
+        showErrorToast(`An unknown error occurred during game creation.`);
       }
     }
   };

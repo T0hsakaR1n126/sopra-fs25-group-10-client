@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
 import styles from "@/styles/gameHistory.module.css";
 import { useSelector } from "react-redux";
+import { showErrorToast } from "@/utils/showErrorToast";
 import { motion } from "framer-motion";
 
 type MatchHistoryItem = {
@@ -56,6 +57,7 @@ const GameHistoryPage: React.FC = () => {
       } catch (error) {
         if (error instanceof Error) {
           console.error("Failed to fetch match history:", error.message);
+          showErrorToast(`${error}`);
         }
       } finally {
         setLoading(false);

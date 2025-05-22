@@ -7,6 +7,7 @@ import { User } from "@/types/user";
 import { useApi } from "@/hooks/useApi";
 import { RootState } from "../"; // import RootState to type the useSelector
 import { logout } from "@/userSlice"; // Assuming you have a logout action in your userSlice
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const Authenticator = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
@@ -36,9 +37,10 @@ const Authenticator = ({ children }: { children: React.ReactNode }) => {
         }
       } catch (error) {
         if (error instanceof Error) {
-          alert(`Something went wrong while authenticating:\n${error.message}`);
+          showErrorToast(`${error.message}`);
         } else {
           console.error("An unknown error occurred while authenticating.");
+          showErrorToast("An unknown error occurred while authenticating.");
         }
         dispatch(logout()); // Clear token from Redux if authentication fails
         router.push("/login");

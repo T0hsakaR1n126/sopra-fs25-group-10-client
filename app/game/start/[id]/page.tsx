@@ -14,6 +14,7 @@ import { answerUpdate, clearGameState, gameStart, gameTimeInitialize, ownerUpdat
 import 'react-toastify/dist/ReactToastify.css';
 import { Luckiest_Guy } from "next/font/google";
 import { showSuccessToast } from '@/utils/showSuccessToast';
+import { showErrorToast } from "@/utils/showErrorToast";
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface Message {
@@ -101,6 +102,7 @@ const GameStart = () => {
       } catch (error) {
         window.dispatchEvent(new Event("globalLock"));
         console.error("Failed to fetch players:", error);
+        showErrorToast(`${error}`);
         router.push("/lobby");
       }
     };
@@ -108,8 +110,8 @@ const GameStart = () => {
     fetchPlayers();
 
     const stompClient = new Client({
-      brokerURL: "wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws",
-      // brokerURL: "http://localhost:8080/ws",
+      // brokerURL: "wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws",
+      brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
 
@@ -123,6 +125,7 @@ const GameStart = () => {
 
         stompClient.subscribe(`/topic/ready/${gameId}/status`, (message) => {
           const map: Record<string, boolean> = JSON.parse(message.body);
+          console.log(">> STATUS RECEIVED:", map); 
 
           const normalizedMap: Record<string, boolean> = {};
           for (const [k, v] of Object.entries(map)) {
@@ -134,7 +137,7 @@ const GameStart = () => {
 
         stompClient.subscribe(`/topic/ready/${gameId}/canStart`, (message) => {
           const can: boolean = JSON.parse(message.body);
-
+          console.log(">> STATUS RECEIVED:", can); 
           setCanStart(can);
         });
 
@@ -153,6 +156,7 @@ const GameStart = () => {
             }
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -182,6 +186,7 @@ const GameStart = () => {
             setChatMessages((prevMessages) => [...prevMessages, data]);
           } catch (err) {
             console.error('Invalid chat message:', err);
+            showErrorToast(`${err}`);
           }
         });
       },
@@ -234,6 +239,7 @@ const GameStart = () => {
       // router.push("/lobby");
     } catch (error) {
       console.error("Error leaving game:", error);
+      showErrorToast(`${error}`);
     }
   };
 
@@ -242,6 +248,7 @@ const GameStart = () => {
       await apiService.put(`/start/${gameId}`, {});
     } catch (error) {
       console.error("Error starting game:", error);
+      showErrorToast(`${error}`);
     }
   };
 
@@ -324,7 +331,7 @@ const GameStart = () => {
                       {player.userId?.toString() === players[0]?.userId?.toString() && "👑 "}{player.username}
                     </div>
                     <div className={styles.readyStampWrapper}>
-                      {readyStatus[player.userId?.toString() ?? ""] && (
+                      {readyStatus[player.userId?.toString() ?? ""] && player.userId !== players[0]?.userId && (
                         <div className={styles.readyStamp}>
                           READY
                         </div>

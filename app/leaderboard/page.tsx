@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
 import styles from "@/styles/leaderboard.module.css";
 import { User } from "@/types/user";
+import { showErrorToast } from "@/utils/showErrorToast";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 
@@ -33,6 +34,7 @@ const LeaderboardPage: React.FC = () => {
         setPaginatedEntries(data.slice(0, itemsPerPage));
       } catch (e) {
         console.error(e);
+        showErrorToast(`${e}`);
       } finally {
         setLoading(false);
       }
