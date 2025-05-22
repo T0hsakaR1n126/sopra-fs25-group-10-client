@@ -167,6 +167,13 @@ Note: If a team member fails to show continuous progress after using their Joker
 |**@yzq0325**| 19-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/pull/95/commits/9c4dd0a165de076da3bfd48234a6cdabf801f0dd|UI improvement|UI improvement of home, login, register and hall|
 |**@yzq0325**| 17-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/pull/95/commits/de4376573319bde5a550f834ba17cb9db004eacd|fix country name display in exercise mode|Show country name but not country ID in exercise mode.|
 ---
+## Contributions Week 8 - [12-05-2025] to [18-05-2025]
+| **Student**        | **Date** | **Link to Commit** | **Description**           | **Relevance**                 |
+| ------------------------ | -------------- | ------------------------ | ------------------------------- | ----------------------------------- |
+
+| **@fuxinyu01**  |  22-05-2025         | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/65910898f48773bf598dab2e16e4f8daa0f6802b https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/bfd73039f7b501d680c3ba4450c098a67326f4c3 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/b79e186b2f2047c8becaf2b19b23ae9b3ba4e6c0|update tests | update tests of usercontroller test, userservice test and userintegration test |
+|             **@fuxinyu01**              |20-05-2025        | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/9f5329bf88bebe4488a46ec83eb2c22c5905ef4f https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/1b4fe40dfabba8082b3e6c978ff72e1d22e92228 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/3dc91d73e25622e910975865478d497bf6aba7e4 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server/commit/7560b6c63361f181646af38df3ee5e8f4b1456e6 |fix bugs in backend|modify game entity, add broadcast and fix bugs of ready status|
+|             **@fuxinyu01**              |21-05-2025        | https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/0b2cea42256415161c4827d54e28de3a84659f74 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/e8e538de4848c1fc56caa9195644d6325b9dde50 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/94f088de02a5d089735dced5bcafad36ce884e23 https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/4014c4761698a679e96049ccfc50011e0ed8c75c https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/commit/b89a3537fc362e0f6f90d384bbf2d97fd591a432 |fix bugs in frontend|fix bug of worng time disply in history, gameroom and lobby, update error message and modify for the ready status |
 
 
 
