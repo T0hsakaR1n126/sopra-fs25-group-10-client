@@ -41,7 +41,9 @@ const Statistics: React.FC = () => {
           .map(([country]) => country);
         setCollectedCountries(new Set(collected));
       } catch (e) {
-        showErrorToast("Failed to load user stats");
+        if (e instanceof Error) {
+          showErrorToast(e.message);
+        }
       }
     };
     fetchUserData();
