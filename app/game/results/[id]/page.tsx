@@ -8,6 +8,7 @@ import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import { updateUserInfo } from "@/userSlice";
 import { motion } from "framer-motion";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const Results = () => {
   const router = useRouter();
