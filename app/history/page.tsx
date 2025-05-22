@@ -216,7 +216,7 @@ const GameHistoryPage: React.FC = () => {
                         </div>
                       </motion.div>
                     ))}
-                    <div className={styles.pagination}>
+                    {filter.length > itemsPerPage && (<div className={styles.pagination}>
                       <button
                         onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                         disabled={currentPage === 1}
@@ -232,7 +232,7 @@ const GameHistoryPage: React.FC = () => {
                       >
                         Next ▶
                       </button>
-                    </div>
+                    </div>)}
                   </>
                 )
                 }
