@@ -60,6 +60,7 @@
 
 <a name="high-level-components"></a>
 ## High level components
+Here we show you the component tree at L1 for this repository where you see most key components of the game. We explain the ones that are most important both for the game play and functioning.
 ```
 ├── ReduxProvider.tsx
 ├── __tests__/
@@ -84,17 +85,23 @@
 └── utils/
 ```
 
-### [Gameroom]
+### [`app`](./app)
+Primary directory of the next app where all the frontend pages, logic, and hooks reside. The tree above is from this directory.
 
-The Gameroom page is the central interface for gameplay, displaying essential player information (name, avatar, readiness, round status, and score) on the left, based the current round. The top section features room details (name and theme) alongside a volume control for audio adjustments. On the right, a timer counts down each round, complemented by widgets showing current round details and reminders. The bottom-right contains audio recorders supporting recording, playing and reversing, an answer input field, and buttons for uploading/sharing and confirming answer validation. Before and after the game, the bottom-right area will have only the confirm ready pop up or the ranked leader board pop up showing the final result.
+### Redux - [`userSlice and gameSlice`](./app/gameSlice.ts)
+We use Reduxstore to maintain and process game and user states. We create slices for both to strategically navigate storage and access the local variables during a user's session. We setup the redux provider `ReduxProvider.tsx` accordingly.
 
-### [Lobby]
+### [`game`](./app/game/)
+Core of the game play is hosted in the `game` directory which holds the access, creation, and playing the games; access the home page where all the game types are dispalyed [here](./app/game/page.tsx). Once user starts a user creates a game for others to join, they see other players, ready, and begin options [here](./app/game/start/[id]/page.tsx). The game itself will be displayed [here](./app/game/[id]/page.tsx)
 
-The lobby page serves as a navigation hub to various parts of the site. In the top-left, user information (avatar and name) is displayed; clicking here allows access to profile editing. The bottom-left features a logout button, redirecting users to the login/register page. Near the center, an animated info button activates a pop-up with game rules and buttons to activate mic and redirect to the rule guide page. On the right, a list of game rooms shows real-time details (current status, available seats, players, room theme, and name), each clickable to join a game directly from the lobby.
+### [`leaderboard`](./app/leaderboard/page.tsx)
+Laderboard shows the top 10 players across the games. 
 
-### [RuleGuide]
+### [`hooks`](./app/hooks/)
+Hooks folder holds some of the recurrent and crucial functionality we hold in the game. This includes important blocks such as [authorization](./app/hooks/authWrapper.tsx) and **[interative map](./app/hooks/interactiveMap.tsx). `Interactive Map` is the most important component of the game**. This holds the map visualisation and the interaction bits that are on the map. This hosts logic to display and also on the actions upon clicks.
 
-The Rule Guide page offers a step-by-step walk-through for new players, detailing each stage of a complete game round for both speaking and guessing roles. It features instructional messages and highlighted boxes to indicate necessary actions.
+### [`navbar`](./app/navbar.tsx)
+Navigtion bar holds the home, user actions like checking [statistics](./app/statistics/page.tsx) and accessing user profile information, hone, and access to the leaderboard.
 
 ## Launch and Deployment
 <a name="Launch and Deployment"></a>
@@ -240,10 +247,14 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
 ## Roadmap
 
-- :negative_squared_cross_mark: Implement a live chat feature.
-- :negative_squared_cross_mark: Allow to finish each round earlier
-- :negative_squared_cross_mark: Configurable setting of game rounds and word difficulty.
-- :negative_squared_cross_mark: Optional re-match after a game ends.
+- [ ] 🔄 Guest players can join games without registration  
+- [ ] 🔄 Team vs Team gameplay mode  
+- [ ] Configurable settings:  
+  - [ ] Select continents or countries to be tested on  
+  - [ ] Choose difficulty levels
+- [ ] Add other themes such as cities, rivers, food etc.
+- [ ] Ability to end a round early  
+- [ ] 🔄 Live chat feature – partially implemented  
 
 
 <a name="authors"></a>
@@ -261,7 +272,7 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 <a name="acknowledgement"></a>
 ### Acknowledgement
 
-- The client code is based on the [SoPra FS25 - Client Template](https://github.com/HASEL-UZH/sopra-fs25-template-client).
+- This repository code derives the framework from the kind** UZH HASEL team **provided [SoPra FS25 - Client Template](https://github.com/HASEL-UZH/sopra-fs25-template-client).
 - Many thanks to **[Silvan Schlegel](https://github.com/silvanschlegel)** who helped us as our TA and Scrum Master during this project.
 
 <a name="license"></a>
