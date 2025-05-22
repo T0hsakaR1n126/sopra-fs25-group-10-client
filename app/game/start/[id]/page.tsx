@@ -50,6 +50,7 @@ const GameStart = () => {
   const [readyStatus, setReadyStatus] = useState<Record<string, boolean>>({});
   const [canStart, setCanStart] = useState<boolean>(false);
   const [client, setClient] = useState<Client | null>(null);
+  const [isLocked, setIsLocked] = useState(false);
 
   // State for chat functionality
   const [showChat, setShowChat] = useState(false); // Toggle chat visibility
@@ -221,6 +222,7 @@ const GameStart = () => {
       } else if (current === 0) {
         setCountDown("GO!");
         setTimeout(() => {
+          setIsLocked(true);
           setCountDown(null);
           requestAnimationFrame(() => {
             router.push(`/game/${gameId}`);
@@ -463,6 +465,10 @@ const GameStart = () => {
           <div className={styles.overlay}>
             <div className={styles.countdown} key={countDown}>{countDown === "0" ? "GO!" : countDown}</div>
           </div>
+        )}
+
+        {isLocked && (
+          <div className={styles.interactionLock} />
         )}
       </div>
     </>
