@@ -82,7 +82,7 @@ const GameHistoryPage: React.FC = () => {
   const paginated = filtered.slice(start, end);
 
   function formatTimestampToYMDHM(timestamp: string): string {
-    const iso = timestamp.split(".")[0];
+    const iso = timestamp.split(".")[0] + "Z";
     const date = new Date(iso);
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
@@ -122,6 +122,9 @@ const GameHistoryPage: React.FC = () => {
           <span style={{ color: "#f7c325" }}>★</span>
           &nbsp;Record all your performance!
         </h2>
+        <p style={{ textAlign: "center", color: "#ccc", fontSize: "14px", marginBottom: "20px" }}>
+          <strong>📅Date</strong>&nbsp;&nbsp;&nbsp;<strong>🎯Accuracy</strong>&nbsp;&nbsp;&nbsp;<strong>⏳Duration</strong>&nbsp;&nbsp;&nbsp;<strong>❌the game was given up</strong>
+        </p>
         {loading ? (
           <p>Loading...</p>
         ) : (
@@ -193,7 +196,7 @@ const GameHistoryPage: React.FC = () => {
                         <div className={styles.rowTop}>
                           <div className={styles.leftTop}>
                             <span className={styles.index}>#{start + index + 1}</span>
-                            <span className={styles.name}>🎮 {item.gameName}</span>
+                            <span className={styles.name}> {item.modeType === "solo" ? "🎮" : "⚔️"} {item.gameName}</span>
                           </div>
                           <div className={styles.score}>🏅 {getScoreContent(item.score)}</div>
                         </div>

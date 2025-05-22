@@ -69,7 +69,13 @@ const LeaderboardPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
-              onClick={() => { router.push(`/users/${entry.userId}/profile`) }}
+              onClick={() => { 
+                setTimeout(() => {
+                  setIsLeaving(true);
+                  document.querySelector(".page")?.classList.add("pageExit");
+                  router.push(`/users/${entry.userId}/profile`);
+                }, 300);
+              }}
             >
               <div className={styles.rankSection}>
                 {index < 3 ? medals[index] : index + 1}

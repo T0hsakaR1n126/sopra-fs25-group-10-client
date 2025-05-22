@@ -55,6 +55,9 @@ const Statistics: React.FC = () => {
       <h3 className={styles.subtitle}>
         🚩 Light up the flags of countries you have guessed right!
       </h3>
+      <p style={{ textAlign: "center", color: "#ccc", fontSize: "14px", marginBottom: "20px" }}>
+        <strong>Click the lighted flags to get more information on Wikipedia!</strong>
+      </p>
 
       <div className={styles.grid}>
         {Object.keys(grouped).sort().map(letter => (
