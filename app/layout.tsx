@@ -1,5 +1,3 @@
-"use client"
-
 import { Geist, Geist_Mono } from "next/font/google";
 import { ConfigProvider, theme } from "antd";
 import { AntdRegistry } from "@ant-design/nextjs-registry";
@@ -19,7 +17,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// export { metadata };
+export const metadata = {
+  title: 'MapMaster',
+  icons: {
+    icon: '/favicon.ico',
+  },
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
