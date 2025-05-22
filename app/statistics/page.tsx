@@ -15,12 +15,11 @@ const grouped = allCountries.reduce((acc, country) => {
   return acc;
 }, {} as Record<string, string[]>);
 
-const statistics: React.FC = () => {
+const Statistics: React.FC = () => {
   const apiService = useApi();
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
 
   const [collectedCountries, setCollectedCountries] = useState<Set<string>>(new Set());
-  const [loading, setLoading] = useState(true);
 
   const [isLeaving, setIsLeaving] = useState(false);
   useEffect(() => {
@@ -43,8 +42,6 @@ const statistics: React.FC = () => {
         setCollectedCountries(new Set(collected));
       } catch (e) {
         showErrorToast("Failed to load user stats");
-      } finally {
-        setLoading(false);
       }
     };
     fetchUserData();
@@ -54,7 +51,7 @@ const statistics: React.FC = () => {
     <div className={`${styles.container} ${isLeaving ? styles.pageExit : styles.pageEnter}`}>
       <h2 className={styles.title}>📈 User Statistics</h2>
       <h3 className={styles.subtitle}>
-        🚩 Show flags of countries you have guessed right!
+        🚩 Light up the flags of countries you have guessed right!
       </h3>
 
       <div className={styles.grid}>
@@ -89,4 +86,4 @@ const statistics: React.FC = () => {
   );
 };
 
-export default statistics;
+export default Statistics;

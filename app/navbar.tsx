@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux"; // Import Redux hooks
 import { UserOutlined, HistoryOutlined, TrophyOutlined, LogoutOutlined, BookOutlined, HomeOutlined } from "@ant-design/icons";
