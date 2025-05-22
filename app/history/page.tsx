@@ -15,6 +15,7 @@ type MatchHistoryItem = {
   gameCreationDate: string;
   modeType: string;
   gameName: string;
+  difficulty: string;
 };
 
 const GameHistoryPage: React.FC = () => {
@@ -47,7 +48,8 @@ const GameHistoryPage: React.FC = () => {
               "totalQuestions" in item &&
               "gameTime" in item &&
               "gameCreationDate" in item &&
-              "modeType" in item
+              "modeType" in item && 
+              "difficulty" in item
           )
         ) {
           setHistory(Object.values(gameHistory));
@@ -197,7 +199,7 @@ const GameHistoryPage: React.FC = () => {
                       </div> */}
                         <div className={styles.rowTop}>
                           <div className={styles.leftTop}>
-                            <span className={styles.index}>#{start + index + 1}</span>
+                            <span className={styles.index}>#{start + index + 1}-{item.difficulty}</span>
                             <span className={styles.name}> {item.modeType === "solo" ? "🎮" : "⚔️"} {item.gameName}</span>
                           </div>
                           <div className={styles.score}>🏅 {getScoreContent(item.score)}</div>
@@ -216,7 +218,7 @@ const GameHistoryPage: React.FC = () => {
                         </div>
                       </motion.div>
                     ))}
-                    {filter.length > itemsPerPage && (<div className={styles.pagination}>
+                    {filtered.length > itemsPerPage && (<div className={styles.pagination}>
                       <button
                         onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                         disabled={currentPage === 1}
