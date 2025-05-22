@@ -22,26 +22,26 @@ const ProfilePage = () => {
   const avatar = ["/avatar_1.png", "/avatar_2.png", "/avatar_3.png", "/avatar_4.png", "/avatar_5.png", "/avatar_6.png"];
   const currentAvatar = Form.useWatch("avatar", form);
 
-    useEffect(() => {
-    }, [params]);
+  useEffect(() => {
+  }, [params]);
 
-useEffect(() => {
-  const fetchUser = async () => {
-    try {
-      const response: User = await apiService.get<User>(`/users/${viewedUserId}`);
-      setUser(response);
-    } catch (error) {
-      if (error instanceof Error) {
-        alert(`Something went wrong while fetching user:\n${error.message}`);
-        router.push("/game");
-      } else {
-        console.error("An unknown error occurred while fetching user.");
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response: User = await apiService.get<User>(`/users/${viewedUserId}`);
+        setUser(response);
+      } catch (error) {
+        if (error instanceof Error) {
+          alert(`Something went wrong while fetching user:\n${error.message}`);
+          router.push("/game");
+        } else {
+          console.error("An unknown error occurred while fetching user.");
+        }
       }
-    }
-  };
+    };
 
-  fetchUser();
-}, [apiService, viewedUserId, router]);
+    fetchUser();
+  }, [apiService, viewedUserId, router]);
 
   const handleEdit = () => {
     setIsEditing(true);
@@ -66,7 +66,7 @@ useEffect(() => {
         }
       }
       setUser(updatedUser);
-      dispatch(updateUserInfo({ 
+      dispatch(updateUserInfo({
         username: updatedUser.username ?? "",
         avatar: updatedUser.avatar ?? "",
         level: Number(updatedUser.level) / 100,
@@ -82,7 +82,7 @@ useEffect(() => {
 
   return (
     // <Authenticator>
-    <div style={{ minHeight: "100vh", paddingTop: "80px", padding: "80px 16px",       overflowY: "auto", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}>
+    <div style={{ minHeight: "100vh", paddingTop: "80px", padding: "80px 16px", overflowY: "auto", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}>
       <div style={{ width: "100%", maxWidth: "500px", margin: "auto", padding: "20px", background: "#333", color: "#fff", borderRadius: "8px", boxSizing: "border-box" }}>
         <h2 style={{ textAlign: "center" }}>User Profile</h2>
         {/* Profile Form */}

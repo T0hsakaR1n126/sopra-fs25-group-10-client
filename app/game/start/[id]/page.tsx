@@ -22,6 +22,13 @@ interface Message {
   timestamp: string;
 }
 
+function formatChatTimestamp(timestamp: string): string {
+  const iso = timestamp.split(".")[0] + "Z";
+  const date = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
 const luckiestGuy = Luckiest_Guy({ weight: "400", subsets: ['latin'] });
 
 const GameStart = () => {
@@ -34,7 +41,6 @@ const GameStart = () => {
   const username = useSelector((state: { user: { username: string } }) => state.user.username);
   const gameCode = useSelector((state: { game: { gameCode: string } }) => state.game.gameCode);
   const playersNumber = useSelector((state: { game: { playersNumber: number } }) => state.game.playersNumber);
-  const level = useSelector((state: { user: { level: number } }) => state.user.level);
 
   const [players, setPlayers] = useState<User[]>([]);
   const [gameCodeShown, setGameCodeShown] = useState<string | null>(null);
@@ -55,7 +61,7 @@ const GameStart = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    if (chatMessages[chatMessages.length - 1]?.sender !== username && !showChat) {
+    if (chatMessages.length > 0 && chatMessages[chatMessages.length - 1]?.sender !== username && !showChat) {
       setHasUnread(true);
     }
   }, [chatMessages]);
@@ -71,7 +77,7 @@ const GameStart = () => {
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const [selectedPlayerProfile, setSelectedPlayerProfile] = useState<miniProfile | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
-  const xp = selectedPlayerProfile ? (selectedPlayerProfile.level ?? 0) * 100 : level * 100;
+  const xp = selectedPlayerProfile ? (selectedPlayerProfile.level ?? 0) : -1;
   const title = xp >= 10000
     ? "MapMaster"
     : xp >= 5000
@@ -236,7 +242,8 @@ const GameStart = () => {
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
       document.querySelector(".roomWrapper")?.classList.add("roomWrapperExit");
-      setTimeout(() => router.push("/lobby"), 400);
+      // setTimeout(() => router.push("/lobby"), 400);
+      router.push("/lobby");
     } catch (error) {
       console.error("Error leaving game:", error);
     }
@@ -289,6 +296,10 @@ const GameStart = () => {
   return (
     <>
       <div className={`${styles.roomWrapper} roomWrapper roomWrapperEnter`}>
+        <div className={`${styles.gameCode} ${luckiestGuy.className}`} onClick={handleCopyCode}>
+          Click to Copy the Game Code: {gameCodeShown}
+        </div>
+
         <div className={styles.grid}>
           {Array.from({ length: playersNumber }).map((_, idx) => {
             const player = players[idx];
@@ -336,10 +347,6 @@ const GameStart = () => {
           })}
         </div>
 
-        <div className={`${styles.gameCode} ${luckiestGuy.className}`} onClick={handleCopyCode}>
-          Click to Copy the Game Code: {gameCodeShown}
-        </div>
-
         {/* chatbox */}
         <AnimatePresence mode="wait">
           {showChat && (
@@ -371,7 +378,7 @@ const GameStart = () => {
                         {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
                       </div>
                       <div className={styles.time}>
-                        {new Date(msg.timestamp).toLocaleTimeString()}
+                        {formatChatTimestamp(msg.timestamp)}
                       </div>
                     </div>
                   </div>
@@ -447,12 +454,12 @@ const GameStart = () => {
             >
               {title}
             </div>
-            <div className={styles.email}>
-              <strong>Email:</strong> {selectedPlayer.email ?? 'Not Set'}
-            </div>
-            <div className={styles.bio}>
-              <strong>Bio:</strong> {selectedPlayer.bio ?? 'Not Set'}
-            </div>
+            {selectedPlayer.email && (<div className={styles.email}>
+              <strong>Email:</strong> {selectedPlayer.email}
+            </div>)}
+            {selectedPlayer.bio && (<div className={styles.bio}>
+              <strong>Bio:</strong> {selectedPlayer.bio}
+            </div>)}
           </div>
         )}
 

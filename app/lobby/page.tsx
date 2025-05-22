@@ -19,6 +19,13 @@ interface Message {
   timestamp: string;
 }
 
+function formatChatTimestamp(timestamp: string): string {
+  const iso = timestamp.split(".")[0] + "Z";
+  const date = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
 const Lobby: React.FC = () => {
   const apiService = useApi();
   const router = useRouter();
@@ -42,14 +49,14 @@ const Lobby: React.FC = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    if (chatMessages[chatMessages.length - 1]?.sender !== userName && !showChat) {
+    if (chatMessages.length > 0 && chatMessages[chatMessages.length - 1]?.sender !== userName && !showChat) {
       setHasUnread(true);
     }
   }, [chatMessages]);
 
   // paginate page
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 5;
   const start = (currentPage - 1) * itemsPerPage;
   const end = start + itemsPerPage;
 
@@ -166,14 +173,16 @@ const Lobby: React.FC = () => {
           scoreBoard: null,
           answer: null,
           playersNumber: game.playersNumber ? parseInt(game.playersNumber, 10) : null,
-          correctCount:0,
-          questionCount:1,
+          correctCount: 0,
+          questionCount: 1,
+          lastSubmitTime: Date.now(),
+          guessTimeList: [],
         }
       ));
 
       // exit animation
       document.querySelector(".page")?.classList.add("pageExit");
-      setTimeout(() => router.push(`/game/start/${game.gameId}`), 600);
+      setTimeout(() => router.push(`/game/start/${game.gameId}`), 100);
     } catch (error) {
       if (error instanceof Error) {
         showErrorToast(error.message);
@@ -204,7 +213,7 @@ const Lobby: React.FC = () => {
     const newMessage = {
       sender: userName,
       content: messageInput,
-      // timestamp: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
     };
 
     if (clientRef.current) {
@@ -256,7 +265,7 @@ const Lobby: React.FC = () => {
                       {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
                     </div>
                     <div className={styles.time}>
-                      {new Date(msg.timestamp).toLocaleTimeString()}
+                      {formatChatTimestamp(msg.timestamp)}
                     </div>
                   </div>
                 </div>
@@ -301,7 +310,15 @@ const Lobby: React.FC = () => {
         ) : !listReveal ? (
           null // or spinner, or nothing
         ) : paginatedGames.length === 0 ? (
-          <div className={styles.emptyMessage}>No Available Game. Create one!</div>
+          <motion.div
+            key="gameList"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className={styles.emptyMessage}>No Available Game. Create one!</div>
+          </motion.div>
         ) : (
           <AnimatePresence>
             {listReveal && (

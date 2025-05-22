@@ -1,4 +1,4 @@
-import { toast } from "react-toastify";
+import { Slide, toast } from "react-toastify";
 
 export const showSuccessToast = (message: string) => {
   toast.success(message, {
@@ -8,6 +8,7 @@ export const showSuccessToast = (message: string) => {
     closeOnClick: true,
     pauseOnHover: true,
     draggable: false,
+    transition: Slide,
     style: {
       width: "320px",
       padding: "20px 25px",

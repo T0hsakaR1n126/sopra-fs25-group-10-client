@@ -5,13 +5,10 @@ import { useApi } from "@/hooks/useApi";
 import styles from "@/styles/gameHistory.module.css";
 import { useSelector } from "react-redux";
 
+
+
+
 type MatchHistoryItem = {
-  // id: number;
-  // name: string;
-  // date: string;
-  // result: string;
-  // duration: string;
-  // mode: string;
   score: number;
   correctAnswers: number;
   totalQuestions: number;
@@ -20,19 +17,6 @@ type MatchHistoryItem = {
   modeType: string; 
   gameName: string;
 };
-
-// const fallbackHistory: MatchHistoryItem[] = [
-//   { id: 1, name: "Map Genies", date: "01.01.2025", result: "5 of 10 correct", duration: "60 mins", mode: "Team Play", score: 1500 },
-//   { id: 2, name: "Player 1", date: "01.01.2025", result: "5 of 10 correct", duration: "60 mins", mode: "Own Play", score: 200 },
-//   { id: 3, name: "Team Alpha", date: "02.01.2025", result: "6 of 10 correct", duration: "55 mins", mode: "Team Play", score: 1600 },
-//   { id: 4, name: "User X", date: "03.01.2025", result: "4 of 10 correct", duration: "45 mins", mode: "Own Play", score: 180 },
-//   { id: 5, name: "Team Rocket", date: "04.01.2025", result: "7 of 10 correct", duration: "60 mins", mode: "Team Play", score: 1700 },
-//   { id: 6, name: "Solo Master", date: "05.01.2025", result: "8 of 10 correct", duration: "40 mins", mode: "Own Play", score: 210 },
-//   { id: 7, name: "Explorers", date: "06.01.2025", result: "9 of 10 correct", duration: "38 mins", mode: "Team Play", score: 1800 },
-//   { id: 8, name: "Player Z", date: "07.01.2025", result: "2 of 10 correct", duration: "50 mins", mode: "Own Play", score: 150 },
-//   { id: 9, name: "Geo Gods", date: "08.01.2025", result: "10 of 10 correct", duration: "35 mins", mode: "Team Play", score: 2000 },
-//   { id: 10, name: "Beginner", date: "09.01.2025", result: "3 of 10 correct", duration: "60 mins", mode: "Own Play", score: 170 },
-// ];
 
 const GameHistoryPage: React.FC = () => {
   const apiService = useApi();
@@ -50,10 +34,8 @@ const GameHistoryPage: React.FC = () => {
     const fetchHistory = async () => {
       try {
         setLoading(true);
-
         const response = await apiService.get(`/history/${userId}`);
         const gameHistory = (response as { gameHistory: Array<MatchHistoryItem> }).gameHistory;
-
         if (
           gameHistory &&
           typeof gameHistory === "object" &&
@@ -77,15 +59,12 @@ const GameHistoryPage: React.FC = () => {
         if (error instanceof Error) {
           console.error("Failed to fetch match history:", error.message);
         }
-        // setHistory(fallbackHistory);
       } finally {
         setLoading(false);
       }
     };
-
     fetchHistory();
   }, [apiService, userId]);
-
 
   const filtered = history.filter((entry) => {
     if (filter === "All") return true;
@@ -95,30 +74,54 @@ const GameHistoryPage: React.FC = () => {
   const paginated = filtered.slice(start, end);
 
   function formatTimestampToYMDHM(timestamp: string): string {
-    const iso = timestamp.split(".")[0];
+    const iso = timestamp.split(".")[0] + "Z";
     const date = new Date(iso);
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
-  }  
+  }
+
+  function getGameIcon(mode: string) {
+    if (mode.toLowerCase() === "solo") return "🎮";
+    if (mode.toLowerCase() === "combat") return "⚔️";
+    return "🎲";
+  }
+
+  function getAccuracyIcon(correct: number, total: number) {
+    if (total === 0) return "❓";
+    if (correct === total) return "🥇";
+    if (correct === 0) return "❌";
+    if (correct / total >= 0.7) return "🌟";
+    return "";
+  }
+
+  function getScoreContent(score: number) {
+    if (score === -1) return <span style={{ color: "#ff4d4f" }}>🚩 Give Up</span>;
+    if (score >= 1000) return <span style={{ color: "#f7c325", fontWeight: "bold" }}>🏆 {score}</span>;
+    if (score >= 500) return <span style={{ color: "#40a9ff", fontWeight: "bold" }}>🌟 {score}</span>;
+    if (score === 0) return <span style={{ color: "#bbb" }}>😢 0</span>;
+    return <span style={{ color: "#fff" }}>{score}</span>;
+  }
 
   return (
     <div style={{ paddingTop: "80px" }}>
       <div className={styles.container}>
-        <h2 className={styles.title}>Game History</h2>
-        <h2 className={styles.subtitle}>Record all your performance!</h2>
-        {/* {error && <p style={{ color: "red" }}>{error}</p>} */}
+<h1 className={styles.title}>
+  <span className={styles.icon}>🏆</span>
+  Game History
+</h1>
+<h2 className={styles.subtitle}>
+  <span style={{ color: "#f7c325" }}>★</span>
+  &nbsp;Record all your performance!
+</h2>
         {loading ? (
           <p>Loading...</p>
         ) : (
           <>
-            {/* ✅ Filter buttons */}
             <div style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
               {["All", "Solo", "Combat"].map((type) => (
-              // {["All"].map((type) => (
                 <button
                   key={type}
                   onClick={() => setFilter(type as "All" | "Solo" | "Combat")}
-                  // onClick={() => setFilter(type as "All")}
                   style={{
                     padding: "6px 14px",
                     borderRadius: "20px",
@@ -129,6 +132,8 @@ const GameHistoryPage: React.FC = () => {
                     cursor: "pointer",
                   }}
                 >
+                  {type === "Solo" && "🎮 "}
+                  {type === "Combat" && "⚔️ "}
                   {type}
                 </button>
               ))}
@@ -136,7 +141,7 @@ const GameHistoryPage: React.FC = () => {
 
             <div className={styles.leftPanel}>
               <div className={styles.headerRow}>
-                <div className={`${styles.cell} ${styles.cellIndex}`}>Index</div>
+                <div className={`${styles.cell} ${styles.cellIndex}`}>#</div>
                 <div className={`${styles.cell} ${styles.cellName}`}>Name</div>
                 <div className={`${styles.cell} ${styles.cellDate}`}>Date</div>
                 <div className={`${styles.cell} ${styles.cellAccuracy}`}>Accuracy</div>
@@ -145,42 +150,64 @@ const GameHistoryPage: React.FC = () => {
               </div>
 
               {paginated.length === 0 ? (
-                <div className={styles.emptyMessage}>No Available History</div>
+                <div className={styles.emptyMessage} style={{ fontSize: "1.1em" }}>
+                  😅 No Available History. Try joining a game!
+                </div>
               ) : (
                 <>
                   {paginated.map((item, index) => (
-                    <div className={styles.lobbyCard} key={index}>
-                      <div className={`${styles.cell} ${styles.cellIndex}`}>{index + 1}</div>
-                      <div className={`${styles.cell} ${styles.cellName}`}>{item.gameName}</div>
-                      <div className={`${styles.cell} ${styles.cellDate} ${styles.cellCenter}`}>{formatTimestampToYMDHM(item.gameCreationDate)}</div>
+                    <div className={styles.lobbyCard} key={index} style={{
+                      opacity: item.score === -1 ? 0.65 : 1,
+                      background: item.score === -1
+                        ? "linear-gradient(90deg,#ece9e6,#fff6)"
+                        : undefined
+                    }}>
+                      <div className={`${styles.cell} ${styles.cellIndex}`}>{start + index + 1}</div>
+                      <div className={`${styles.cell} ${styles.cellName}`}>
+                        {getGameIcon(item.modeType)} {item.gameName}
+                      </div>
+                      <div className={`${styles.cell} ${styles.cellDate} ${styles.cellCenter}`}>
+                        📅 {formatTimestampToYMDHM(item.gameCreationDate)}
+                      </div>
                       <div className={`${styles.cell} ${styles.cellAccuracy}`}>
-                        {item.correctAnswers} of {item.totalQuestions} correct
+                        {getAccuracyIcon(item.correctAnswers, item.totalQuestions)}{" "}
+                        {item.totalQuestions === 0
+                          ? "No Data"
+                          : `${item.correctAnswers} of ${item.totalQuestions} correct`}
                       </div>
                       <div className={`${styles.cell} ${styles.cellDuration}`}>
-                        {item.gameTime !== -1 ? item.gameTime : ""} {item.gameTime === -1 ? "infinite" : (item.gameTime === 1 ? "min" : "mins")}
+                        ⏳ {item.gameTime !== -1 ? item.gameTime : ""}{" "}
+                        {item.gameTime === -1
+                          ? "infinite"
+                          : item.gameTime === 1
+                          ? "min"
+                          : "mins"}
                       </div>
                       <div className={`${styles.cell} ${styles.cellScore}`}>
-                        {item.score === -1 ? "give up" : item.score}
+                        {getScoreContent(item.score)}
                       </div>
                     </div>
                   ))}
 
-                  <div className={styles.pagination}>
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                      disabled={currentPage === 1}
-                    >
-                      Prev
-                    </button>
-
-                    <span>Page {currentPage}</span>
-
-                    <button
-                      onClick={() => setCurrentPage((p) => p + 1)}
-                      disabled={end >= history.length}
-                    >
-                      Next
-                    </button>
+                  <div className={styles.pagination} style={{ marginTop: "10px" }}>
+                        <button
+                          onClick={() => setCurrentPage((p) => p - 1)}
+                          disabled={currentPage === 1}
+                          title={currentPage === 1 ? "Already at the first page!" : ""}
+                        >
+                          ◀ Prev
+                        </button>
+                        <span style={{ minWidth: 70, display: "inline-block", textAlign: "center" }}>
+                          Page {currentPage}
+                        </span>
+                        <button
+                          onClick={() => setCurrentPage((p) => p + 1)}
+                          disabled={end >= filtered.length}
+                          title={end >= filtered.length ? "Already at the last page!" : ""}
+                          style={{ marginLeft: "8px" }}
+                        >
+                           Next ▶
+                        </button>
                   </div>
                 </>
               )}

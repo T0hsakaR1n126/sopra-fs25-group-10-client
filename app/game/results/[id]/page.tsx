@@ -7,6 +7,7 @@ import styles from "@/styles/results.module.css";
 import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import { updateUserInfo } from "@/userSlice";
+import { motion } from "framer-motion";
 
 const Results = () => {
   const router = useRouter();
@@ -74,10 +75,26 @@ const Results = () => {
               {entries.sort((a, b) => b[1] - a[1]).map(([user, score], index) => (
                 <li
                   key={user}
-                  className={`${styles.resultsItem} ${user === username ? styles.currentUser : ""
-                    }`}
+                  className={`${styles.resultsItem} ${user === username ? styles.currentUser : ""}`}
                 >
-                  <span className={styles.rank}>{index + 1}</span>
+                  <span className={styles.rank}>
+                    {index === 0 ? <motion.span
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 1.2 }}
+                    >
+                      🥇
+                    </motion.span> : index === 1 ? <motion.span
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 1.2 }}
+                    >
+                      🥈
+                    </motion.span> : index === 2 ? <motion.span
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ repeat: Infinity, duration: 1.2 }}
+                    >
+                      🥉
+                    </motion.span> : index + 1}
+                  </span>
                   <span className={styles.user}>{user}</span>
                   <span className={styles.score}>{score === -1 ? "give up" : score}</span>
                 </li>

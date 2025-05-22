@@ -62,10 +62,10 @@ export default function Navbar() {
             setDropdownOpen(false);
             if (pathname === "/game") {
               window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
+              await new Promise((res) => setTimeout(res, 1200));
             } else {
               window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+              await new Promise((res) => setTimeout(res, 300));
             }
             router.push(`/users/${userId}/profile`);
           }}
@@ -82,10 +82,10 @@ export default function Navbar() {
             setDropdownOpen(false);
             if (pathname === "/game") {
               window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
+              await new Promise((res) => setTimeout(res, 1200));
             } else {
               window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+              await new Promise((res) => setTimeout(res, 300));
             }
             router.push("/history");
           }}
@@ -102,10 +102,10 @@ export default function Navbar() {
             setDropdownOpen(false);
             if (pathname === "/game") {
               window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
+              await new Promise((res) => setTimeout(res, 1200));
             } else {
               window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+              await new Promise((res) => setTimeout(res, 300));
             }
             router.push("/statistics");
           }}
@@ -120,10 +120,10 @@ export default function Navbar() {
             setDropdownOpen(false);
             if (pathname === "/game") {
               window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
+              await new Promise((res) => setTimeout(res, 1200));
             } else {
               window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+              await new Promise((res) => setTimeout(res, 300));
             }
             logout();
           }}
@@ -159,14 +159,14 @@ export default function Navbar() {
             //   window.dispatchEvent(new Event("dashboardExit"));
             //   await new Promise((res) => setTimeout(res, 1500));
             // } else {
-              window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+            window.dispatchEvent(new Event("otherExit"));
+            await new Promise((res) => setTimeout(res, 100));
             // }
             router.push("/game");
           }}
         >
           <Image
-            src="/mapmaster-logo.png"
+            src="/home-icon.png"
             alt="Home"
             width={70}
             height={60}
@@ -185,10 +185,10 @@ export default function Navbar() {
               setDropdownOpen(false);
               if (pathname === "/game") {
                 window.dispatchEvent(new Event("dashboardExit"));
-                await new Promise((res) => setTimeout(res, 1500));
+                await new Promise((res) => setTimeout(res, 1200));
               } else {
                 window.dispatchEvent(new Event("otherExit"));
-                await new Promise((res) => setTimeout(res, 600));
+                await new Promise((res) => setTimeout(res, 300));
               }
               router.push("/leaderboard");
             }}
@@ -260,7 +260,7 @@ export default function Navbar() {
                       fontWeight: 600,
                     }}
                   >
-                    {xp} / {title === "MapMaster" ? xp : title === "MapExpert" ? "10000" : "5000"}
+                    {Math.round(xp)}/ {title === "MapMaster" ? xp : title === "MapExpert" ? "10000" : "5000"}
                   </div>
                 </div>
               </div>
