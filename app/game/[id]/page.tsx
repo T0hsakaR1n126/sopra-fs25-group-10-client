@@ -85,7 +85,7 @@ const GameBoard: React.FC = () => {
     correctCountRef.current = correctCount;
   }, [correctCount]);
   const accuracyValue = questionCountRef.current > 0
-    ? Math.round((correctCountRef.current / (questionCountRef.current - 1) ) * 100)
+    ? Math.round((correctCountRef.current / questionCountRef.current) * 100)
     : 0;
   const avgTime =
     guessTimes.length > 0

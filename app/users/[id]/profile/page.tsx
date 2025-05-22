@@ -9,7 +9,6 @@ import { updateUserInfo } from "@/userSlice";
 import styles from "@/styles/profile.module.css";
 import { showSuccessToast } from "@/utils/showSuccessToast";
 import { showErrorToast } from "@/utils/showErrorToast";
-import { error } from "console";
 
 const ProfilePage = () => {
   const router = useRouter();
@@ -31,6 +30,17 @@ const ProfilePage = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => { }, [params]);
+
+  // animation
+  const [isLeaving, setIsLeaving] = useState(false);
+  useEffect(() => {
+    const handleExit = () => {
+      if (!isLeaving) setIsLeaving(true);
+    };
+
+    window.addEventListener("otherExit", handleExit);
+    return () => window.removeEventListener("otherExit", handleExit);
+  }, [isLeaving]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -91,7 +101,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className={`${styles.container} ${isLeaving ? styles.pageExit : styles.pageEnter}`}>
       <div className={`${styles.card} ${drawerOpen ? styles.shifted : ""}`}>
         <h2 className={styles.title}>User Profile</h2>
         {user && (

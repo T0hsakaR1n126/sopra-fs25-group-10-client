@@ -107,12 +107,7 @@ const GameStart = () => {
         setOwnerName(response[0].username ?? "");
         dispatch(ownerUpdate(response[0].userId ?? ""));
 
-        const initialReady: Record<string, boolean> = {};
-        response.forEach(player => {
-          if (player.userId != null) {
-            initialReady[player.userId.toString()] = player.isReady ?? false;
-          }
-        });
+        const initialReady: Record<number, boolean> = response[0].readyMap ?? {};
         setReadyStatus(initialReady);
       } catch (error) {
         console.error("Failed to fetch players:", error);

@@ -96,7 +96,7 @@ const Results = () => {
                     </motion.span> : index + 1}
                   </span>
                   <span className={styles.user}>{user}</span>
-                  <span className={styles.score}>{score === -1 ? "give up" : score}</span>
+                  <span className={styles.score}>{score === -1 ? "❌" : score}</span>
                 </li>
               ))}
             </>
