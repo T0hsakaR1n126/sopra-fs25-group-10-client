@@ -382,7 +382,6 @@ const InteractiveMap = () => {
                 translateRef.current.x = clamp(translateRef.current.x, -maxOffsetX, maxOffsetX);
                 translateRef.current.y = clamp(translateRef.current.y, -maxOffsetY, maxOffsetY);
               }
-
               updateTransform();
             });
 

@@ -1,16 +1,18 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Input, Button, Form } from "antd";
+import { Input, Form } from "antd";
 import { useApi } from "@/hooks/useApi";
-import { User } from "@/types/user"
+import { User } from "@/types/user";
 import { useParams, useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUserInfo } from "@/userSlice";
-// import Authenticator from "@/auth/authenticator";
+import styles from "@/styles/profile.module.css";
+import { showSuccessToast } from "@/utils/showSuccessToast";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const ProfilePage = () => {
   const router = useRouter();
-  const params = useParams(); // 获取 URL 参数
+  const params = useParams();
   const apiService = useApi();
   const dispatch = useDispatch();
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
@@ -19,11 +21,26 @@ const ProfilePage = () => {
   const [form] = Form.useForm();
   const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState<boolean>(false);
-  const avatar = ["/avatar_1.png", "/avatar_2.png", "/avatar_3.png", "/avatar_4.png", "/avatar_5.png", "/avatar_6.png"];
+  const avatar = [
+    "/avatar_1.png", "/avatar_2.png", "/avatar_3.png",
+    "/avatar_4.png", "/avatar_5.png", "/avatar_6.png"
+  ];
   const currentAvatar = Form.useWatch("avatar", form);
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => { }, [params]);
+
+  // animation
+  const [isLeaving, setIsLeaving] = useState(false);
   useEffect(() => {
-  }, [params]);
+    const handleExit = () => {
+      if (!isLeaving) setIsLeaving(true);
+    };
+
+    window.addEventListener("otherExit", handleExit);
+    return () => window.removeEventListener("otherExit", handleExit);
+  }, [isLeaving]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -32,26 +49,19 @@ const ProfilePage = () => {
         setUser(response);
       } catch (error) {
         if (error instanceof Error) {
-          alert(`Something went wrong while fetching user:\n${error.message}`);
+          showErrorToast(`${error.message}`);
           router.push("/game");
         } else {
+          showErrorToast("An unknown error occurred while fetching user.");
           console.error("An unknown error occurred while fetching user.");
         }
       }
     };
-
     fetchUser();
   }, [apiService, viewedUserId, router]);
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleCancel = () => {
-    setIsEditing(false);
-    form.resetFields();
-  };
-
+  const handleEdit = () => setIsEditing(true);
+  const handleCancel = () => { setIsEditing(false); form.resetFields(); };
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
@@ -59,11 +69,7 @@ const ProfilePage = () => {
       try {
         await apiService.put(`/users/${userId}`, updatedUser);
       } catch (error) {
-        if (error instanceof SyntaxError) {
-          console.warn("Received 204 No Content, treating as successful.");
-        } else {
-          throw error;
-        }
+        if (!(error instanceof SyntaxError)) throw error;
       }
       setUser(updatedUser);
       dispatch(updateUserInfo({
@@ -72,42 +78,47 @@ const ProfilePage = () => {
         level: Number(updatedUser.level) / 100,
       }));
       setIsEditing(false);
+      showSuccessToast("Saved!");
     } catch (error) {
       if (error instanceof Error) {
-        console.error(error.message);
-        alert("Invalid update. Please try again.");
+        showErrorToast(error.message);
+      }
+    }
+  };
+
+  const handleChangePassword = async (values: { userId: string, newPassword: string }) => {
+    try {
+      await apiService.put(`/users/pwd`, {
+        userId: userId,
+        password: values.newPassword,
+      });
+      showSuccessToast("Password changed successfully!");
+      setDrawerOpen(false);
+    } catch (err) {
+      if (err instanceof Error) {
+        showErrorToast(err.message);
       }
     }
   };
 
   return (
-    // <Authenticator>
-    <div style={{ minHeight: "100vh", paddingTop: "80px", padding: "80px 16px", overflowY: "auto", display: "flex", alignItems: "center", justifyContent: "center", boxSizing: "border-box" }}>
-      <div style={{ width: "100%", maxWidth: "500px", margin: "auto", padding: "20px", background: "#333", color: "#fff", borderRadius: "8px", boxSizing: "border-box" }}>
-        <h2 style={{ textAlign: "center" }}>User Profile</h2>
-        {/* Profile Form */}
-        {/* {!user && ( // only for test */}
+    <div className={`${styles.container} ${isLeaving ? styles.pageExit : styles.pageEnter}`}>
+      <div className={`${styles.card} ${drawerOpen ? styles.shifted : ""}`}>
+        <h2 className={styles.title}>User Profile</h2>
         {user && (
           <>
             <Form
               form={form}
               layout="vertical"
               onFinish={handleSave}
-              initialValues={user} // only for test
-              style={{ marginTop: "20px", color: "#fff", width: "100%" }}
+              initialValues={user}
+              style={{ marginTop: "20px", width: "100%" }}
             >
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
                 <Form.Item>
                   <Form.Item name="avatar" noStyle>
                     {isEditing ? (
-                      <div
-                        style={{
-                          display: "flex",
-                          gap: "10px",
-                          justifyContent: "center",
-                          flexWrap: "wrap",
-                        }}
-                      >
+                      <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap" }}>
                         {avatar.map((url) => {
                           const selected = currentAvatar === url;
                           return (
@@ -115,7 +126,8 @@ const ProfilePage = () => {
                               key={url}
                               onClick={() => form.setFieldsValue({ avatar: url })}
                               style={{
-                                border: selected ? "2px solid #1890ff" : "2px solid transparent",
+                                border: selected ? "2px solid #0ea5e9" : "2px solid rgba(255,255,255,0.1)",
+                                boxShadow: selected ? "0 0 8px #0ea5e9" : "none",
                                 borderRadius: "50%",
                                 cursor: "pointer",
                                 transition: "transform 0.2s, border 0.2s",
@@ -128,185 +140,117 @@ const ProfilePage = () => {
                                 justifyContent: "center",
                               }}
                             >
-                              <img
-                                src={url}
-                                alt="avatar"
-                                style={{
-                                  width: "20vw",
-                                  maxWidth: "64px",
-                                  height: "20vw",
-                                  maxHeight: "64px",
-                                  borderRadius: "50%",
-                                }}
-                              />
+                              <img src={url} alt="avatar" className={styles.avatarImg} />
                             </div>
                           );
                         })}
                       </div>
                     ) : (
                       <div style={{ display: "flex", justifyContent: "center" }}>
-                        <img
-                          src={form.getFieldValue("avatar")}
-                          alt="avatar"
-                          style={{ width: 64, height: 64, borderRadius: "50%", display: "block" }}
-                        />
+                        <img src={form.getFieldValue("avatar")} alt="avatar" className={styles.avatarImg} />
                       </div>
                     )}
                   </Form.Item>
                 </Form.Item>
-                {/* <Form.Item>
-                  {(() => {
-                    const level = form.getFieldValue("level");
-
-                    let label = "No Level";
-                    if (level != null) {
-                      if (level < 5000) label = "MapAmateur";
-                      else if (level < 10000) label = "MapExpert";
-                      else label = "MapMaster";
-                    }
-
-                    return (
-                      <div
-                        style={{
-                          padding: "6px 16px",
-                          backgroundColor:
-                            label === "MapMaster"
-                              ? "#d4af37"
-                              : label === "MapExpert"
-                                ? "#40a9ff"
-                                : "#73d13d",
-                          color: "#000",
-                          fontWeight: "bold",
-                          borderRadius: "999px",
-                          fontSize: "14px",
-                          textAlign: "center",
-                          boxShadow: "0 0 6px rgba(0,0,0,0.2)",
-                        }}
-                      >
-                        {label}
-                      </div>
-                    );
-                  })()}
-                </Form.Item> */}
               </div>
+
               <Form.Item label="Username">
                 {isEditing ? (
-                  <Form.Item name="username" noStyle rules={[
-                    { required: true, message: "Username cannot be empty!" },
-                    { whitespace: true, message: "Username cannot be just spaces!" },
-                  ]}>
-                    <Input placeholder="Not Set" />
+                  <Form.Item name="username" noStyle rules={[{ required: true, message: "Username cannot be empty!" }, { whitespace: true, message: "Username cannot be just spaces!" }]}>
+                    <Input className={styles.customInput} placeholder="Not Set" />
                   </Form.Item>
                 ) : (
-                  <div
-                    style={{
-                      padding: "6px 11px",
-                      minHeight: 32,
-                      border: "1px solid #666",
-                      borderRadius: 6,
-                      color: form.getFieldValue("username") ? "#fff" : "#888",
-                      backgroundColor: "#444",
-                    }}
-                  >
-                    {form.getFieldValue("username") || "Not Set"}
-                  </div>
+                  <div className={styles.readOnlyBox}>{form.getFieldValue("username") || "Not Set"}</div>
                 )}
               </Form.Item>
-              {isEditing ? (
+
+              {/* {isEditing && (
                 <Form.Item label="Password">
                   <Form.Item name="password" noStyle>
-                    <Input.Password visibilityToggle={true} placeholder="input your new password" />
+                    <Input.Password className={styles.customInput} placeholder="input your new password" visibilityToggle />
                   </Form.Item>
-                  {/* <div
-                    style={{
-                      padding: "6px 11px",
-                      minHeight: 32,
-                      border: "1px solid #666",
-                      borderRadius: 6,
-                      color: form.getFieldValue("email") ? "#fff" : "#888",
-                      backgroundColor: "#444",
-                    }}
-                  >
-                    {form.getFieldValue("email") || "Not Set"}
-                  </div> */}
                 </Form.Item>
-              ) : (
-                <></>
-              )}
+              )} */}
+
               <Form.Item label="Email">
                 {isEditing ? (
                   <Form.Item name="email" noStyle>
-                    <Input placeholder="example: ex@example.com" />
+                    <Input className={styles.customInput} placeholder="example: ex@example.com" />
                   </Form.Item>
                 ) : (
-                  <div
-                    style={{
-                      padding: "6px 11px",
-                      minHeight: 32,
-                      border: "1px solid #666",
-                      borderRadius: 6,
-                      color: form.getFieldValue("email") ? "#fff" : "#888",
-                      backgroundColor: "#444",
-                    }}
-                  >
-                    {form.getFieldValue("email") || "Not Set"}
-                  </div>
-                )}
-              </Form.Item>
-              <Form.Item label="Bio">
-                {isEditing ? (
-                  <Form.Item name="bio" noStyle>
-                    <Input.TextArea
-                      rows={2}
-                      placeholder="example: I can guess countries over the world!"
-                    />
-                  </Form.Item>
-                ) : (
-                  <div
-                    style={{
-                      minHeight: "64px",
-                      padding: "6px 11px",
-                      border: "1px solid #666",
-                      borderRadius: 6,
-                      color: form.getFieldValue("bio") ? "#fff" : "#888",
-                      backgroundColor: "#444",
-                      whiteSpace: "pre-wrap",
-                      lineHeight: 1.5,
-                    }}
-                  >
-                    {form.getFieldValue("bio") || "Not Set"}
-                  </div>
+                  <div className={styles.readOnlyBox}>{form.getFieldValue("email") || "Not Set"}</div>
                 )}
               </Form.Item>
 
+              <Form.Item label="Bio">
+                {isEditing ? (
+                  <Form.Item name="bio" noStyle>
+                    <Input.TextArea className={styles.customInput} rows={2} placeholder="example: I can guess countries over the world!" />
+                  </Form.Item>
+                ) : (
+                  <div className={styles.readOnlyBox}>{form.getFieldValue("bio") || "Not Set"}</div>
+                )}
+              </Form.Item>
             </Form>
+
             <br />
             {user.token === token ? (
-              // {!user ? ( // only for test
               !isEditing ? (
-                <>
-                  <Button type="primary" onClick={handleEdit} style={{ marginRight: '20px' }}>
-                    Edit
-                  </Button>
-                </>
+                <div className={styles.buttonGroup}>
+                  <button className={styles.neonButton} onClick={handleEdit}>Edit</button>
+                  <button
+                    className={styles.neonButton}
+                    onClick={() => setDrawerOpen(true)}
+                    disabled={drawerOpen}
+                  >
+                    Change Password
+                  </button>
+                </div>
               ) : (
-                <>
-                  <Button type="primary" onClick={handleSave} style={{ marginRight: '20px' }}>
-                    Save
-                  </Button>
-                  <Button type="primary" onClick={handleCancel} style={{ marginRight: '20px' }}>
-                    Cancel
-                  </Button>
-                </>
+                <div className={styles.buttonGroup}>
+                  <button className={styles.neonButtonFilled} onClick={handleSave}>Save</button>
+                  <button className={styles.neonButton} onClick={handleCancel}>Cancel</button>
+                </div>
               )
             ) : (
-              <></>
+              <div className={styles.buttonGroup}>
+                <button className={styles.neonButton} onClick={() => {
+                  setIsLeaving(true);
+                  setTimeout(() => router.push("/leaderboard"), 300);
+                }}>Back</button>
+              </div>
             )}
           </>
         )}
       </div>
+      {drawerOpen &&
+        <div className={styles.passwordPopup}>
+          <h3>Change Password</h3>
+          <Form layout="vertical" onFinish={handleChangePassword}>
+            <Form.Item label="New Password" name="newPassword" rules={[{ required: true }]}>
+              <Input.Password className={styles.customInput} />
+            </Form.Item>
+            <Form.Item label="Confirm Password" name="confirmPassword" dependencies={["newPassword"]} rules={[
+              { required: true },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("newPassword") === value) return Promise.resolve();
+                  return Promise.reject(new Error("Passwords do not match!"));
+                },
+              }),
+            ]}>
+              <Input.Password className={styles.customInput} />
+            </Form.Item>
+            <Form.Item>
+              <div className={styles.buttonGroup}>
+                <button className={styles.neonButtonFilled} type="submit">Update</button>
+                <button onClick={() => setDrawerOpen(false)} className={styles.neonButton}>Cancel</button>
+              </div>
+            </Form.Item>
+          </Form>
+        </div>
+      }
     </div>
-    // </Authenticator>
   );
 };
 

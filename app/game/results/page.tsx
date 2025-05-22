@@ -8,6 +8,7 @@ import { useApi } from "@/hooks/useApi";
 // import { useSelector } from "react-redux";
 // import { RootState } from "../../";
 import styles from "../../styles/results.module.css";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -77,6 +78,7 @@ const Results = () => {
       setGameData(res as GameData);
     } catch (error) {
       console.error("Failed to fetch game results:", error);
+      showErrorToast(`${error}`);
 
       // 🧪 DUMMY fallback for local/dev use only. REMOVE IN PRODUCTION.
       const dummy: GameData = {

@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import "../styles/dashboard.css";
 import { useRouter } from "next/navigation"; // use NextJS router for navigation
+import { showSuccessToast } from "@/utils/showSuccessToast";
 
 const Dashboard: React.FC = () => {
   const router = useRouter();
@@ -14,7 +15,7 @@ const Dashboard: React.FC = () => {
   };
 
   const handleStart = () => {
-    alert("start!"); // TODO: push to solo game page
+    showSuccessToast("start!"); // TODO: push to solo game page
   };
 
   const toggleSoloPopup = () => {

@@ -14,6 +14,7 @@ import { answerUpdate, clearGameState, gameStart, gameTimeInitialize, ownerUpdat
 import 'react-toastify/dist/ReactToastify.css';
 import { Luckiest_Guy } from "next/font/google";
 import { showSuccessToast } from '@/utils/showSuccessToast';
+import { showErrorToast } from "@/utils/showErrorToast";
 import { AnimatePresence, motion } from 'framer-motion';
 
 interface Message {
@@ -50,6 +51,7 @@ const GameStart = () => {
   const [readyStatus, setReadyStatus] = useState<Record<string, boolean>>({});
   const [canStart, setCanStart] = useState<boolean>(false);
   const [client, setClient] = useState<Client | null>(null);
+  const [isLocked, setIsLocked] = useState(false);
 
   // State for chat functionality
   const [showChat, setShowChat] = useState(false); // Toggle chat visibility
@@ -73,6 +75,7 @@ const GameStart = () => {
     email?: string;
     bio?: string;
   }
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<User | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const [selectedPlayerProfile, setSelectedPlayerProfile] = useState<miniProfile | null>(null);
@@ -83,19 +86,6 @@ const GameStart = () => {
     : xp >= 5000
       ? "MapExpert"
       : "MapAmateur";
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        setSelectedPlayer(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [popupRef]);
 
   useEffect(() => {
     setGameCodeShown(gameCode);
@@ -107,15 +97,12 @@ const GameStart = () => {
         setOwnerName(response[0].username ?? "");
         dispatch(ownerUpdate(response[0].userId ?? ""));
 
-        const initialReady: Record<string, boolean> = {};
-        response.forEach(player => {
-          if (player.userId != null) {
-            initialReady[player.userId.toString()] = player.isReady ?? false;
-          }
-        });
+        const initialReady: Record<number, boolean> = response[0].readyMap ?? {};
         setReadyStatus(initialReady);
       } catch (error) {
+        window.dispatchEvent(new Event("globalLock"));
         console.error("Failed to fetch players:", error);
+        showErrorToast(`${error}`);
         router.push("/lobby");
       }
     };
@@ -138,6 +125,7 @@ const GameStart = () => {
 
         stompClient.subscribe(`/topic/ready/${gameId}/status`, (message) => {
           const map: Record<string, boolean> = JSON.parse(message.body);
+          console.log(">> STATUS RECEIVED:", map); 
 
           const normalizedMap: Record<string, boolean> = {};
           for (const [k, v] of Object.entries(map)) {
@@ -149,7 +137,7 @@ const GameStart = () => {
 
         stompClient.subscribe(`/topic/ready/${gameId}/canStart`, (message) => {
           const can: boolean = JSON.parse(message.body);
-
+          console.log(">> STATUS RECEIVED:", can); 
           setCanStart(can);
         });
 
@@ -168,6 +156,7 @@ const GameStart = () => {
             }
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -197,6 +186,7 @@ const GameStart = () => {
             setChatMessages((prevMessages) => [...prevMessages, data]);
           } catch (err) {
             console.error('Invalid chat message:', err);
+            showErrorToast(`${err}`);
           }
         });
       },
@@ -224,8 +214,10 @@ const GameStart = () => {
       if (current > 0) {
         setCountDown(current.toString());
       } else if (current === 0) {
+        window.dispatchEvent(new Event("globalLock"));
         setCountDown("GO!");
         setTimeout(() => {
+          setIsLocked(true);
           setCountDown(null);
           requestAnimationFrame(() => {
             router.push(`/game/${gameId}`);
@@ -239,13 +231,15 @@ const GameStart = () => {
 
   const handleExitGame = async () => {
     try {
+      window.dispatchEvent(new Event("globalLock"));
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
       document.querySelector(".roomWrapper")?.classList.add("roomWrapperExit");
-      // setTimeout(() => router.push("/lobby"), 400);
-      router.push("/lobby");
+      setTimeout(() => router.push("/lobby"), 200);
+      // router.push("/lobby");
     } catch (error) {
       console.error("Error leaving game:", error);
+      showErrorToast(`${error}`);
     }
   };
 
@@ -254,6 +248,7 @@ const GameStart = () => {
       await apiService.put(`/start/${gameId}`, {});
     } catch (error) {
       console.error("Error starting game:", error);
+      showErrorToast(`${error}`);
     }
   };
 
@@ -312,7 +307,7 @@ const GameStart = () => {
                         src={player.avatar}
                         alt="avatar"
                         className={styles.avatarImg}
-                        onClick={async (e) => {
+                        onMouseEnter={async (e) => {
                           const rect = e.currentTarget.getBoundingClientRect();
                           setSelectedPlayer(player);
                           setPopupPos({ x: rect.right + 10, y: rect.top });
@@ -324,6 +319,10 @@ const GameStart = () => {
                             bio: response.bio ? response.bio : "",
                           });
                         }}
+                        onMouseLeave={() => {
+                          setSelectedPlayer(null);
+                          setPopupPos(null);
+                        }}
                       />
                     ) : (
                       <div className={styles.avatarFallback}>{idx + 1}</div>
@@ -332,7 +331,7 @@ const GameStart = () => {
                       {player.userId?.toString() === players[0]?.userId?.toString() && "👑 "}{player.username}
                     </div>
                     <div className={styles.readyStampWrapper}>
-                      {readyStatus[player.userId?.toString() ?? ""] && (
+                      {readyStatus[player.userId?.toString() ?? ""] && player.userId !== players[0]?.userId && (
                         <div className={styles.readyStamp}>
                           READY
                         </div>
@@ -345,6 +344,9 @@ const GameStart = () => {
               </div>
             );
           })}
+          <div className={styles.bubbleTip}>
+            The game cannot begin until all players are ready!
+          </div>
         </div>
 
         {/* chatbox */}
@@ -434,40 +436,53 @@ const GameStart = () => {
         </div>
 
         {/* mini profile */}
-        {selectedPlayer && popupPos && (
-          <div
-            ref={popupRef}
-            className={styles.playerPopup}
-            style={{ top: popupPos.y, left: popupPos.x }}
-            onClick={() => setSelectedPlayer(null)}
-          >
-            <h3>{selectedPlayer.username}</h3>
-            <div
-              className={styles.playerTitle}
-              style={{
-                background: xp >= 10000
-                  ? 'linear-gradient(135deg, #ffcc00, #ff6600)'  // gold-orange
-                  : xp >= 5000
-                    ? 'linear-gradient(135deg, #40a9ff, #0050b3)'  // blue
-                    : 'linear-gradient(135deg, #95de64, #389e0d)'  // green
-              }}
+
+        <AnimatePresence>
+          {selectedPlayer && popupPos && (
+
+            <motion.div
+              ref={popupRef}
+              className={styles.playerPopup}
+              style={{ top: popupPos.y, left: popupPos.x }}
+              onMouseEnter={() => clearTimeout(hideTimeoutRef.current as NodeJS.Timeout | undefined)}
+              onMouseLeave={() => { setSelectedPlayer(null); }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              {title}
-            </div>
-            {selectedPlayer.email && (<div className={styles.email}>
-              <strong>Email:</strong> {selectedPlayer.email}
-            </div>)}
-            {selectedPlayer.bio && (<div className={styles.bio}>
-              <strong>Bio:</strong> {selectedPlayer.bio}
-            </div>)}
-          </div>
-        )}
+              <h3>{selectedPlayer.username}</h3>
+              <div
+                className={styles.playerTitle}
+                style={{
+                  background: xp >= 10000
+                    ? 'linear-gradient(135deg, #ffcc00, #ff6600)'  // gold-orange
+                    : xp >= 5000
+                      ? 'linear-gradient(135deg, #40a9ff, #0050b3)'  // blue
+                      : 'linear-gradient(135deg, #95de64, #389e0d)'  // green
+                }}
+              >
+                {title}
+              </div>
+              {selectedPlayer.email && (<div className={styles.email}>
+                <strong>📧</strong> {selectedPlayer.email}
+              </div>)}
+              {selectedPlayer.bio && (<div className={styles.bio}>
+                <strong>✍️</strong> {selectedPlayer.bio}
+              </div>)}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* countdown */}
         {countDown !== null && (
           <div className={styles.overlay}>
             <div className={styles.countdown} key={countDown}>{countDown === "0" ? "GO!" : countDown}</div>
           </div>
+        )}
+
+        {isLocked && (
+          <div className={styles.interactionLock} />
         )}
       </div>
     </>

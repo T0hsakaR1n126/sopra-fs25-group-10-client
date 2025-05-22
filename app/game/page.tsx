@@ -9,6 +9,7 @@ import { useApi } from "@/hooks/useApi";
 import { Client } from "@stomp/stompjs";
 import { gameIdUpdate, gameStart, gameTimeInitialize, ownerUpdate } from "@/gameSlice";
 import { motion, AnimatePresence } from "framer-motion";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const Dashboard: React.FC = () => {
   const router = useRouter();
@@ -37,7 +38,7 @@ const Dashboard: React.FC = () => {
     const handleExit = () => {
       setShowButtons(false);
     };
-  
+
     window.addEventListener("dashboardExit", handleExit);
     return () => window.removeEventListener("dashboardExit", handleExit);
   }, []);
@@ -54,6 +55,7 @@ const Dashboard: React.FC = () => {
             dispatch(gameIdUpdate(data));
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -63,6 +65,7 @@ const Dashboard: React.FC = () => {
             dispatch(gameIdUpdate(data));
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -74,6 +77,7 @@ const Dashboard: React.FC = () => {
             setButtonDisabled(true);
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -93,6 +97,7 @@ const Dashboard: React.FC = () => {
             }
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
       },
@@ -125,6 +130,7 @@ const Dashboard: React.FC = () => {
         setTimeout(() => {
           setCountDown(null);
           requestAnimationFrame(async () => {
+            window.dispatchEvent(new Event("globalLock"));
             setShowButtons(false);
             setTimeout(async () => {
               window.dispatchEvent(new Event("navbarExit"));
@@ -165,9 +171,10 @@ const Dashboard: React.FC = () => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        alert(`Something went wrong during game creation:\n${error.message}`);
+        showErrorToast(`${error.message}`);
       } else {
         console.error("An unknown error occurred during game creation.");
+        showErrorToast(`An unknown error occurred during game creation.`);
       }
     }
   };
@@ -183,134 +190,135 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-      <div className="game-body">
-        <div className="game-container">
-          <AnimatePresence>
-            {showButtons && (
-              <motion.div
-                initial={{ opacity: 0, y: 80 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 80 }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: 0.5 }}
-                className="solo-container"
-              >
-                <button className="button solo-button" disabled={buttonDisabled} onClick={toggleSoloPopup}>
-                  <div className="button-inner">
-                    <img src="/solo.png" alt="Solo Icon" className="button-icon" />
-                    <span className="button-label">SOLO</span>
-                  </div>
-                </button>
-                <div className={`popup ${showSoloPopup ? "visible" : "hidden"}`}>
-                  {/* <div className="popup-header">⏱ Time Setting:</div> */}
-
-                  <div className="popup-controls">
-                    <div className="slider-row">
-                      <span className="slider-prefix">⌛</span>
-                      <input
-                        type="range"
-                        min="1"
-                        max="5"
-                        step="1"
-                        value={selectedSoloTime}
-                        onChange={(e) => setSelectedSoloTime(e.target.value)}
-                        className="time-slider solo-slider"
-                      />
-                      <span className="time-label">{selectedSoloTime} min{selectedSoloTime !== "1" ? "s" : ""}</span>
-                    </div>
-                    <div className="slider-row">
-                      <span className="slider-prefix">⚔️</span>
-                      <input
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="1"
-                        value={selectedSoloDifficulty}
-                        onChange={(e) => setSelectedSoloDifficulty(e.target.value)}
-                        className="time-slider solo-slider"
-                      />
-                      <span className="time-label">{selectedSoloDifficulty === "0" ? "easy" : "hard"}</span>
-                    </div>
-
-                    <button className="start-btn solo-btn" onClick={() => handleStart(false)}>
-                      Start
-                    </button>
-                  </div>
+    <div className="game-body">
+      <div className="game-container">
+        <AnimatePresence>
+          {showButtons && (
+            <motion.div
+              initial={{ opacity: 0, y: 80 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 80 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.5 }}
+              className="solo-container"
+            >
+              <button className="button solo-button" disabled={buttonDisabled} onClick={toggleSoloPopup}>
+                <div className="button-inner">
+                  <img src="/solo.png" alt="Solo Icon" className="button-icon" />
+                  <span className="button-label">SOLO</span>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </button>
+              <div className={`popup ${showSoloPopup ? "visible" : "hidden"}`}>
+                {/* <div className="popup-header">⏱ Time Setting:</div> */}
 
-          <AnimatePresence>
-            {showButtons && (
-              <motion.div
-                initial={{ opacity: 0, y: 80 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 80 }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: 0.65 }}
-                className="combat-container"
-              >
-                <button className="button combat-button" disabled={buttonDisabled} onClick={() => {
-                  setShowButtons(false);
-                  setTimeout(() => {
-                    router.push("/lobby");
-                  }, 1200);
-                }}>
-                  <div className="button-inner">
-                    <img src="/combat.png" alt="Combat Icon" className="button-icon" />
-                    <span className="button-label">COMBAT</span>
+                <div className="popup-controls">
+                  <div className="slider-row">
+                    <span className="slider-prefix">⌛</span>
+                    <input
+                      type="range"
+                      min="1"
+                      max="5"
+                      step="1"
+                      value={selectedSoloTime}
+                      onChange={(e) => setSelectedSoloTime(e.target.value)}
+                      className="time-slider solo-slider"
+                    />
+                    <span className="time-label">{selectedSoloTime} min{selectedSoloTime !== "1" ? "s" : ""}</span>
                   </div>
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
+                  <div className="slider-row">
+                    <span className="slider-prefix">⚔️</span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="1"
+                      value={selectedSoloDifficulty}
+                      onChange={(e) => setSelectedSoloDifficulty(e.target.value)}
+                      className="time-slider solo-slider"
+                    />
+                    <span className="time-label">{selectedSoloDifficulty === "0" ? "easy" : "hard"}</span>
+                  </div>
 
-          <AnimatePresence>
-            {showButtons && (
-              <motion.div
-                initial={{ opacity: 0, y: 80 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 80 }}
-                transition={{ duration: 0.6, ease: "easeOut", delay: 0.8 }}
-                className="exercise-container"
-              >
-                <button className="button exercise-button" disabled={buttonDisabled} onClick={toggleExercisePopup}>
-                  <div className="button-inner">
-                    <img src="/exercise.png" alt="Exercise Icon" className="button-icon" />
-                    <span className="button-label">EXERCISE</span>
-                  </div>
-                </button>
-                <div className={`popup ${showExercisePopup ? "visible" : "hidden"}`}>
-                  <div className="popup-controls">
-                    <div className="slider-row">
-                      <span className="slider-prefix">⚔️</span>
-                      <input
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="1"
-                        value={selectedSoloDifficulty}
-                        onChange={(e) => setSelectedSoloDifficulty(e.target.value)}
-                        className="time-slider exercise-slider"
-                      />
-                      <span className="time-label">{selectedSoloDifficulty === "0" ? "easy" : "hard"}</span>
-                    </div>
-
-                    <button className="start-btn exercise-btn" onClick={() => handleStart(true)}>
-                      Start
-                    </button>
-                  </div>
+                  <button className="start-btn solo-btn" onClick={() => handleStart(false)}>
+                    Start
+                  </button>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        </div>
-        {countDown !== null && (
-          <div className="overlay">
-            <div className="countdown" key={countDown}>{countDown === "0" ? "GO!" : countDown}</div>
-          </div>
-        )}
+        <AnimatePresence>
+          {showButtons && (
+            <motion.div
+              initial={{ opacity: 0, y: 80 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 80 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.65 }}
+              className="combat-container"
+            >
+              <button className="button combat-button" disabled={buttonDisabled} onClick={() => {
+                setShowButtons(false);
+                window.dispatchEvent(new Event("globalLock"));
+                setTimeout(() => {
+                  router.push("/lobby");
+                }, 1200);
+              }}>
+                <div className="button-inner">
+                  <img src="/combat.png" alt="Combat Icon" className="button-icon" />
+                  <span className="button-label">COMBAT</span>
+                </div>
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showButtons && (
+            <motion.div
+              initial={{ opacity: 0, y: 80 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 80 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.8 }}
+              className="exercise-container"
+            >
+              <button className="button exercise-button" disabled={buttonDisabled} onClick={toggleExercisePopup}>
+                <div className="button-inner">
+                  <img src="/exercise.png" alt="Exercise Icon" className="button-icon" />
+                  <span className="button-label">EXERCISE</span>
+                </div>
+              </button>
+              <div className={`popup ${showExercisePopup ? "visible" : "hidden"}`}>
+                <div className="popup-controls">
+                  <div className="slider-row">
+                    <span className="slider-prefix">⚔️</span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="1"
+                      step="1"
+                      value={selectedSoloDifficulty}
+                      onChange={(e) => setSelectedSoloDifficulty(e.target.value)}
+                      className="time-slider exercise-slider"
+                    />
+                    <span className="time-label">{selectedSoloDifficulty === "0" ? "easy" : "hard"}</span>
+                  </div>
+
+                  <button className="start-btn exercise-btn" onClick={() => handleStart(true)}>
+                    Start
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </div>
+      {countDown !== null && (
+        <div className="overlay">
+          <div className="countdown" key={countDown}>{countDown === "0" ? "GO!" : countDown}</div>
+        </div>
+      )}
+    </div>
   );
 };
 

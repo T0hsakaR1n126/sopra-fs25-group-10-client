@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from 'next/navigation';
 import styles from "@/styles/results.module.css";
@@ -8,6 +8,7 @@ import { useApi } from "@/hooks/useApi";
 import { User } from "@/types/user";
 import { updateUserInfo } from "@/userSlice";
 import { motion } from "framer-motion";
+import { showErrorToast } from "@/utils/showErrorToast";
 
 const Results = () => {
   const router = useRouter();
@@ -31,6 +32,16 @@ const Results = () => {
 
   const entries = Object.entries(scoreBoard) as [string, number][];
 
+  const [isLeaving, setIsLeaving] = useState(false);
+  useEffect(() => {
+    const handleExit = () => {
+      if (!isLeaving) setIsLeaving(true);
+    };
+
+    window.addEventListener("otherExit", handleExit);
+    return () => window.removeEventListener("otherExit", handleExit);
+  }, [isLeaving]);
+
   const handleBack = async () => {
     if (gameMode === "combat") {
       try {
@@ -42,26 +53,29 @@ const Results = () => {
         }));
       } catch (error) {
         if (error instanceof Error) {
-          alert(`Something went wrong while fetching user:\n${error.message}`);
+          showErrorToast(`${error.message}`);
           router.push("/game");
         } else {
           console.error("An unknown error occurred while fetching user.");
+          showErrorToast(`An unknown error occurred while fetching user.`);
         }
       }
-
-      router.push(`/game/start/${gameId}`);
+      setTimeout(() => {
+        router.push(`/game/start/${gameId}`);
+      }, 300);
     } else {
-      router.push("/game");
+      setTimeout(() => {
+        router.push("/game");
+      }, 300);
     }
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper} ${isLeaving ? styles.pageExit : styles.pageEnter}`}>
       <div className={styles.aboveBox}>
-        <span className={styles.congratsText}>🎉 Congratulations 🎉</span>
+        <span className={styles.congratsText}>🎉 Result 🎉</span>
       </div>
       <div className={styles.resultsContainer}>
-        <h2 className={styles.resultsTitle}>ScoreBoard</h2>
         <ul className={styles.resultsList}>
           {entries.length === 0 ? (
             <li style={{ color: "white", textAlign: "center" }}>Loading...</li>
@@ -96,7 +110,7 @@ const Results = () => {
                     </motion.span> : index + 1}
                   </span>
                   <span className={styles.user}>{user}</span>
-                  <span className={styles.score}>{score === -1 ? "give up" : score}</span>
+                  <span className={styles.score}>{score === -1 ? "❌" : score}</span>
                 </li>
               ))}
             </>

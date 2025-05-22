@@ -17,7 +17,6 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 
-
 // interface GameState {
 //   questionCount: number;
 //   correctCount: number;
@@ -148,6 +147,7 @@ const GameBoard: React.FC = () => {
             dispatch(scoreBoardResultSet(data));
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -158,12 +158,13 @@ const GameBoard: React.FC = () => {
             setCurrentTime(data);
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
         client.subscribe(`/topic/end/${gameId}`, (message) => {
           try {
-            console.log('RAW message body:', message.body);
+            window.dispatchEvent(new Event("globalLock"));
             const data: string = message.body;
             setGameEnded(true);
             setEndMessage(data);
@@ -182,6 +183,7 @@ const GameBoard: React.FC = () => {
             }, 1000);
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
 
@@ -192,6 +194,7 @@ const GameBoard: React.FC = () => {
             dispatch(ownerUpdate(data));
           } catch (err) {
             console.error('Invalid message:', err);
+            showErrorToast(`${err}`);
           }
         });
       },
@@ -209,6 +212,7 @@ const GameBoard: React.FC = () => {
 
   const handleFinishGame = async () => {
     try {
+      window.dispatchEvent(new Event("globalLock"));
       await apiService.put(`/finishexercise/${gameId}`, {});
       setTransitionDirection("out");
       setTimeout(() => {
@@ -219,10 +223,45 @@ const GameBoard: React.FC = () => {
       }, 800);
     } catch (error) {
       console.error('Error finishing game:', error);
+      showErrorToast(`${error}`);
     }
   };
 
   return (
+//     <div className={styles.container}>
+//       <div className={styles.topBar}>
+//         <div className={styles.topLeft}>
+//           {gameMode !== "exercise" ? (
+//             <div className={styles.scoreboardWrapper}>
+//               <button className={styles.userBoxRed} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
+//             </div>
+//           ) : (
+//             <div className={styles.scoreboardWrapper}>
+//               <button className={styles.userBoxGreen} onClick={async () => {
+//                 if (nextLocked) return;
+//                 setNextLocked(true);
+
+//                 try {
+//                   const response: Game = await apiService.post(`/next/${gameId}`, {});
+//                   dispatch(hintUpdate(response.hints ?? []));
+//                   dispatch(hintUsageClear());
+//                   dispatch(answerUpdate(response.answer ?? ""));
+//                 } catch (err) {
+//                   console.error('error', err);
+//                   showErrorToast(`${err}`);
+//                 } finally {
+//                   setTimeout(() => setNextLocked(false), 500);
+//                 }
+//               }}>
+//                 Next
+//               </button>
+//             </div>
+//           )}
+//           {showExitWindow && (
+//             <div className={styles.modalOverlay}>
+//               <div className={styles.exitModal}>
+//                 <p>The game is still ongoing.<br />Are you sure you want to exit?</p>
+//                 <div className={styles.exitButtons}>
     <>
       {transitionDirection !== "none" && (
         <motion.div
@@ -287,6 +326,7 @@ const GameBoard: React.FC = () => {
                           dispatch(resetQuestionStats());
                           setTimeout(async () => {
                             try {
+                              window.dispatchEvent(new Event("globalLock"));
                               await apiService.put(`/giveup/${userId}`, {});
                               if (gameMode === "combat") {
                                 router.push('/lobby');
@@ -366,8 +406,9 @@ const GameBoard: React.FC = () => {
                         if ((response as { judgement: boolean }).judgement) {
                           showSuccessToast(`The answer is: ${countryIdMap[answerRef.current]}`);
                         }
-                      } catch (err) {
-                        showErrorToast("Error fetching next question: " + (err as Error).message);
+                      } catch (error) {
+                        console.error('Error leaving game:', error);
+                        showErrorToast("Error fetching next question: " + (error as Error).message);
                       } finally {
                         setTimeout(() => setAnswerLocked(false), 1000);
                       }

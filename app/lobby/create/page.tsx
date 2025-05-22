@@ -81,6 +81,7 @@ const CreateForm: React.FC = () => {
         showErrorToast(error.message);
       } else {
         console.error("An unknown error occurred during game creation.");
+        showErrorToast("An unknown error occurred during game creation.");
       }
     }
   };
