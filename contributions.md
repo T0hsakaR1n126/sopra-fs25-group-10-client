@@ -166,8 +166,9 @@ Note: If a team member fails to show continuous progress after using their Joker
 |**@yzq0325**| 17-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/pull/95/commits/3de796ef0c4fd9e4c8454d89c7d6f25dfdeef214|Persistant Combat Mode|Keep combat mode groups intact after a game ends until manually deleted or everyone leaves.|
 |**@yzq0325**| 19-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/pull/95/commits/9c4dd0a165de076da3bfd48234a6cdabf801f0dd|UI improvement|UI improvement of home, login, register and hall|
 |**@yzq0325**| 17-05-2025 |https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/pull/95/commits/de4376573319bde5a550f834ba17cb9db004eacd|fix country name display in exercise mode|Show country name but not country ID in exercise mode.|
+
 ---
-## Contributions Week 8 - [12-05-2025] to [18-05-2025]
+## Contributions Week 9 - [19-05-2025] to [25-05-2025]
 | **Student**        | **Date** | **Link to Commit** | **Description**           | **Relevance**                 |
 | ------------------------ | -------------- | ------------------------ | ------------------------------- | ----------------------------------- |
 
