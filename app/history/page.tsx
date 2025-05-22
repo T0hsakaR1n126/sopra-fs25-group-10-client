@@ -190,21 +190,24 @@ const GameHistoryPage: React.FC = () => {
                   ))}
 
                   <div className={styles.pagination} style={{ marginTop: "10px" }}>
-                    <button
-                      onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                      disabled={currentPage === 1}
-                      style={{ marginRight: "8px" }}
-                    >
-                      🗂️ Prev
-                    </button>
-                    <span style={{ minWidth: 70, display: "inline-block", textAlign: "center" }}>Page {currentPage}</span>
-                    <button
-                      onClick={() => setCurrentPage((p) => p + 1)}
-                      disabled={end >= filtered.length}
-                      style={{ marginLeft: "8px" }}
-                    >
-                      Next 📝
-                    </button>
+                        <button
+                          onClick={() => setCurrentPage((p) => p - 1)}
+                          disabled={currentPage === 1}
+                          title={currentPage === 1 ? "Already at the first page!" : ""}
+                        >
+                          ◀ Prev
+                        </button>
+                        <span style={{ minWidth: 70, display: "inline-block", textAlign: "center" }}>
+                          Page {currentPage}
+                        </span>
+                        <button
+                          onClick={() => setCurrentPage((p) => p + 1)}
+                          disabled={end >= filtered.length}
+                          title={end >= filtered.length ? "Already at the last page!" : ""}
+                          style={{ marginLeft: "8px" }}
+                        >
+                           Next ▶
+                        </button>
                   </div>
                 </>
               )}
