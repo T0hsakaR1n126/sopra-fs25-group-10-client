@@ -86,8 +86,8 @@ const LeaderboardPage: React.FC = () => {
                     marginTop: 4,
                     padding: "4px 12px",
                     backgroundColor:
-                      Number(entry.level) * 100 >= 10000 ? "#d4af37" :
-                        Number(entry.level) * 100 >= 5000 ? "#40a9ff" :
+                      Number(entry.level) >= 10000 ? "#d4af37" :
+                        Number(entry.level) >= 5000 ? "#40a9ff" :
                           "#73d13d",
                     color: "#000",
                     fontWeight: "bold",
@@ -98,9 +98,9 @@ const LeaderboardPage: React.FC = () => {
                     boxShadow: "0 0 6px rgba(0,0,0,0.2)",
                   }}
                 >
-                  {Number(entry.level) * 100 >= 10000
+                  {Number(entry.level) >= 10000
                     ? "MapMaster"
-                    : Number(entry.level) * 100 >= 5000
+                    : Number(entry.level) >= 5000
                       ? "MapExpert"
                       : "MapAmateur"}
                 </div>

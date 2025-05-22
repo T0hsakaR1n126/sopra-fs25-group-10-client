@@ -21,6 +21,16 @@ const GuestPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [isLeaving, setIsLeaving] = useState(false);
+  useEffect(() => {
+    const handleExit = () => {
+      if (!isLeaving) setIsLeaving(true);
+    };
+
+    window.addEventListener("otherExit", handleExit);
+    return () => window.removeEventListener("otherExit", handleExit);
+  }, [isLeaving]);
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -64,20 +74,19 @@ const GuestPage: React.FC = () => {
     fetchUserData();
   }, [apiService, id, userId]);
 
-  // 总答题数统计
   const totalAnswered = countryData.reduce((sum, c) => sum + c.answered, 0);
 
   return (
-    <div className={styles.container}>
-        <h2 className={styles.title}>
-          📈 User Statistics
-        </h2>
-        <h2 className={styles.subtitle}>
-          The flags below represent the number of correctly answered questions for each country across all game modes.
-        </h2>
-        <p style={{ textAlign: "center", color: "#ffc63f", fontSize: "16px", fontWeight: 600 }}>
-          Total correct: {totalAnswered} | Countries: {countryData.length}
-        </p>
+    <div className={`${styles.container} ${isLeaving ? styles.pageExit : styles.pageEnter}`}>
+      <h2 className={styles.title}>
+        📈 User Statistics
+      </h2>
+      <h2 className={styles.subtitle}>
+        The flags below represent the number of correctly answered questions for each country across all game modes.
+      </h2>
+      <p style={{ textAlign: "center", color: "#ffc63f", fontSize: "16px", fontWeight: 600 }}>
+        Total correct: {totalAnswered} | Countries: {countryData.length}
+      </p>
       {loading ? (
         <p className={styles.loading}>Loading...</p>
       ) : error ? (
