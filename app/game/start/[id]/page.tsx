@@ -74,6 +74,7 @@ const GameStart = () => {
     email?: string;
     bio?: string;
   }
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<User | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const [selectedPlayerProfile, setSelectedPlayerProfile] = useState<miniProfile | null>(null);
@@ -84,19 +85,6 @@ const GameStart = () => {
     : xp >= 5000
       ? "MapExpert"
       : "MapAmateur";
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        setSelectedPlayer(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [popupRef]);
 
   useEffect(() => {
     setGameCodeShown(gameCode);
@@ -242,8 +230,8 @@ const GameStart = () => {
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
       document.querySelector(".roomWrapper")?.classList.add("roomWrapperExit");
-      // setTimeout(() => router.push("/lobby"), 400);
-      router.push("/lobby");
+      setTimeout(() => router.push("/lobby"), 200);
+      // router.push("/lobby");
     } catch (error) {
       console.error("Error leaving game:", error);
     }
@@ -312,7 +300,7 @@ const GameStart = () => {
                         src={player.avatar}
                         alt="avatar"
                         className={styles.avatarImg}
-                        onClick={async (e) => {
+                        onMouseEnter={async (e) => {
                           const rect = e.currentTarget.getBoundingClientRect();
                           setSelectedPlayer(player);
                           setPopupPos({ x: rect.right + 10, y: rect.top });
@@ -323,6 +311,10 @@ const GameStart = () => {
                             email: response.email ? response.email : "",
                             bio: response.bio ? response.bio : "",
                           });
+                        }}
+                        onMouseLeave={() => {
+                          setSelectedPlayer(null);
+                          setPopupPos(null);
                         }}
                       />
                     ) : (
@@ -345,6 +337,9 @@ const GameStart = () => {
               </div>
             );
           })}
+          <div className={styles.bubbleTip}>
+            The game cannot begin until all players are ready!
+          </div>
         </div>
 
         {/* chatbox */}
@@ -434,34 +429,43 @@ const GameStart = () => {
         </div>
 
         {/* mini profile */}
-        {selectedPlayer && popupPos && (
-          <div
-            ref={popupRef}
-            className={styles.playerPopup}
-            style={{ top: popupPos.y, left: popupPos.x }}
-            onClick={() => setSelectedPlayer(null)}
-          >
-            <h3>{selectedPlayer.username}</h3>
-            <div
-              className={styles.playerTitle}
-              style={{
-                background: xp >= 10000
-                  ? 'linear-gradient(135deg, #ffcc00, #ff6600)'  // gold-orange
-                  : xp >= 5000
-                    ? 'linear-gradient(135deg, #40a9ff, #0050b3)'  // blue
-                    : 'linear-gradient(135deg, #95de64, #389e0d)'  // green
-              }}
+
+        <AnimatePresence>
+          {selectedPlayer && popupPos && (
+
+            <motion.div
+              ref={popupRef}
+              className={styles.playerPopup}
+              style={{ top: popupPos.y, left: popupPos.x }}
+              onMouseEnter={() => clearTimeout(hideTimeoutRef.current as NodeJS.Timeout | undefined)}
+              onMouseLeave={() => { setSelectedPlayer(null); }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              {title}
-            </div>
-            {selectedPlayer.email && (<div className={styles.email}>
-              <strong>Email:</strong> {selectedPlayer.email}
-            </div>)}
-            {selectedPlayer.bio && (<div className={styles.bio}>
-              <strong>Bio:</strong> {selectedPlayer.bio}
-            </div>)}
-          </div>
-        )}
+              <h3>{selectedPlayer.username}</h3>
+              <div
+                className={styles.playerTitle}
+                style={{
+                  background: xp >= 10000
+                    ? 'linear-gradient(135deg, #ffcc00, #ff6600)'  // gold-orange
+                    : xp >= 5000
+                      ? 'linear-gradient(135deg, #40a9ff, #0050b3)'  // blue
+                      : 'linear-gradient(135deg, #95de64, #389e0d)'  // green
+                }}
+              >
+                {title}
+              </div>
+              {selectedPlayer.email && (<div className={styles.email}>
+                <strong>📧</strong> {selectedPlayer.email}
+              </div>)}
+              {selectedPlayer.bio && (<div className={styles.bio}>
+                <strong>✍️</strong> {selectedPlayer.bio}
+              </div>)}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* countdown */}
         {countDown !== null && (

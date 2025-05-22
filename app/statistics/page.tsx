@@ -3,23 +3,24 @@
 import React, { useState, useEffect } from "react";
 import { countryCodeMap } from "@/utils/countryCodeMap";
 import { useApi } from "@/hooks/useApi";
-import { useParams } from "next/navigation";
 import styles from "@/styles/Statistics.module.css";
 import { useSelector } from "react-redux";
+import { showErrorToast } from "@/utils/showErrorToast";
 
-interface Country {
-  name: string;
-  answered: number;
-}
+const allCountries = Object.keys(countryCodeMap);
+const grouped = allCountries.reduce((acc, country) => {
+  const letter = country[0].toUpperCase();
+  if (!acc[letter]) acc[letter] = [];
+  acc[letter].push(country);
+  return acc;
+}, {} as Record<string, string[]>);
 
-const GuestPage: React.FC = () => {
+const statistics: React.FC = () => {
   const apiService = useApi();
-  const { id } = useParams();
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
 
-  const [countryData, setCountryData] = useState<Country[]>([]);
+  const [collectedCountries, setCollectedCountries] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   const [isLeaving, setIsLeaving] = useState(false);
   useEffect(() => {
@@ -34,111 +35,58 @@ const GuestPage: React.FC = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        setLoading(true);
-
         const response = await apiService.get(`/users/${userId}`);
         const { learningTracking } = response as { learningTracking: Record<string, number> };
-
-        if (
-          learningTracking &&
-          typeof learningTracking === "object" &&
-          Object.entries(learningTracking).every(([k, v]) => typeof k === "string" && typeof v === "number")
-        ) {
-          const formattedData: Country[] = Object.entries(learningTracking)
-            .filter(([, answered]) => answered > 0)
-            .map(([name, answered]) => ({ name, answered }));
-          // 排序：数量多的在前
-          formattedData.sort((a, b) => b.answered - a.answered);
-          setCountryData(formattedData);
-        } else {
-          throw new Error("Invalid learningTracking data.");
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error("Failed to fetch user data:", error.message);
-          setError("Failed to load user country statistics. Showing mock data.");
-        } else {
-          setError("Unknown error occurred.");
-        }
-        setCountryData([
-          { name: "Switzerland", answered: 25 },
-          { name: "United States", answered: 30 },
-          { name: "France", answered: 18 },
-          { name: "Germany", answered: 22 },
-        ]);
+        const collected = Object.entries(learningTracking)
+          .filter(([, count]) => count > 0)
+          .map(([country]) => country);
+        setCollectedCountries(new Set(collected));
+      } catch (e) {
+        showErrorToast("Failed to load user stats");
       } finally {
         setLoading(false);
       }
     };
-
     fetchUserData();
-  }, [apiService, id, userId]);
-
-  const totalAnswered = countryData.reduce((sum, c) => sum + c.answered, 0);
+  }, [apiService, userId]);
 
   return (
     <div className={`${styles.container} ${isLeaving ? styles.pageExit : styles.pageEnter}`}>
-      <h2 className={styles.title}>
-        📈 User Statistics
-      </h2>
-      <h2 className={styles.subtitle}>
-        The flags below represent the number of correctly answered questions for each country across all game modes.
-      </h2>
-      <p style={{ textAlign: "center", color: "#ffc63f", fontSize: "16px", fontWeight: 600 }}>
-        Total correct: {totalAnswered} | Countries: {countryData.length}
-      </p>
-      {loading ? (
-        <p className={styles.loading}>Loading...</p>
-      ) : error ? (
-        <p className={styles.error}>{error}</p>
-      ) : null}
+      <h2 className={styles.title}>📈 User Statistics</h2>
+      <h3 className={styles.subtitle}>
+        🚩 Show flags of countries you have guessed right!
+      </h3>
 
       <div className={styles.grid}>
-        {countryData.length === 0 && !loading && (
-          <div style={{ color: "#888", fontSize: "1.15em", margin: "32px 0" }}>
-            No answered questions yet.<br />Start your first game!
-          </div>
-        )}
-        {countryData.map((country, index) => {
-          const countryCode = countryCodeMap[country.name] || "unknown";
-          return (
-            <div key={index} className={styles.card}>
-              <img
-                src={countryCode !== "unknown"
-                  ? `/flag/${countryCode}.svg`
-                  : `/flag/world.svg`}
-                alt={country.name}
-                className={styles.flag}
-                style={{
-                  filter: country.answered >= 20 ? "drop-shadow(0 0 8px #ffd70066)" : undefined,
-                  border: country.answered >= 20 ? "2.5px solid #ffd700cc" : "2.5px solid #eee",
-                  background: "#fff"
-                }}
-              />
-              <p className={styles.label}>
-                <span style={{
-                  fontWeight: country.answered >= 20 ? "bold" : "normal",
-                  color: country.answered >= 20 ? "#f7b924" : "#3faff7",
-                  fontSize: country.answered >= 30 ? "1.1em" : "1em"
-                }}>
-                  {country.name}
-                </span>
-                <span style={{
-                  marginLeft: 8,
-                  fontWeight: "bold"
-                }}>
-                  {country.answered >= 50 ? "🏆" : country.answered >= 30 ? "🌟" : ""}
-                  {country.answered}
-                  {" "}
-                  <span style={{ color: "#95de64" }}>✔</span>
-                </span>
-              </p>
+        {Object.keys(grouped).sort().map(letter => (
+          <div key={letter} className={styles.group}>
+            <h3 className={styles.groupTitle}>{letter}</h3>
+            <div className={styles.grid}>
+              {grouped[letter].map((name, idx) => {
+                const code = countryCodeMap[name] || "unknown";
+                const collected = collectedCountries.has(name);
+                return (
+                  <div
+                    key={idx}
+                    className={`${styles.card} ${collected ? styles.collected : styles.locked}`}
+                    onClick={() => {
+                      if (collected) {
+                        window.open(`https://en.wikipedia.org/wiki/${name}`, "_blank");
+                      }
+                    }}
+                  >
+                    <img src={`/flag/${code}.svg`} alt={name} className={styles.flag} />
+                    <p className={styles.label}>{collected ? name : "???"}</p>
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
+          </div>
+        ))}
+
       </div>
     </div>
   );
 };
 
-export default GuestPage;
+export default statistics;

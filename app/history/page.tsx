@@ -151,58 +151,88 @@ const GameHistoryPage: React.FC = () => {
                   <div className={`${styles.cell} ${styles.cellScore}`}>🏅 Score</div>
                 </div> */}
 
-                {paginated.map((item, index) => (
+                {paginated.length === 0 ? (
                   <motion.div
-                    key={index}
-                    className={styles.gameCard}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ duration: 0.5 }}
                   >
-                    {/* <div className={styles.cardLine}><span>#️⃣</span>{start + index + 1}</div>
-                    <div className={styles.cardLine}>
-                      {getGameIcon(item.modeType)} {item.gameName}
-                    </div>
-                    <div className={styles.cardLine}>
-                      <span>📅</span>
-                      {formatTimestampToYMDHM(item.gameCreationDate)}
-                    </div>
-                    <div className={styles.cardLine}>
-                      <span>🎯</span>
-                      {item.score !== -1 ? renderAccuracyBar(item.correctAnswers, item.totalQuestions) : "❌"}
-                    </div>
-                    <div className={styles.cardLine}>
-                      <span>⏳</span>
-                      {item.gameTime !== -1 ? item.gameTime : ""}{" "}
-                      {item.gameTime === -1 ? "infinite" : item.gameTime === 1 ? "min" : "mins"}
-                    </div>
-                    <div className={styles.cardLine}>
-                      <span>🏅</span>
-                      {getScoreContent(item.score)}
-                    </div> */}
-                    <div className={styles.rowTop}>
-                      <div className={styles.leftTop}>
-                        <span className={styles.index}>#{start + index + 1}</span>
-                        <span className={styles.name}>🎮 {item.gameName}</span>
+                    <div className={styles.emptyMessage}>No Available History.</div>
+                  </motion.div>) : (
+                  <>
+                    {paginated.map((item, index) => (
+                      <motion.div
+                        key={index}
+                        className={styles.gameCard}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.05 }}
+                      >
+                        {/* <div className={styles.cardLine}><span>#️⃣</span>{start + index + 1}</div>
+                      <div className={styles.cardLine}>
+                        {getGameIcon(item.modeType)} {item.gameName}
                       </div>
-                      <div className={styles.score}>🏅 {getScoreContent(item.score)}</div>
-                    </div>
+                      <div className={styles.cardLine}>
+                        <span>📅</span>
+                        {formatTimestampToYMDHM(item.gameCreationDate)}
+                      </div>
+                      <div className={styles.cardLine}>
+                        <span>🎯</span>
+                        {item.score !== -1 ? renderAccuracyBar(item.correctAnswers, item.totalQuestions) : "❌"}
+                      </div>
+                      <div className={styles.cardLine}>
+                        <span>⏳</span>
+                        {item.gameTime !== -1 ? item.gameTime : ""}{" "}
+                        {item.gameTime === -1 ? "infinite" : item.gameTime === 1 ? "min" : "mins"}
+                      </div>
+                      <div className={styles.cardLine}>
+                        <span>🏅</span>
+                        {getScoreContent(item.score)}
+                      </div> */}
+                        <div className={styles.rowTop}>
+                          <div className={styles.leftTop}>
+                            <span className={styles.index}>#{start + index + 1}</span>
+                            <span className={styles.name}>🎮 {item.gameName}</span>
+                          </div>
+                          <div className={styles.score}>🏅 {getScoreContent(item.score)}</div>
+                        </div>
 
-                    <div className={styles.rowBottomGrid}>
-                      <div className={styles.infoBox}>
-                        📅 {formatTimestampToYMDHM(item.gameCreationDate)}
-                      </div>
-                      <div className={styles.infoBox}>
-                        🎯 {item.score !== -1 ? renderAccuracyBar(item.correctAnswers, item.totalQuestions) : "❌"}
-                      </div>
-                      <div className={styles.infoBox}>
-                        ⏳ {item.gameTime} min
-                      </div>
+                        <div className={styles.rowBottomGrid}>
+                          <div className={styles.infoBox}>
+                            📅 {formatTimestampToYMDHM(item.gameCreationDate)}
+                          </div>
+                          <div className={styles.infoBox}>
+                            🎯 {item.score !== -1 ? renderAccuracyBar(item.correctAnswers, item.totalQuestions) : "❌"}
+                          </div>
+                          <div className={styles.infoBox}>
+                            ⏳ {item.gameTime} min
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                    <div className={styles.pagination}>
+                      <button
+                        onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                        disabled={currentPage === 1}
+                        style={{ marginRight: "8px" }}
+                      >
+                        ◀ Prev
+                      </button>
+                      <span style={{ minWidth: 70, display: "inline-block", textAlign: "center" }}>Page {currentPage}</span>
+                      <button
+                        onClick={() => setCurrentPage((p) => p + 1)}
+                        disabled={end >= filtered.length}
+                        style={{ marginLeft: "8px" }}
+                      >
+                        Next ▶
+                      </button>
                     </div>
-                  </motion.div>
-                ))}
+                  </>
+                )
+                }
               </div>
-              <div className={styles.pagination}>
+              {/* <div className={styles.pagination}>
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
                   disabled={currentPage === 1}
@@ -218,7 +248,7 @@ const GameHistoryPage: React.FC = () => {
                 >
                   Next ▶
                 </button>
-              </div>
+              </div> */}
             </div>
           </>
         )}
