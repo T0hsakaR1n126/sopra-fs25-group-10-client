@@ -20,7 +20,7 @@ interface Message {
 }
 
 function formatChatTimestamp(timestamp: string): string {
-  const iso = timestamp.split(".")[0] + "Z";
+  const iso = timestamp.split(".")[0];
   const date = new Date(iso);
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
@@ -96,8 +96,8 @@ const Lobby: React.FC = () => {
 
   useEffect(() => {
     const client = new Client({
-      brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
-      // brokerURL: "http://localhost:8080/ws",
+      // brokerURL: 'wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws', // TODO: replace with your WebSocket URL
+      brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
         clientRef.current = client;
@@ -181,6 +181,7 @@ const Lobby: React.FC = () => {
       ));
 
       // exit animation
+      window.dispatchEvent(new Event("globalLock"));
       document.querySelector(".page")?.classList.add("pageExit");
       setTimeout(() => router.push(`/game/start/${game.gameId}`), 100);
     } catch (error) {
@@ -418,7 +419,7 @@ const Lobby: React.FC = () => {
           </button>
         </form>
       </div>
-    </div >
+    </div>
   );
 };
 

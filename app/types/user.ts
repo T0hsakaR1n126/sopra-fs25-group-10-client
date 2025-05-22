@@ -8,5 +8,6 @@ export interface User {
   avatar: string | null;
   level: string | null;
   isReady?: boolean | null;
+  readyMap: Record<number, boolean> | null;
 }
     

@@ -23,7 +23,7 @@ interface Message {
 }
 
 function formatChatTimestamp(timestamp: string): string {
-  const iso = timestamp.split(".")[0] + "Z";
+  const iso = timestamp.split(".")[0];
   const date = new Date(iso);
   const pad = (n: number) => String(n).padStart(2, "0");
   return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
@@ -50,6 +50,7 @@ const GameStart = () => {
   const [readyStatus, setReadyStatus] = useState<Record<string, boolean>>({});
   const [canStart, setCanStart] = useState<boolean>(false);
   const [client, setClient] = useState<Client | null>(null);
+  const [isLocked, setIsLocked] = useState(false);
 
   // State for chat functionality
   const [showChat, setShowChat] = useState(false); // Toggle chat visibility
@@ -73,6 +74,7 @@ const GameStart = () => {
     email?: string;
     bio?: string;
   }
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<User | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const [selectedPlayerProfile, setSelectedPlayerProfile] = useState<miniProfile | null>(null);
@@ -83,19 +85,6 @@ const GameStart = () => {
     : xp >= 5000
       ? "MapExpert"
       : "MapAmateur";
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        setSelectedPlayer(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [popupRef]);
 
   useEffect(() => {
     setGameCodeShown(gameCode);
@@ -107,14 +96,10 @@ const GameStart = () => {
         setOwnerName(response[0].username ?? "");
         dispatch(ownerUpdate(response[0].userId ?? ""));
 
-        const initialReady: Record<string, boolean> = {};
-        response.forEach(player => {
-          if (player.userId != null) {
-            initialReady[player.userId.toString()] = player.isReady ?? false;
-          }
-        });
+        const initialReady: Record<number, boolean> = response[0].readyMap ?? {};
         setReadyStatus(initialReady);
       } catch (error) {
+        window.dispatchEvent(new Event("globalLock"));
         console.error("Failed to fetch players:", error);
         router.push("/lobby");
       }
@@ -123,8 +108,8 @@ const GameStart = () => {
     fetchPlayers();
 
     const stompClient = new Client({
-      brokerURL: "wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws",
-      // brokerURL: "http://localhost:8080/ws",
+      // brokerURL: "wss://sopra-fs25-group-10-server.oa.r.appspot.com/ws",
+      brokerURL: "http://localhost:8080/ws",
       reconnectDelay: 5000,
       onConnect: () => {
 
@@ -224,8 +209,10 @@ const GameStart = () => {
       if (current > 0) {
         setCountDown(current.toString());
       } else if (current === 0) {
+        window.dispatchEvent(new Event("globalLock"));
         setCountDown("GO!");
         setTimeout(() => {
+          setIsLocked(true);
           setCountDown(null);
           requestAnimationFrame(() => {
             router.push(`/game/${gameId}`);
@@ -239,11 +226,12 @@ const GameStart = () => {
 
   const handleExitGame = async () => {
     try {
+      window.dispatchEvent(new Event("globalLock"));
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
       document.querySelector(".roomWrapper")?.classList.add("roomWrapperExit");
-      // setTimeout(() => router.push("/lobby"), 400);
-      router.push("/lobby");
+      setTimeout(() => router.push("/lobby"), 200);
+      // router.push("/lobby");
     } catch (error) {
       console.error("Error leaving game:", error);
     }
@@ -312,7 +300,7 @@ const GameStart = () => {
                         src={player.avatar}
                         alt="avatar"
                         className={styles.avatarImg}
-                        onClick={async (e) => {
+                        onMouseEnter={async (e) => {
                           const rect = e.currentTarget.getBoundingClientRect();
                           setSelectedPlayer(player);
                           setPopupPos({ x: rect.right + 10, y: rect.top });
@@ -323,6 +311,10 @@ const GameStart = () => {
                             email: response.email ? response.email : "",
                             bio: response.bio ? response.bio : "",
                           });
+                        }}
+                        onMouseLeave={() => {
+                          setSelectedPlayer(null);
+                          setPopupPos(null);
                         }}
                       />
                     ) : (
@@ -345,6 +337,9 @@ const GameStart = () => {
               </div>
             );
           })}
+          <div className={styles.bubbleTip}>
+            The game cannot begin until all players are ready!
+          </div>
         </div>
 
         {/* chatbox */}
@@ -434,40 +429,53 @@ const GameStart = () => {
         </div>
 
         {/* mini profile */}
-        {selectedPlayer && popupPos && (
-          <div
-            ref={popupRef}
-            className={styles.playerPopup}
-            style={{ top: popupPos.y, left: popupPos.x }}
-            onClick={() => setSelectedPlayer(null)}
-          >
-            <h3>{selectedPlayer.username}</h3>
-            <div
-              className={styles.playerTitle}
-              style={{
-                background: xp >= 10000
-                  ? 'linear-gradient(135deg, #ffcc00, #ff6600)'  // gold-orange
-                  : xp >= 5000
-                    ? 'linear-gradient(135deg, #40a9ff, #0050b3)'  // blue
-                    : 'linear-gradient(135deg, #95de64, #389e0d)'  // green
-              }}
+
+        <AnimatePresence>
+          {selectedPlayer && popupPos && (
+
+            <motion.div
+              ref={popupRef}
+              className={styles.playerPopup}
+              style={{ top: popupPos.y, left: popupPos.x }}
+              onMouseEnter={() => clearTimeout(hideTimeoutRef.current as NodeJS.Timeout | undefined)}
+              onMouseLeave={() => { setSelectedPlayer(null); }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              {title}
-            </div>
-            {selectedPlayer.email && (<div className={styles.email}>
-              <strong>Email:</strong> {selectedPlayer.email}
-            </div>)}
-            {selectedPlayer.bio && (<div className={styles.bio}>
-              <strong>Bio:</strong> {selectedPlayer.bio}
-            </div>)}
-          </div>
-        )}
+              <h3>{selectedPlayer.username}</h3>
+              <div
+                className={styles.playerTitle}
+                style={{
+                  background: xp >= 10000
+                    ? 'linear-gradient(135deg, #ffcc00, #ff6600)'  // gold-orange
+                    : xp >= 5000
+                      ? 'linear-gradient(135deg, #40a9ff, #0050b3)'  // blue
+                      : 'linear-gradient(135deg, #95de64, #389e0d)'  // green
+                }}
+              >
+                {title}
+              </div>
+              {selectedPlayer.email && (<div className={styles.email}>
+                <strong>📧</strong> {selectedPlayer.email}
+              </div>)}
+              {selectedPlayer.bio && (<div className={styles.bio}>
+                <strong>✍️</strong> {selectedPlayer.bio}
+              </div>)}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* countdown */}
         {countDown !== null && (
           <div className={styles.overlay}>
             <div className={styles.countdown} key={countDown}>{countDown === "0" ? "GO!" : countDown}</div>
           </div>
+        )}
+
+        {isLocked && (
+          <div className={styles.interactionLock} />
         )}
       </div>
     </>

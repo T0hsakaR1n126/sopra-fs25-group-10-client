@@ -65,7 +65,7 @@ const initialState: GameState = {
   scoreBoard: null, // Store the score board
   answer: null, // Store the answer
   playersNumber: null, // Store the number of players
-  questionCount: 1,
+  questionCount: 0,
   correctCount: 0,
   lastSubmitTime: 0,
   guessTimeList: [],
@@ -134,7 +134,7 @@ const gameSlice = createSlice({
     },
 
     resetQuestionStats: (state) => {
-      state.questionCount = 1;
+      state.questionCount = 0;
       state.correctCount = 0;
       state.lastSubmitTime = 0;
       state.guessTimeList = [];

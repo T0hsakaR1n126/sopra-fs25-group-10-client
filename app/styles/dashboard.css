@@ -1,291 +1,302 @@
 .game-body {
-    background-color: transparent;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: sans-serif;
+  background-color: transparent;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: sans-serif;
 }
 
 .game-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
-    justify-items: center;
-    align-items: center;
-    position: relative;
-    margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  justify-items: center;
+  align-items: center;
+  position: relative;
+  margin-top: 30px;
 }
 
 .button {
-    width: 350px;
-    height: 350px;
-    border-radius: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #1c1c1c, #2b2b2b);
-    border: 3px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
-    transition: transform 0.2s, box-shadow 0.3s;
-    cursor: pointer;
+  width: 350px;
+  height: 350px;
+  border-radius: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1c1c1c, #2b2b2b);
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s, box-shadow 0.3s;
+  cursor: pointer;
 }
 
 .button:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
 }
 
 .button-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .button-icon {
-    width: 200px;
-    height: 200px;
-    margin-bottom: 16px;
-    object-fit: contain;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 16px;
+  object-fit: contain;
 }
 
 .button-label {
-    font-size: 40px;
-    font-weight: 600;
-    color: white;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+  font-size: 40px;
+  font-weight: 600;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
 }
 
 .solo-button {
-    background: linear-gradient(to bottom, #2e7d32, #1b5e20);
+  background: linear-gradient(to bottom, #2e7d32, #1b5e20);
 }
 
 .combat-button {
-    background: linear-gradient(to bottom, #0277bd, #01579b);
+  background: linear-gradient(to bottom, #0277bd, #01579b);
 }
 
 .exercise-button {
-    background: linear-gradient(to bottom, #ef6c00, #e65100);
+  background: linear-gradient(to bottom, #ef6c00, #e65100);
 }
 
 .popup {
-    position: absolute;
-    top: 102%;
-    transform: translate(-50%, 10px);
-    width: 350px;
+  position: absolute;
+  top: 102%;
+  transform: translate(-50%, 10px);
+  width: 350px;
 
-    text-align: center;
-    background-color: #fff;
-    border-radius: 20px;
-    padding: 16px;
-    font-size: 18px;
-    color: #000;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    z-index: 10;
+  text-align: center;
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 16px;
+  font-size: 18px;
+  color: #000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 10;
 }
 
 .popup.visible {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
 }
 
 .popup.hidden {
-    opacity: 0;
-    transform: translateY(-20px);
-    pointer-events: none;
+  opacity: 0;
+  transform: translateY(-20px);
+  pointer-events: none;
 }
 
 .popup-label {
-    font-size: 16px;
-    color: #333;
+  font-size: 16px;
+  color: #333;
 }
 
 .popup-controls {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
-    gap: 16px;
-    margin-top: 8px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 8px;
 }
 
 .popup-header {
-    font-size: 18px;
-    font-weight: 500;
-    text-align: center;
-    margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  margin-bottom: 10px;
 }
 
 .time-select {
-    margin-top: 5px;
-    padding: 8px 12px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+  margin-top: 5px;
+  padding: 8px 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 .start-btn {
-    padding: 10px 20px;
-    font-size: 18px;
-    border-radius: 15px;
-    border: none;
-    background-color: #4caf50;
-    color: white;
-    cursor: pointer;
-    transition: background 0.2s;
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 15px;
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+  transition: background 0.2s;
 }
 
 .start-btn:hover {
-    background-color: #45a049;
+  background-color: #45a049;
 }
 
 .solo-btn {
-    background-color: #4caf50;
+  background-color: #4caf50;
 }
 
 .solo-btn:hover {
-    background-color: #45a049;
+  background-color: #45a049;
 }
 
 .exercise-btn {
-    background-color: #ef6c00;
+  background-color: #ef6c00;
 }
 
 .exercise-btn:hover {
-    background-color: #e65100;
+  background-color: #e65100;
 }
 
 .small-text {
-    display: block;
-    font-size: 12px;
-    margin-top: 4px;
-    color: #333;
+  display: block;
+  font-size: 12px;
+  margin-top: 4px;
+  color: #333;
 }
 
 .solo-container {
-    grid-column: 1 / 2;
-    position: relative;
+  grid-column: 1 / 2;
+  position: relative;
 }
 
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
 }
 
 .countdown {
-    color: white;
-    font-size: 80px;
-    font-weight: bold;
-    animation: scaleFade 1s ease-out;
+  color: white;
+  font-size: 80px;
+  font-weight: bold;
+  animation: scaleFade 1s ease-out;
 }
 
 @keyframes scaleFade {
-    0% {
-        transform: scale(2);
-        opacity: 0;
-    }
+  0% {
+    transform: scale(2);
+    opacity: 0;
+  }
 
-    50% {
-        transform: scale(1);
-        opacity: 1;
-    }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
 
-    100% {
-        transform: scale(0.8);
-        opacity: 0;
-    }
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
 }
 
 .slider-prefix {
-    font-size: 20px;
-    font-weight: 500;
-    color: #333;
-    white-space: nowrap;
-    min-width: 50px;
-    text-align: right;
+  font-size: 20px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  min-width: 50px;
+  text-align: right;
 }
 
 .slider-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 12px;
 }
 
 .time-label {
-    font-size: 16px;
-    font-weight: 500;
-    color: #333;
-    white-space: nowrap;
-    min-width: 60px;
-    text-align: left;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  min-width: 60px;
+  text-align: left;
 }
 
 .time-slider {
-    width: 200px;
-    appearance: none;
-    height: 8px;
-    background: #ccc;
-    border-radius: 5px;
-    outline: none;
-    transition: background 0.3s;
+  width: 200px;
+  appearance: none;
+  height: 8px;
+  background: #ccc;
+  border-radius: 5px;
+  outline: none;
+  transition: background 0.3s;
 }
 
 .time-slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    background: #4caf50;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: background 0.3s;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #4caf50;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
 .time-slider::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
-    background: #4caf50;
-    border-radius: 50%;
-    cursor: pointer;
+  width: 20px;
+  height: 20px;
+  background: #4caf50;
+  border-radius: 50%;
+  cursor: pointer;
 }
 
 .solo-slider::-webkit-slider-thumb {
-    background: #4caf50;
+  background: #4caf50;
 }
 
 .solo-slider::-moz-range-thumb {
-    background: #4caf50;
+  background: #4caf50;
 }
 
 .exercise-slider::-webkit-slider-thumb {
-    background: #ef6c00;
+  background: #ef6c00;
 }
 
 .exercise-slider::-moz-range-thumb {
-    background: #ef6c00;
+  background: #ef6c00;
 }
 
 .combat-container {
-    grid-column: 2 / 3;
-    position: relative;
+  grid-column: 2 / 3;
+  position: relative;
 }
 
 
 .exercise-container {
-    grid-column: 3 / 4;
-    position: relative;
+  grid-column: 3 / 4;
+  position: relative;
+}
+
+.interaction-lock {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 1000;
+  pointer-events: all;
 }
