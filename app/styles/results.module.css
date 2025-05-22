@@ -160,3 +160,36 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 6px;
 }
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.pageEnter {
+  animation: fadeSlideIn 0.6s ease-out both;
+}
+
+.pageExit {
+  animation: fadeSlideOut 0.3s ease-in forwards;
+  pointer-events: none;
+}

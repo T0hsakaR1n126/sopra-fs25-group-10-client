@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from 'next/navigation';
 import styles from "@/styles/results.module.css";
@@ -31,6 +31,16 @@ const Results = () => {
 
   const entries = Object.entries(scoreBoard) as [string, number][];
 
+  const [isLeaving, setIsLeaving] = useState(false);
+  useEffect(() => {
+    const handleExit = () => {
+      if (!isLeaving) setIsLeaving(true);
+    };
+
+    window.addEventListener("otherExit", handleExit);
+    return () => window.removeEventListener("otherExit", handleExit);
+  }, [isLeaving]);
+
   const handleBack = async () => {
     if (gameMode === "combat") {
       try {
@@ -48,20 +58,22 @@ const Results = () => {
           console.error("An unknown error occurred while fetching user.");
         }
       }
-
-      router.push(`/game/start/${gameId}`);
+      setTimeout(() => {
+        router.push(`/game/start/${gameId}`);
+      }, 300);
     } else {
-      router.push("/game");
+      setTimeout(() => {
+        router.push("/game");
+      }, 300);
     }
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper} ${isLeaving ? styles.pageExit : styles.pageEnter}`}>
       <div className={styles.aboveBox}>
-        <span className={styles.congratsText}>🎉 Congratulations 🎉</span>
+        <span className={styles.congratsText}>🎉 Result 🎉</span>
       </div>
       <div className={styles.resultsContainer}>
-        <h2 className={styles.resultsTitle}>ScoreBoard</h2>
         <ul className={styles.resultsList}>
           {entries.length === 0 ? (
             <li style={{ color: "white", textAlign: "center" }}>Loading...</li>
