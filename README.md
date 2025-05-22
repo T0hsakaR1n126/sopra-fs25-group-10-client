@@ -272,7 +272,7 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 <a name="acknowledgement"></a>
 ### Acknowledgement
 
-- This repository code derives the framework from the kind** UZH HASEL team **provided [SoPra FS25 - Client Template](https://github.com/HASEL-UZH/sopra-fs25-template-client).
+- This repository code derives the framework from the kind **UZH HASEL team** provided [SoPra FS25 - Client Template](https://github.com/HASEL-UZH/sopra-fs25-template-client).
 - Many thanks to **[Silvan Schlegel](https://github.com/silvanschlegel)** who helped us as our TA and Scrum Master during this project.
 
 <a name="license"></a>
