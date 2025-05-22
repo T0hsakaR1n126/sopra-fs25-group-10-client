@@ -1,8 +1,61 @@
+.page {
+  min-height: 100vh;
+  background-color: transparent;
+  color: white;
+  padding: 0px 20px;
+  position: relative;
+  padding-top: 215px;
+  padding-bottom: clamp(120px, 10vh, 200px);
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.levelLabel {
+  display: inline-block;
+  letter-spacing: 1.2px;
+  margin: 0 2px;
+  padding: 1px 10px;
+  border-radius: 10px;
+  font-size: 1.15em;
+  font-weight: bold;
+}
+
+.amateur {
+  font-family: 'Quicksand', 'Baloo 2', 'Comic Sans MS', cursive;
+  color: #35e46a;
+  background: linear-gradient(90deg, #eaffd0 0%, #d0ffe9 100%);
+  box-shadow: 0 1px 8px 0 #b0ffdf33;
+  text-shadow: 0 1px 6px #7cffc3;
+}
+
+.expert {
+  font-family: 'Montserrat', 'Roboto Slab', 'Poppins', sans-serif;
+  color: #4079ff;
+  background: linear-gradient(90deg, #e0e7ff 0%, #cae2ff 100%);
+  box-shadow: 0 1px 8px 0 #b0c4ff33;
+  text-shadow: 0 1px 6px #8bb8ff;
+}
+
+.master {
+  font-family: 'Cinzel', 'Merriweather', 'Bebas Neue', serif;
+  color: #fff9d7;
+  background: linear-gradient(92deg, #f6d365 0%, #fda085 100%);
+  box-shadow: 0 2px 16px 0 #ffe18744;
+  text-shadow: 0 1px 12px #ffe187bb;
+  letter-spacing: 1.8px;
+  font-size: 1.20em;
+}
+
 .title {
   font-size: 48px;
-  color: white;
+  font-weight: 800;
+  color: #fff;
+  text-shadow:
+    0 0 6px #22d3ee,
+    0 0 12px #0ea5e9;
+  letter-spacing: 1px;
   text-align: center;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .subtitle {
@@ -12,86 +65,279 @@
   align-items: center;
 }
 
-.containerPage {
-  background-color: transparent;
-  min-height: 100vh;
-  padding: 20px;
-  padding-top: 120px;
-}
-
 .leftPanel {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  align-items: center;
-}
-
-/* 统一设置 5 列：Rank | Name | Avatar | Level | Score */
-.lobbyCard {
-  width: 80%;
-  display: grid;
-  grid-template-columns: 0.6fr 2fr 1fr 1fr;
-  align-items: center;
-  padding: 14px 20px;
-  border-radius: 8px;
-  background-color: #1f2937;
-  color: white;
-  font-weight: bold;
-  transition: background 0.2s ease;
-}
-
-.lobbyCard.first {
-  background-color: #166534;
-}
-
-.lobbyCard.second {
-  background-color: #0284c7;
-}
-
-.lobbyCard.third {
-  background-color: #ea580c;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 700px;
 }
 
 .headerRow {
-  width: 80%;
-  display: grid;
-  grid-template-columns: 0.6fr 2fr 1fr 1fr;
+  display: flex;
+  align-items: center;
+  border-bottom: 2px solid #46c7fc44;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
   font-weight: bold;
-  color: #cccccc;
-  margin: 0 auto 10px;
-  padding: 8px 20px;
+  color: #c1d7e4;
+  background: none;
+  font-size: 1.09rem;
+}
+
+.lobbyCard {
+  background: rgba(30, 38, 66, 0.93);
+  border-radius: 18px;
+  margin-bottom: 13px;
+  padding: 14px 18px 12px 18px;
+  box-shadow: 0 3px 18px 0 rgba(0, 0, 0, 0.11);
+  display: flex;
+  align-items: center;
+  transition: transform 0.17s, box-shadow 0.18s;
+  cursor: pointer;
+}
+
+.lobbyCard:hover {
+  transform: translateY(-3px) scale(1.018);
+  box-shadow: 0 6px 36px 0 rgba(46, 162, 231, 0.16);
+  background: linear-gradient(92deg, #2d4d8c 0%, #1c253a 100%);
 }
 
 .cell {
-  min-width: 0;
+  flex: 1;
   text-align: center;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.cellRank {
-  text-align: left;
+  font-size: 1.07rem;
+  padding: 4px 0;
 }
 
 .cellName {
-  text-align: left;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
 }
 
-.cellLevel, .cellScore {
+.avatarWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cellLevel {
+  font-size: 1.01rem;
+}
+
+.cellScore {
+  font-size: 1.25rem;
+  font-family: 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
+  font-weight: bold;
+}
+
+.medalBounce {
+  animation: bounce-in 0.7s;
+  display: inline-block;
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.5) translateY(-10px);
+    opacity: 0.7;
+  }
+
+  60% {
+    transform: scale(1.15) translateY(4px);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* gameCard */
+.gameCard {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  padding: 18px 22px;
+  margin: 12px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #e2e8f0;
+  box-shadow: 0 3px 16px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
+}
+
+.gameCard:hover {
+  transform: translateY(-3px) scale(1.02);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.rankIcon {
+  font-size: 1.8rem;
+  width: 40px;
+  text-align: center;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 2;
+}
+
+.scoreBlock {
   text-align: right;
+  flex: 1;
+  font-weight: bold;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.15rem;
 }
 
-/* 确保头像在单元格中居中 */
-.cell img {
-  width: 28px;
-  height: 28px;
+.avatar {
+  width: 42px;
+  height: 42px;
   border-radius: 50%;
   object-fit: cover;
+  border: 2px solid #1793ff88;
+  background-color: #1e3a5f;
 }
-.scrollDownBtn {
-  font-size: 24px;
+
+.levelText {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+.leaderCard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  padding: 12px 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.3s ease, background 0.3s ease;
   cursor: pointer;
-  color: #22c55e;
-  margin-top: 10px;
+}
+
+.leaderCard:hover {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: 0 8px 16px rgba(14, 165, 233, 0.4);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.rankSection {
+  width: 40px;
+  font-size: 1.4rem;
+  text-align: center;
+  font-weight: bold;
+  color: #fff;
+}
+
+.avatarSection {
+  width: 50px;
+}
+
+.avatarImg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #1dcaff;
+  background-color: #0f172a;
+}
+
+.infoSection {
+  flex: 1;
+  margin-left: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.username {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.levelText {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  margin-top: 2px;
+}
+
+.scoreSection {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  text-align: right;
+  min-width: 60px;
+}
+
+.centerSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 2;
+}
+
+.userBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.badge {
+  font-size: 12px;
+  color: black;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 999px;
+  display: inline-block;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  width: fit-content;
+  margin-top: 4px;
+}
+
+.leaderCard.firstCard:hover,
+.leaderCard.secondCard:hover,
+.leaderCard.thirdCard:hover {
+  transform: translateY(-3px) scale(1.015);
+  box-shadow: 0 8px 16px rgba(14, 165, 233, 0.4);
+  filter: brightness(1.05);
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.pageEnter {
+  animation: fadeSlideIn 0.6s ease-out both;
+}
+
+.pageExit {
+  animation: fadeSlideOut 0.3s ease-in forwards;
+  pointer-events: none;
 }

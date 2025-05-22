@@ -23,6 +23,13 @@ interface Message {
   timestamp: string;
 }
 
+function formatChatTimestamp(timestamp: string): string {
+  const iso = timestamp.split(".")[0] + "Z";
+  const date = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
 const luckiestGuy = Luckiest_Guy({ weight: "400", subsets: ['latin'] });
 
 const GameStart = () => {
@@ -35,7 +42,6 @@ const GameStart = () => {
   const username = useSelector((state: { user: { username: string } }) => state.user.username);
   const gameCode = useSelector((state: { game: { gameCode: string } }) => state.game.gameCode);
   const playersNumber = useSelector((state: { game: { playersNumber: number } }) => state.game.playersNumber);
-  const level = useSelector((state: { user: { level: number } }) => state.user.level);
 
   const [players, setPlayers] = useState<User[]>([]);
   const [gameCodeShown, setGameCodeShown] = useState<string | null>(null);
@@ -45,6 +51,7 @@ const GameStart = () => {
   const [readyStatus, setReadyStatus] = useState<Record<string, boolean>>({});
   const [canStart, setCanStart] = useState<boolean>(false);
   const [client, setClient] = useState<Client | null>(null);
+  const [isLocked, setIsLocked] = useState(false);
 
   // State for chat functionality
   const [showChat, setShowChat] = useState(false); // Toggle chat visibility
@@ -56,7 +63,7 @@ const GameStart = () => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-    if (chatMessages[chatMessages.length - 1]?.sender !== username && !showChat) {
+    if (chatMessages.length > 0 && chatMessages[chatMessages.length - 1]?.sender !== username && !showChat) {
       setHasUnread(true);
     }
   }, [chatMessages]);
@@ -68,29 +75,17 @@ const GameStart = () => {
     email?: string;
     bio?: string;
   }
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [selectedPlayer, setSelectedPlayer] = useState<User | null>(null);
   const [popupPos, setPopupPos] = useState<{ x: number; y: number } | null>(null);
   const [selectedPlayerProfile, setSelectedPlayerProfile] = useState<miniProfile | null>(null);
   const popupRef = useRef<HTMLDivElement | null>(null);
-  const xp = selectedPlayerProfile ? (selectedPlayerProfile.level ?? 0) * 100 : level * 100;
+  const xp = selectedPlayerProfile ? (selectedPlayerProfile.level ?? 0) : -1;
   const title = xp >= 10000
     ? "MapMaster"
     : xp >= 5000
       ? "MapExpert"
       : "MapAmateur";
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
-        setSelectedPlayer(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [popupRef]);
 
   useEffect(() => {
     setGameCodeShown(gameCode);
@@ -101,7 +96,11 @@ const GameStart = () => {
         setPlayers(response);
         setOwnerName(response[0].username ?? "");
         dispatch(ownerUpdate(response[0].userId ?? ""));
+
+        const initialReady: Record<number, boolean> = response[0].readyMap ?? {};
+        setReadyStatus(initialReady);
       } catch (error) {
+        window.dispatchEvent(new Event("globalLock"));
         console.error("Failed to fetch players:", error);
         showErrorToast(`${error}`);
         router.push("/lobby");
@@ -215,8 +214,10 @@ const GameStart = () => {
       if (current > 0) {
         setCountDown(current.toString());
       } else if (current === 0) {
+        window.dispatchEvent(new Event("globalLock"));
         setCountDown("GO!");
         setTimeout(() => {
+          setIsLocked(true);
           setCountDown(null);
           requestAnimationFrame(() => {
             router.push(`/game/${gameId}`);
@@ -230,19 +231,12 @@ const GameStart = () => {
 
   const handleExitGame = async () => {
     try {
-
-          // 新增 ↓↓↓
-        if (client && client.connected) {
-          client.publish({
-            destination: `/app/game/${gameId}/ready`,
-            body: JSON.stringify({ userId, ready: false }),
-          });
-        }
-
+      window.dispatchEvent(new Event("globalLock"));
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
       document.querySelector(".roomWrapper")?.classList.add("roomWrapperExit");
-      setTimeout(() => router.push("/lobby"), 400);
+      setTimeout(() => router.push("/lobby"), 200);
+      // router.push("/lobby");
     } catch (error) {
       console.error("Error leaving game:", error);
       showErrorToast(`${error}`);
@@ -297,6 +291,10 @@ const GameStart = () => {
   return (
     <>
       <div className={`${styles.roomWrapper} roomWrapper roomWrapperEnter`}>
+        <div className={`${styles.gameCode} ${luckiestGuy.className}`} onClick={handleCopyCode}>
+          Click to Copy the Game Code: {gameCodeShown}
+        </div>
+
         <div className={styles.grid}>
           {Array.from({ length: playersNumber }).map((_, idx) => {
             const player = players[idx];
@@ -309,7 +307,7 @@ const GameStart = () => {
                         src={player.avatar}
                         alt="avatar"
                         className={styles.avatarImg}
-                        onClick={async (e) => {
+                        onMouseEnter={async (e) => {
                           const rect = e.currentTarget.getBoundingClientRect();
                           setSelectedPlayer(player);
                           setPopupPos({ x: rect.right + 10, y: rect.top });
@@ -320,6 +318,10 @@ const GameStart = () => {
                             email: response.email ? response.email : "",
                             bio: response.bio ? response.bio : "",
                           });
+                        }}
+                        onMouseLeave={() => {
+                          setSelectedPlayer(null);
+                          setPopupPos(null);
                         }}
                       />
                     ) : (
@@ -342,10 +344,9 @@ const GameStart = () => {
               </div>
             );
           })}
-        </div>
-
-        <div className={`${styles.gameCode} ${luckiestGuy.className}`} onClick={handleCopyCode}>
-          Click to Copy the Game Code: {gameCodeShown}
+          <div className={styles.bubbleTip}>
+            The game cannot begin until all players are ready!
+          </div>
         </div>
 
         {/* chatbox */}
@@ -379,7 +380,7 @@ const GameStart = () => {
                         {typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content)}
                       </div>
                       <div className={styles.time}>
-                        {new Date(msg.timestamp).toLocaleTimeString()}
+                        {formatChatTimestamp(msg.timestamp)}
                       </div>
                     </div>
                   </div>
@@ -435,40 +436,53 @@ const GameStart = () => {
         </div>
 
         {/* mini profile */}
-        {selectedPlayer && popupPos && (
-          <div
-            ref={popupRef}
-            className={styles.playerPopup}
-            style={{ top: popupPos.y, left: popupPos.x }}
-            onClick={() => setSelectedPlayer(null)}
-          >
-            <h3>{selectedPlayer.username}</h3>
-            <div
-              className={styles.playerTitle}
-              style={{
-                background: xp >= 10000
-                  ? 'linear-gradient(135deg, #ffcc00, #ff6600)'  // gold-orange
-                  : xp >= 5000
-                    ? 'linear-gradient(135deg, #40a9ff, #0050b3)'  // blue
-                    : 'linear-gradient(135deg, #95de64, #389e0d)'  // green
-              }}
+
+        <AnimatePresence>
+          {selectedPlayer && popupPos && (
+
+            <motion.div
+              ref={popupRef}
+              className={styles.playerPopup}
+              style={{ top: popupPos.y, left: popupPos.x }}
+              onMouseEnter={() => clearTimeout(hideTimeoutRef.current as NodeJS.Timeout | undefined)}
+              onMouseLeave={() => { setSelectedPlayer(null); }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.25, ease: "easeOut" }}
             >
-              {title}
-            </div>
-            <div className={styles.email}>
-              <strong>Email:</strong> {selectedPlayer.email ?? 'Not Set'}
-            </div>
-            <div className={styles.bio}>
-              <strong>Bio:</strong> {selectedPlayer.bio ?? 'Not Set'}
-            </div>
-          </div>
-        )}
+              <h3>{selectedPlayer.username}</h3>
+              <div
+                className={styles.playerTitle}
+                style={{
+                  background: xp >= 10000
+                    ? 'linear-gradient(135deg, #ffcc00, #ff6600)'  // gold-orange
+                    : xp >= 5000
+                      ? 'linear-gradient(135deg, #40a9ff, #0050b3)'  // blue
+                      : 'linear-gradient(135deg, #95de64, #389e0d)'  // green
+                }}
+              >
+                {title}
+              </div>
+              {selectedPlayer.email && (<div className={styles.email}>
+                <strong>📧</strong> {selectedPlayer.email}
+              </div>)}
+              {selectedPlayer.bio && (<div className={styles.bio}>
+                <strong>✍️</strong> {selectedPlayer.bio}
+              </div>)}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* countdown */}
         {countDown !== null && (
           <div className={styles.overlay}>
             <div className={styles.countdown} key={countDown}>{countDown === "0" ? "GO!" : countDown}</div>
           </div>
+        )}
+
+        {isLocked && (
+          <div className={styles.interactionLock} />
         )}
       </div>
     </>

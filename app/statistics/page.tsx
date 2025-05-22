@@ -3,102 +3,92 @@
 import React, { useState, useEffect } from "react";
 import { countryCodeMap } from "@/utils/countryCodeMap";
 import { useApi } from "@/hooks/useApi";
-import { useParams } from "next/navigation";
-import styles from "@/styles/GuestStatsGrid.module.css";
+import styles from "@/styles/Statistics.module.css";
 import { useSelector } from "react-redux";
-import { showErrorToast } from '@/utils/showErrorToast';
+import { showErrorToast } from "@/utils/showErrorToast";
 
-interface Country {
-  name: string;
-  answered: number;
-}
+const allCountries = Object.keys(countryCodeMap);
+const grouped = allCountries.reduce((acc, country) => {
+  const letter = country[0].toUpperCase();
+  if (!acc[letter]) acc[letter] = [];
+  acc[letter].push(country);
+  return acc;
+}, {} as Record<string, string[]>);
 
-const GuestPage: React.FC = () => {
+const Statistics: React.FC = () => {
   const apiService = useApi();
-  const { id } = useParams();
   const userId = useSelector((state: { user: { userId: string } }) => state.user.userId);
 
-  const [countryData, setCountryData] = useState<Country[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [collectedCountries, setCollectedCountries] = useState<Set<string>>(new Set());
+
+  const [isLeaving, setIsLeaving] = useState(false);
+  useEffect(() => {
+    const handleExit = () => {
+      if (!isLeaving) setIsLeaving(true);
+    };
+
+    window.addEventListener("otherExit", handleExit);
+    return () => window.removeEventListener("otherExit", handleExit);
+  }, [isLeaving]);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        setLoading(true);
-
         const response = await apiService.get(`/users/${userId}`);
         const { learningTracking } = response as { learningTracking: Record<string, number> };
-
-        if (
-          learningTracking &&
-          typeof learningTracking === "object" &&
-          Object.entries(learningTracking).every(([k, v]) => typeof k === "string" && typeof v === "number")
-        ) {
-          const formattedData: Country[] = Object.entries(learningTracking).map(([name, answered]) => ({
-            name,
-            answered,
-          }));
-          setCountryData(formattedData);
-        } else {
-          throw new Error("Invalid learningTracking data.");
+        const collected = Object.entries(learningTracking)
+          .filter(([, count]) => count > 0)
+          .map(([country]) => country);
+        setCollectedCountries(new Set(collected));
+      } catch (e) {
+        if (e instanceof Error) {
+          showErrorToast(e.message);
         }
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error("Failed to fetch user data:", error.message);
-          showErrorToast(`${error}`)
-          setError("Failed to load user country statistics. Showing mock data.");
-        } else {
-          setError("Unknown error occurred.");
-        }
-
-        // fallback mock data
-        setCountryData([
-          { name: "Switzerland", answered: 25 },
-          { name: "United States", answered: 30 },
-          { name: "France", answered: 18 },
-          { name: "Germany", answered: 22 },
-        ]);
-      } finally {
-        setLoading(false);
       }
     };
-
     fetchUserData();
-  }, [apiService, id]);
+  }, [apiService, userId]);
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.heading}>User Statistics</h1>
-      <p className={styles.description}>
-        The flags below represent the number of correctly answered questions for each country across all game modes. If no flags are displayed, the player has not yet participated in any games.
+    <div className={`${styles.container} ${isLeaving ? styles.pageExit : styles.pageEnter}`}>
+      <h2 className={styles.title}>📈 User Statistics</h2>
+      <h3 className={styles.subtitle}>
+        🚩 Light up the flags of countries you have guessed right!
+      </h3>
+      <p style={{ textAlign: "center", color: "#ccc", fontSize: "14px", marginBottom: "20px" }}>
+        <strong>Click the lighted flags to get more information on Wikipedia!</strong>
       </p>
 
-      {loading ? (
-        <p className={styles.loading}>Loading...</p>
-      ) : error ? (
-        <p className={styles.error}>{error}</p>
-      ) : null}
-
       <div className={styles.grid}>
-        {countryData.map((country, index) => {
-          const countryCode = countryCodeMap[country.name] || "unknown";
-          return (
-            <div key={index} className={styles.card}>
-              <img
-                src={`/flag/${countryCode}.svg`}
-                alt={country.name}
-                className={styles.flag}
-              />
-              <p className={styles.label}>
-                {country.name}: {country.answered} questions
-              </p>
+        {Object.keys(grouped).sort().map(letter => (
+          <div key={letter} className={styles.group}>
+            <h3 className={styles.groupTitle}>{letter}</h3>
+            <div className={styles.grid}>
+              {grouped[letter].map((name, idx) => {
+                const code = countryCodeMap[name] || "unknown";
+                const collected = collectedCountries.has(name);
+                return (
+                  <div
+                    key={idx}
+                    className={`${styles.card} ${collected ? styles.collected : styles.locked}`}
+                    onClick={() => {
+                      if (collected) {
+                        window.open(`https://en.wikipedia.org/wiki/${name}`, "_blank");
+                      }
+                    }}
+                  >
+                    <img src={`/flag/${code}.svg`} alt={name} className={styles.flag} />
+                    <p className={styles.label}>{collected ? name : "???"}</p>
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
+          </div>
+        ))}
+
       </div>
     </div>
   );
 };
 
-export default GuestPage;
+export default Statistics;

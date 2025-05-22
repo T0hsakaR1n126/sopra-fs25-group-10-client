@@ -42,6 +42,8 @@ interface GameState {
   playersNumber: number | null; // Store the number of players
   questionCount: number; //Keeps individual user score
   correctCount: number; //keeps correct answers of individual user
+  lastSubmitTime: number,
+  guessTimeList: number[],
 }
 
 // Initial state setup for each game
@@ -63,8 +65,10 @@ const initialState: GameState = {
   scoreBoard: null, // Store the score board
   answer: null, // Store the answer
   playersNumber: null, // Store the number of players
-  questionCount: 1,
+  questionCount: 0,
   correctCount: 0,
+  lastSubmitTime: 0,
+  guessTimeList: [],
 };
 
 // Create the game slice
@@ -81,7 +85,7 @@ const gameSlice = createSlice({
       state.time = action.payload.time;
       state.playersNumber = action.payload.playersNumber;
     },
-    
+
     gameStart: (state, action: PayloadAction<{ hints: Map<string, string>[]; gameId: string; scoreBoard: Map<string, number>, modeType: string, answer: string }>) => {
       state.hints = action.payload.hints;
       state.gameId = action.payload.gameId;
@@ -114,23 +118,9 @@ const gameSlice = createSlice({
     ownerUpdate: (state, action: PayloadAction<string>) => {
       state.ownerId = action.payload;
     },
-    clearGameState: (state) => {
-      state.gameId = null;
-      state.gameCode = null;
-      state.gamename = null;
-      state.gameStarted = false;
-      state.modeType = null;
-      state.time = null;
-      state.hints = [];
-      state.ownerId = null;
-      state.gameHistory = [];
-      state.learningProgress = [];
-      state.currentGameMode = null;
-      state.currentTeamId = null;
-      state.gameResults = null;
-      state.hintUsage = 1; // Reset hint usage when a new game starts
-      state.scoreBoard = null; // Reset score board
-    },
+
+    clearGameState: () => initialState,
+
     answerUpdate: (state, action: PayloadAction<string>) => {
       state.answer = action.payload;
     },
@@ -144,17 +134,27 @@ const gameSlice = createSlice({
     },
 
     resetQuestionStats: (state) => {
-      state.questionCount = 1;
+      state.questionCount = 0;
       state.correctCount = 0;
+      state.lastSubmitTime = 0;
+      state.guessTimeList = [];
     },
+
+    setLastSubmitTime: (state, action) => {
+      state.lastSubmitTime = action.payload;
+    },
+    collectGuessTime: (state, action) => {
+      state.guessTimeList.push(action.payload);
+    },
+
   },
 });
 
 // Export actions for use in components
-export const { 
-  gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear, 
+export const {
+  gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear,
   scoreBoardResultSet, gameIdUpdate, ownerUpdate, clearGameState, answerUpdate,
-  incrementQuestionCount, incrementCorrectCount, resetQuestionStats,
+  incrementQuestionCount, incrementCorrectCount, resetQuestionStats, setLastSubmitTime, collectGuessTime
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -1,0 +1,200 @@
+.container {
+  min-height: 100vh;
+  padding: 40px 16px 80px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+  background: transparent;
+  box-sizing: border-box;
+  gap: 40px;
+  transition: all 0.3s ease;
+  margin-top: 150px;
+}
+
+.card {
+  width: 100%;
+  max-width: 560px;
+  padding: 32px 24px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e2e8f0;
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  box-sizing: border-box;
+  transition: transform 0.3s ease;
+}
+
+.card.shifted {
+  transform: translateX(-80px);
+}
+
+.title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 0 6px #22d3ee, 0 0 12px #0ea5e9;
+  animation: neonPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes neonPulse {
+
+  0%,
+  100% {
+    text-shadow: 0 0 6px #22d3ee, 0 0 12px #0ea5e9;
+  }
+
+  50% {
+    text-shadow: 0 0 12px #38bdf8, 0 0 20px #0ea5e9;
+  }
+}
+
+.readOnlyBox {
+  padding: 8px 12px;
+  min-height: 40px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 14px;
+  color: #e2e8f0;
+  backdrop-filter: blur(4px);
+  white-space: pre-wrap;
+}
+
+.customInput,
+.customInput:hover,
+.customInput:focus,
+.customInput:disabled {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #e2e8f0 !important;
+  box-shadow: none !important;
+  border-radius: 8px;
+  transition: border 0.2s ease;
+}
+
+.neonButton {
+  background-color: transparent;
+  border: 1.5px solid #0ea5e9;
+  color: #0ea5e9;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.neonButton:hover {
+  background-color: #0ea5e9;
+  color: black;
+  box-shadow: 0 0 8px #0ea5e9;
+}
+
+.neonButtonFilled {
+  background-color: #0ea5e9;
+  color: black;
+  font-weight: 600;
+  border: 1.5px solid #0ea5e9;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 6px rgba(14, 165, 233, 0.6);
+}
+
+.neonButtonFilled:hover {
+  background-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(14, 165, 233, 0.8);
+}
+
+.avatarImg {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.avatarImg:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 8px #0ea5e9;
+}
+
+.passwordPopup {
+  width: 320px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 0 16px rgba(0, 234, 233, 0.3);
+  animation: fadeInPopup 0.3s ease-out;
+}
+
+@keyframes fadeInPopup {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.passwordPopup h3 {
+  color: #e2e8f0;
+  margin-bottom: 16px;
+  font-size: 20px;
+  text-align: center;
+}
+
+.buttonGroup {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.neonButton,
+.neonButtonFilled {
+  padding: 10px 16px;
+  min-width: 110px;
+  text-align: center;
+}
+
+/* animation */
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+
+.pageEnter {
+  animation: fadeSlideIn 0.6s ease-out both;
+}
+
+.pageExit {
+  animation: fadeSlideOut 0.3s ease-in forwards;
+  pointer-events: none;
+}

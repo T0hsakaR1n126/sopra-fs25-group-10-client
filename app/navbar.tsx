@@ -1,9 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux"; // Import Redux hooks
-import { UserOutlined, HistoryOutlined, TrophyOutlined, LogoutOutlined, BookOutlined } from "@ant-design/icons";
+import { UserOutlined, HistoryOutlined, TrophyOutlined, LogoutOutlined, BookOutlined, HomeOutlined } from "@ant-design/icons";
 import { useLogout } from "@/utils/useLogout"; // Import the logout function
 import { Avatar, Dropdown, Tooltip } from "antd";
 import { useState } from "react";
@@ -58,16 +57,18 @@ export default function Navbar() {
         <Link
           href={`/users/${userId}/profile`}
           onClick={async (e) => {
-            e.preventDefault();
-            setDropdownOpen(false);
-            if (pathname === "/game") {
-              window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
-            } else {
-              window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+            if (pathname !== `/users/${userId}/profile`) {
+              e.preventDefault();
+              setDropdownOpen(false);
+              if (pathname === "/game") {
+                window.dispatchEvent(new Event("dashboardExit"));
+                await new Promise((res) => setTimeout(res, 1200));
+              } else {
+                window.dispatchEvent(new Event("otherExit"));
+                await new Promise((res) => setTimeout(res, 300));
+              }
+              router.push(`/users/${userId}/profile`);
             }
-            router.push(`/users/${userId}/profile`);
           }}
           style={{ ...menuItemStyle, backgroundColor: hovered === "profile" ? "#014b7d" : "transparent" }}
           onMouseEnter={() => setHovered("profile")}
@@ -78,16 +79,18 @@ export default function Navbar() {
         <Link
           href="/history"
           onClick={async (e) => {
-            e.preventDefault();
-            setDropdownOpen(false);
-            if (pathname === "/game") {
-              window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
-            } else {
-              window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+            if (pathname !== "/history") {
+              e.preventDefault();
+              setDropdownOpen(false);
+              if (pathname === "/game") {
+                window.dispatchEvent(new Event("dashboardExit"));
+                await new Promise((res) => setTimeout(res, 1200));
+              } else {
+                window.dispatchEvent(new Event("otherExit"));
+                await new Promise((res) => setTimeout(res, 300));
+              }
+              router.push("/history");
             }
-            router.push("/history");
           }}
           style={{ ...menuItemStyle, backgroundColor: hovered === "history" ? "#014b7d" : "transparent" }}
           onMouseEnter={() => setHovered("history")}
@@ -98,16 +101,18 @@ export default function Navbar() {
         <Link
           href="/statistics"
           onClick={async (e) => {
-            e.preventDefault();
-            setDropdownOpen(false);
-            if (pathname === "/game") {
-              window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
-            } else {
-              window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+            if (pathname !== "/statistics") {
+              e.preventDefault();
+              setDropdownOpen(false);
+              if (pathname === "/game") {
+                window.dispatchEvent(new Event("dashboardExit"));
+                await new Promise((res) => setTimeout(res, 1200));
+              } else {
+                window.dispatchEvent(new Event("otherExit"));
+                await new Promise((res) => setTimeout(res, 300));
+              }
+              router.push("/statistics");
             }
-            router.push("/statistics");
           }}
           style={{ ...menuItemStyle, backgroundColor: hovered === "statistics" ? "#014b7d" : "transparent" }}
           onMouseEnter={() => setHovered("statistics")}
@@ -120,10 +125,10 @@ export default function Navbar() {
             setDropdownOpen(false);
             if (pathname === "/game") {
               window.dispatchEvent(new Event("dashboardExit"));
-              await new Promise((res) => setTimeout(res, 1500));
+              await new Promise((res) => setTimeout(res, 1200));
             } else {
               window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+              await new Promise((res) => setTimeout(res, 300));
             }
             logout();
           }}
@@ -150,7 +155,7 @@ export default function Navbar() {
     >
       {/* Logo */}
       <Tooltip title="Home">
-        <Link 
+        <Link
           href="/game"
           onClick={async (e) => {
             e.preventDefault();
@@ -159,18 +164,15 @@ export default function Navbar() {
             //   window.dispatchEvent(new Event("dashboardExit"));
             //   await new Promise((res) => setTimeout(res, 1500));
             // } else {
-              window.dispatchEvent(new Event("otherExit"));
-              await new Promise((res) => setTimeout(res, 600));
+            window.dispatchEvent(new Event("otherExit"));
+            await new Promise((res) => setTimeout(res, 200));
             // }
             router.push("/game");
           }}
         >
-          <Image
-            src="/mapmaster-logo.png"
-            alt="Home"
-            width={70}
-            height={60}
-            style={{ cursor: "pointer" }}
+          <HomeOutlined
+            style={{ fontSize: "24px", color: "#fff", cursor: "pointer", marginLeft: "8px" }}
+            aria-label="Home"
           />
         </Link>
       </Tooltip>
@@ -181,16 +183,18 @@ export default function Navbar() {
           <Link
             href="/leaderboard"
             onClick={async (e) => {
-              e.preventDefault();
-              setDropdownOpen(false);
-              if (pathname === "/game") {
-                window.dispatchEvent(new Event("dashboardExit"));
-                await new Promise((res) => setTimeout(res, 1500));
-              } else {
-                window.dispatchEvent(new Event("otherExit"));
-                await new Promise((res) => setTimeout(res, 600));
+              if (pathname !== "/leaderboard") {
+                e.preventDefault();
+                setDropdownOpen(false);
+                if (pathname === "/game") {
+                  window.dispatchEvent(new Event("dashboardExit"));
+                  await new Promise((res) => setTimeout(res, 1200));
+                } else {
+                  window.dispatchEvent(new Event("otherExit"));
+                  await new Promise((res) => setTimeout(res, 300));
+                }
+                router.push("/leaderboard");
               }
-              router.push("/leaderboard");
             }}
           >
             <TrophyOutlined
@@ -260,7 +264,7 @@ export default function Navbar() {
                       fontWeight: 600,
                     }}
                   >
-                    {xp} / {title === "MapMaster" ? xp : title === "MapExpert" ? "10000" : "5000"}
+                    {Math.round(xp)} / {title === "MapMaster" ? xp : title === "MapExpert" ? "10000" : "5000"}
                   </div>
                 </div>
               </div>

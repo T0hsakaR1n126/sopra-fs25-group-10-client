@@ -4,14 +4,28 @@ import React, { useState, useEffect } from "react";
 import { useApi } from "@/hooks/useApi";
 import styles from "@/styles/leaderboard.module.css";
 import { User } from "@/types/user";
-import Link from "next/link";
 import { showErrorToast } from "@/utils/showErrorToast";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+
+const medals = ["🏆", "🥈", "🥉"];
 
 const LeaderboardPage: React.FC = () => {
   const apiService = useApi();
+  const router = useRouter();
   const [paginatedEntries, setPaginatedEntries] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const itemsPerPage = 10;
+
+  const [isLeaving, setIsLeaving] = useState(false);
+  useEffect(() => {
+    const handleExit = () => {
+      if (!isLeaving) setIsLeaving(true);
+    };
+
+    window.addEventListener("otherExit", handleExit);
+    return () => window.removeEventListener("otherExit", handleExit);
+  }, [isLeaving]);
 
   useEffect(() => {
     const fetchLeaderboard = async () => {
@@ -25,85 +39,96 @@ const LeaderboardPage: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchLeaderboard();
   }, [apiService]);
 
-  const getRankClass = (index: number): string => {
-    if (index === 0) return `${styles.lobbyCard} ${styles.first}`;
-    if (index === 1) return `${styles.lobbyCard} ${styles.second}`;
-    if (index === 2) return `${styles.lobbyCard} ${styles.third}`;
-    return styles.lobbyCard;
-  };
-
   return (
-    <div className={styles.containerPage}>
-      <h2 className={styles.title}>Global Leaderboard</h2>
-      <h2 className={styles.subtitle}>Top 10 players are shown here!</h2>
+    <div className={`${styles.page} ${isLeaving ? styles.pageExit : styles.pageEnter}`}>
+      <h2 className={styles.title}>🌍 Global Leaderboard</h2>
+      <h2 className={styles.subtitle}>👇 Top 10 players are shown here!</h2>
       <p style={{ textAlign: "center", color: "#ccc", fontSize: "14px", marginBottom: "20px" }}>
-        🏅 Titles are based on score: <strong>🥉MapAmateur</strong> (below 5000), <strong>🥈MapExpert</strong> (5000–9999), <strong> 🥇MapMaster</strong> (10000+)
+        🏅 Titles: <strong>🗺️MapAmateur</strong> (below 5000), <strong>🧭MapExpert</strong> (5000–9999), <strong> 🛰️MapMaster</strong> (10000+)
       </p>
 
       {loading ? (
-        <p>Loading...</p>
+        <p style={{ textAlign: "center", color: "#fff", fontSize: "1.2em" }}>Loading...</p>
       ) : (
-        <>
-          {/* Leaderboard table header */}
-          <div className={styles.leftPanel}>
-            <div className={styles.headerRow}>
-              <div className={styles.cell}>Rank</div>
-              <div className={styles.cell}>Name</div>
-              <div className={`${styles.cell} ${styles.cellLevel}`}>Level</div>
-              <div className={`${styles.cell} ${styles.cellScore}`}>Score</div>
-            </div>
+        <div className={styles.leftPanel}>
+          {/* 表头 */}
+          {/* <div className={styles.headerRow}>
+            <div className={styles.cell}>Rank</div>
+            <div className={styles.cell}>Name</div>
+            <div className={`${styles.cell} ${styles.cellLevel}`}>Level</div>
+            <div className={`${styles.cell} ${styles.cellScore}`}>Score</div>
+          </div> */}
 
-            {/* Player rows */}
-            {paginatedEntries.map((entry, index) => (
-              <div className={getRankClass(index)} key={entry.userId ?? `fallback-${index}`}>
-                {/* Rank */}
-                <div className={styles.cell}>{index + 1}</div>
-
-                {/* Avatar + Name */}
-            <div className={`${styles.cell} ${styles.cellName}`}>
-              <div style={{ display: "flex", alignItems: "center",  justifyContent: "center" , gap: "10px" }}>
-                <img
-                  src={entry.avatar ?? ""}
-                  alt={`${entry.username}'s avatar`}
-                  style={{ width: "28px", height: "28px", borderRadius: "50%", objectFit: "cover" }}
-                />
-                <Link href={`/users/${entry.userId}/profile`} style={{ color: "#0ea5e9", textDecoration: "underline" }}>
-                  {entry.username}
-                </Link>
+          {/* player list */}
+          {paginatedEntries.map((entry, index) => (
+            <motion.div
+              key={entry.userId ?? index}
+              className={`${styles.leaderCard} ${index === 0 ? styles.firstCard : index === 1 ? styles.secondCard : index === 2 ? styles.thirdCard : ""
+                }`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+              onClick={() => { 
+                setTimeout(() => {
+                  setIsLeaving(true);
+                  document.querySelector(".page")?.classList.add("pageExit");
+                  router.push(`/users/${entry.userId}/profile`);
+                }, 300);
+              }}
+            >
+              <div className={styles.rankSection}>
+                {index < 3 ? medals[index] : index + 1}
               </div>
-            </div>
-
-                {/* Level */}
-                <div className={`${styles.cell} ${styles.cellLevel}`}>
-                  {parseInt(entry.level ?? "0") < 5000
-                    ? "🥉MapAmateur"
-                    : parseInt(entry.level ?? "0") < 10000
-                      ? "🥈MapExpert"
-                      : "🥇MapMaster"}
+              <div className={styles.avatarSection}>
+                <img src={entry.avatar ?? ""} alt="avatar" className={styles.avatarImg} />
+              </div>
+              <div className={styles.infoSection}>
+                <div className={styles.username}>{entry.username}</div>
+              </div>
+              <div className={styles.levelText}>
+                <div
+                  style={{
+                    marginTop: 4,
+                    padding: "4px 12px",
+                    backgroundColor:
+                      Number(entry.level) >= 10000 ? "#d4af37" :
+                        Number(entry.level) >= 5000 ? "#40a9ff" :
+                          "#73d13d",
+                    color: "#000",
+                    fontWeight: "bold",
+                    borderRadius: "999px",
+                    fontSize: "12px",
+                    textAlign: "center",
+                    display: "inline-block",
+                    boxShadow: "0 0 6px rgba(0,0,0,0.2)",
+                  }}
+                >
+                  {Number(entry.level) >= 10000
+                    ? "MapMaster"
+                    : Number(entry.level) >= 5000
+                      ? "MapExpert"
+                      : "MapAmateur"}
                 </div>
-
-                {/* Score */}
-                <div className={`${styles.cell} ${styles.cellScore}`}>
-                  {parseInt(entry.level ?? "0")}
-                </div>
               </div>
-            ))}
-
-            {/* Empty rows to fill 10 total */}
-            {[...Array(Math.max(0, 10 - paginatedEntries.length))].map((_, idx) => (
-              <div className={styles.lobbyCard} key={`empty-${idx}`} style={{ opacity: 0.2 }}>
-                <div className={styles.cell}>&nbsp;</div>
-                <div className={styles.cell}>&nbsp;</div>
-                <div className={styles.cell}>&nbsp;</div>
-                <div className={styles.cell}>&nbsp;</div>
+              <div className={styles.scoreSection}>
+                {parseInt(entry.level ?? "0")}
               </div>
-            ))}
-          </div>
-        </>
+            </motion.div>
+          ))}
+
+          {/* 空白行填满10行 */}
+          {/* {[...Array(Math.max(0, 10 - paginatedEntries.length))].map((_, idx) => (
+            <div className={styles.lobbyCard} key={`empty-${idx}`} style={{ opacity: 0.14 }}>
+              <div className={styles.cell}>&nbsp;</div>
+              <div className={styles.cell}>&nbsp;</div>
+              <div className={styles.cell}>&nbsp;</div>
+              <div className={styles.cell}>&nbsp;</div>
+            </div>
+          ))} */}
+        </div>
       )}
     </div>
   );
