@@ -111,6 +111,7 @@ const GameStart = () => {
         const initialReady: Record<number, boolean> = response[0].readyMap ?? {};
         setReadyStatus(initialReady);
       } catch (error) {
+        window.dispatchEvent(new Event("globalLock"));
         console.error("Failed to fetch players:", error);
         router.push("/lobby");
       }
@@ -220,6 +221,7 @@ const GameStart = () => {
       if (current > 0) {
         setCountDown(current.toString());
       } else if (current === 0) {
+        window.dispatchEvent(new Event("globalLock"));
         setCountDown("GO!");
         setTimeout(() => {
           setIsLocked(true);
@@ -236,6 +238,7 @@ const GameStart = () => {
 
   const handleExitGame = async () => {
     try {
+      window.dispatchEvent(new Event("globalLock"));
       await apiService.put(`/lobbyOut/${userId}`, {});
       dispatch(clearGameState());
       document.querySelector(".roomWrapper")?.classList.add("roomWrapperExit");

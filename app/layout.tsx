@@ -8,6 +8,7 @@ import ReduxProvider from "./ReduxProvider";
 import NavbarWrapper from "./hooks/navbarWrapper";
 import AuthWrapper from "./hooks/authWrapper";
 import { ToastContainer } from "react-toastify";
+import LockOverlay from "./hooks/lockOverlay";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -46,7 +47,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               }}
             >
               <NavbarWrapper>
-                <AntdRegistry>{children}</AntdRegistry>
+                <AntdRegistry>
+                  <LockOverlay />
+                  {children}
+                </AntdRegistry>
                 <ToastContainer
                   position="top-center"
                   autoClose={2500}

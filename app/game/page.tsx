@@ -32,7 +32,6 @@ const Dashboard: React.FC = () => {
   );
 
   // animate
-  const [isLocked, setIsLocked] = useState(false);
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [showButtons, setShowButtons] = useState(true);
   useEffect(() => {
@@ -127,7 +126,7 @@ const Dashboard: React.FC = () => {
         setTimeout(() => {
           setCountDown(null);
           requestAnimationFrame(async () => {
-            setIsLocked(true);
+            window.dispatchEvent(new Event("globalLock"));
             setShowButtons(false);
             setTimeout(async () => {
               window.dispatchEvent(new Event("navbarExit"));
@@ -254,7 +253,7 @@ const Dashboard: React.FC = () => {
             >
               <button className="button combat-button" disabled={buttonDisabled} onClick={() => {
                 setShowButtons(false);
-                setIsLocked(true);
+                window.dispatchEvent(new Event("globalLock"));
                 setTimeout(() => {
                   router.push("/lobby");
                 }, 1200);
@@ -313,9 +312,6 @@ const Dashboard: React.FC = () => {
         <div className="overlay">
           <div className="countdown" key={countDown}>{countDown === "0" ? "GO!" : countDown}</div>
         </div>
-      )}
-      {isLocked && (
-        <div className="interaction-lock" />
       )}
     </div>
   );

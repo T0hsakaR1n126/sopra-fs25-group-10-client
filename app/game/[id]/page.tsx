@@ -163,7 +163,7 @@ const GameBoard: React.FC = () => {
 
         client.subscribe(`/topic/end/${gameId}`, (message) => {
           try {
-            console.log('RAW message body:', message.body);
+            window.dispatchEvent(new Event("globalLock"));
             const data: string = message.body;
             setGameEnded(true);
             setEndMessage(data);
@@ -209,6 +209,7 @@ const GameBoard: React.FC = () => {
 
   const handleFinishGame = async () => {
     try {
+      window.dispatchEvent(new Event("globalLock"));
       await apiService.put(`/finishexercise/${gameId}`, {});
       setTransitionDirection("out");
       setTimeout(() => {
@@ -287,6 +288,7 @@ const GameBoard: React.FC = () => {
                           dispatch(resetQuestionStats());
                           setTimeout(async () => {
                             try {
+                              window.dispatchEvent(new Event("globalLock"));
                               await apiService.put(`/giveup/${userId}`, {});
                               if (gameMode === "combat") {
                                 router.push('/lobby');

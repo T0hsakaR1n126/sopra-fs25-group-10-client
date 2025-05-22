@@ -181,6 +181,7 @@ const Lobby: React.FC = () => {
       ));
 
       // exit animation
+      window.dispatchEvent(new Event("globalLock"));
       document.querySelector(".page")?.classList.add("pageExit");
       setTimeout(() => router.push(`/game/start/${game.gameId}`), 100);
     } catch (error) {
@@ -418,7 +419,7 @@ const Lobby: React.FC = () => {
           </button>
         </form>
       </div>
-    </div >
+    </div>
   );
 };
 
