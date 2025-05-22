@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useSelector } from "react-redux"; // Import Redux hooks
-import { UserOutlined, HistoryOutlined, TrophyOutlined, LogoutOutlined, BookOutlined } from "@ant-design/icons";
+import { UserOutlined, HistoryOutlined, TrophyOutlined, LogoutOutlined, BookOutlined, HomeOutlined } from "@ant-design/icons";
 import { useLogout } from "@/utils/useLogout"; // Import the logout function
 import { Avatar, Dropdown, Tooltip } from "antd";
 import { useState } from "react";
@@ -165,12 +165,9 @@ export default function Navbar() {
             router.push("/game");
           }}
         >
-          <Image
-            src="/home-icon.png"
-            alt="Home"
-            width={70}
-            height={60}
-            style={{ cursor: "pointer" }}
+          <HomeOutlined
+            style={{ fontSize: "24px", color: "#fff", cursor: "pointer", marginLeft: "8px" }}
+            aria-label="Home" 
           />
         </Link>
       </Tooltip>

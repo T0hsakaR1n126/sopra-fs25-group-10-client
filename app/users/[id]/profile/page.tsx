@@ -49,9 +49,10 @@ const ProfilePage = () => {
         setUser(response);
       } catch (error) {
         if (error instanceof Error) {
-          alert(`Something went wrong while fetching user:\n${error.message}`);
+          showErrorToast(`${error.message}`);
           router.push("/game");
         } else {
+          showErrorToast("An unknown error occurred while fetching user.");
           console.error("An unknown error occurred while fetching user.");
         }
       }
@@ -193,7 +194,7 @@ const ProfilePage = () => {
             </Form>
 
             <br />
-            {user.token === token && (
+            {user.token === token ? (
               !isEditing ? (
                 <div className={styles.buttonGroup}>
                   <button className={styles.neonButton} onClick={handleEdit}>Edit</button>
@@ -211,6 +212,13 @@ const ProfilePage = () => {
                   <button className={styles.neonButton} onClick={handleCancel}>Cancel</button>
                 </div>
               )
+            ) : (
+              <div className={styles.buttonGroup}>
+                <button className={styles.neonButton} onClick={() => {
+                  setIsLeaving(true);
+                  setTimeout(() => router.push("/leaderboard"), 300);
+                }}>Back</button>
+              </div>
             )}
           </>
         )}
