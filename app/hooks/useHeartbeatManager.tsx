@@ -3,24 +3,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "..";
 import { useApi } from "./useApi";
 import { User } from "@/types/user";
-import { showSuccessToast } from "@/utils/showSuccessToast";
 import { useRouter } from "next/navigation";
-import { clearGameState, resetHintUsage } from "@/gameSlice";
-import { logout, resetJustLoggedIn } from "@/userSlice";
+import { clearGameState } from "@/gameSlice";
+import { logout } from "@/userSlice";
 import { disableHeartbeat } from "@/heartbeatSlice";
 
 export const useHeartbeatManager = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const userId = useSelector((state: RootState) => state.user.userId);
   const enabled = useSelector((state: RootState) => state.heartbeat.enabled);
-  const gameId = useSelector((state: RootState) => state.game.gameId);
-  const justLoggedIn = useSelector((state: RootState) => state.user.justLoggedIn);
   const dispatch = useDispatch();
   const router = useRouter();
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const apiService = useApi();
-
-  const hasReconnectedRef = useRef(false);
 
   useEffect(() => {
     if (!enabled || !token) return;
