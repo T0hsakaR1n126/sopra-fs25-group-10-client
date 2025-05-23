@@ -39,13 +39,12 @@
 <a name="technologies"></a>
 
 ## Technologies
+Frontend
 - **[Next.js](https://nextjs.org/)** – Frontend framework we primarily used.
 - **[React](https://react.dev/)** – Frontend JavaScript library for building interactive UIs, maintained by Meta.
 - **[Vercel](https://vercel.com/)** – Cloud platform for static sites and serverless functions, optimized for Next.js deployments.
 - **[STOMP.js](https://stomp-js.github.io/stomp-websocket/)** – A simple text-oriented messaging protocol used over WebSocket.
 - **[SockJS](https://github.com/sockjs)** – WebSocket emulation library ensuring fallback options for real-time communication.
-- **[Spring Boot](https://spring.io/projects/spring-boot)** – Backend framework that simplifies building production-ready RESTful services in Java.
-- **[Mockito](https://site.mockito.org/)** – Java mocking framework for creating mock objects in unit tests, simplifying test-driven development.
 - **[OpenAI API](https://platform.openai.com/docs)** – Enables access to powerful AI models for intelligent text or chat interactions. We use it for clue generation for the countries dynamically.
 - **[Ant Design (AntD)](https://ant.design/)** – Enterprise-level React UI component library with elegant design and robust components.
 - **[React Toastify](https://fkhadra.github.io/react-toastify/introduction/)** – Toast notifications made easy with auto-dismiss and theming.
@@ -210,14 +209,15 @@ This section explains some intricacies of the game modes, instructions/ game rul
 
 ## Roadmap
 
-- [ ] 🔄 Guest players can join games without registration  
-- [ ] 🔄 Team vs Team gameplay mode  
+- [ ] 🔄 Guest players can join games without registration  - partially implemented
+- [ ] 🔄 Team vs Team gameplay mode  - partially implemented
 - [ ] Configurable settings:  
   - [ ] Select continents or countries to be tested on  
   - [ ] Choose difficulty levels
 - [ ] Add other themes such as cities, rivers, food etc.
 - [ ] Ability to end a round early  
 - [ ] 🔄 Live chat feature – partially implemented  
+- [ ] Ability to set a different time limit in combat mode when players want to play another round.
 
 
 <a name="authors"></a>
