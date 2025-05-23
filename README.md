@@ -1,387 +1,242 @@
-# Getting Started
 
-### MacOS, Linux and WSL
+<p align="center">
+  <img src="./assets/mapmaster-logo.png" alt="MapMaster Logo" width="300"/>
+</p>
 
-If you are using MacOS, Linux or WSL(Windows-Subsystem-Linux), you can skip
-directly to the
-[installation part](https://github.com/HASEL-UZH/sopra-fs25-template-client?tab=readme-ov-file#installation)
+<p align="center" style="font-size: 20px;">
+  <i style="font-weight: bold;">One map to rule them all</i>
+</p>
 
-### Windows
+<h4 align="center">
 
-If you are using Windows, you first need to install
-WSL(Windows-Subsystem-Linux). You might need to reboot your computer for the
-installation, therefore, save and close all your other work and programs
+[![build](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/actions/workflows/build.yml/badge.svg)](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/actions/workflows/build.yml)
+[![dockerize](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/actions/workflows/dockerize.yml/badge.svg)](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/actions/workflows/dockerize.yml)
+[![sonarcloud](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/actions/workflows/sonarcloud.yml/badge.svg)](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/actions/workflows/sonarcloud.yml)
+[![verceldeployment](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/actions/workflows/verceldeployment.yml/badge.svg)](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/actions/workflows/verceldeployment.yml)
 
-1. Download the following [powershell script](./windows.ps1)\
-   ![downloadWindowsScript](https://github.com/user-attachments/assets/1ed16c0d-ed8a-42d5-a5d7-7bab1ac277ab)
 
----
-2. Open a new powershell terminal **with admin privileges** and run the following command and follow the instructions. Make sure that you open the powershell terminal at the path where you have downloaded the powershell script, otherwise the command will not work because it can not find the script. You can list currently accessible files in the powershell terminal with ```dir``` and you can use ```cd``` to navigate between directories
-   ```shell
-   C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File .\windows.ps1
-   ```
----
+[![contributors](https://img.shields.io/github/contributors-anon/T0hsakaR1n126/sopra-fs25-group-10-client?color=yellow&style=flat-square)](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/graphs/contributors)
+[![license](https://img.shields.io/badge/apache%202.0-blue.svg?style=flat-square&label=license)](https://opensource.org/licenses/Apache-2.0)
 
-3. If you experience any issues, try re-running the script a couple of times. If
-   the installation remains unsuccessful, follow this
-   [youtube tutorial](https://youtu.be/GIYOoMDfmkM) or post your question in the
-   OLAT forum
+<!-- [![preview](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/actions/workflows/preview.yml/badge.svg)](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/actions/workflows/preview.yml) -->
 
----
-4. After successful installation, you can open WSL/Ubuntu. You will need to choose a username and password, although no characters will be shown on the screen when typing the password but the system recognizes your input, no worries :) After these four steps your setup should look similar to this
-![initialUbuntuScreen](https://github.com/user-attachments/assets/a2b1511f-943b-468e-a726-b7a9dc46ea2c)
-<br>
-<br>
-<br>
-# Installation
-1. Open a new MacOS, Linux or WSL(Windows-Subsystem-Linux) terminal. Make sure you have git installed, you can check that by running
-   ```shell
-   git --version
-   ```
-   The output should be something similar to ```git version X.XX.X```, if not, try to install git in one of the following ways
-   #### MacOS
-   ```shell
-   brew install --formulae git
-   ```
-   #### Linux/WSL
-   ```shell
-   sudo apt-get install git
-   ```
-   If you are not using Ubuntu, you will need to install git with your package manager of choice
----
+<h2 align="left">🧭 Introduction</h2> <strong>MapMaster</strong> is not just another geography game — it’s your new adventure across the globe! Dive into an interactive world map and put your knowledge to the test as you guess countries based on clever, progressively revealed hints about population, climate, history, and more. Whether you're flying solo, battling friends in multiplayer mode, or exploring at your own pace, MapMaster turns learning into a thrilling challenge. Powered by Spring Boot and cutting-edge frontend tech, this game delivers real-time interaction, smart scoring, and dynamic difficulty that keeps every round fresh and exciting. Ready to sharpen your geography skills and become a world map master? 
+<h3 align="left">📌 Goal</h3> <p> MapMaster’s mission is simple: make geography *fun*, *engaging*, and *addictive*. It’s designed to help you boost your map smarts, recall countries faster, and compete with friends or players worldwide. Whether you’re a student, trivia buff, or travel fanatic, MapMaster offers a smooth, intuitive experience that’s perfect for all ages and skill levels. Get ready for fast-paced gameplay that turns learning into an unforgettable game! 
+</p> <h3 align="left">📌 Motivation</h3> <p> Traditional geography drills can be dull. MapMaster was born to change that — transforming rote memorization into an exciting, interactive journey. In today’s world, keeping players hooked means blending education with entertainment seamlessly. Whether prepping for exams, teaching, or just indulging your curiosity, MapMaster is your go-to for a fresh, engaging way to connect with the world — one clue, one click, one country at a time. </p>
 
-2. Clone the repository with git using the following command
-   ```shell
-   git clone https://github.com/YOUR_USERNAME/YOUR-CLIENT-REPO
-   ```
 
----
-3. Navigate to the cloned directory in the terminal, in example with ```cd sopra-fs25-student-client```
----
+## Table of contents
 
-4. Inside the repository folder (with `ls` you can list files) there is a bash
-   script _setup.sh_ that will install everything you need, according to the
-   system you are using. Run the following command and follow the instructions
-   ```shell
-   source setup.sh
-   ```
+- [Technologies](#technologies)
+- [High-level components](#high-level-components)
+- [Launch and Deployment](#launch-and-deployment)
+- [Illustrations](#illustrations-and-game-flow)
+- [Roadmap](#roadmap)
+- [Authors](#authors)
+- [Acknowledgment](#acknowledgement)
+- [License](#license)
 
-The screenshot below shows an example of how this looks
-![sourceScript](https://github.com/user-attachments/assets/2560320a-93ec-4086-994d-f3a0eed53c7b)
+<a name="technologies"></a>
 
-The installation script _setup.sh_ can take a few minutes, please be patient and
-do not abort the process. If you encounter any issues, please close the terminal
-and open a new one and try to run the command again
+## Technologies
+Frontend
+- **[Next.js](https://nextjs.org/)** – Frontend framework we primarily used.
+- **[React](https://react.dev/)** – Frontend JavaScript library for building interactive UIs, maintained by Meta.
+- **[Vercel](https://vercel.com/)** – Cloud platform for static sites and serverless functions, optimized for Next.js deployments.
+- **[STOMP.js](https://stomp-js.github.io/stomp-websocket/)** – A simple text-oriented messaging protocol used over WebSocket.
+- **[SockJS](https://github.com/sockjs)** – WebSocket emulation library ensuring fallback options for real-time communication.
+- **[Ant Design (AntD)](https://ant.design/)** – Enterprise-level React UI component library with elegant design and robust components.
+- **[React Toastify](https://fkhadra.github.io/react-toastify/introduction/)** – Toast notifications made easy with auto-dismiss and theming.
+- **[Redux Toolkit](https://redux-toolkit.js.org/)** – Modern and efficient Redux state management tool.
+- **[D3 & D3-Geo](https://d3js.org/)** – For interactive geographic and data-driven visualizations.
+- **[TopoJSON & World Atlas](https://github.com/topojson/topojson-client)** – Efficient encoding of geographic data for map rendering.
+- **[Framer Motion](https://www.framer.com/motion/)** – Declarative animations and transitions for React.
+- **[Watchman](https://facebook.github.io/watchman/)** – Fast, efficient file-watching service by Meta that monitors project files for changes to trigger rebuilds or hot reloads during development.
+- **[Nix](https://nixos.org/)** – Declarative package manager and reproducible development environment tool, ideal for consistent setups across machines and CI pipelines.
+- **[Docker](https://www.docker.com/)** – Containerization platform to package and run applications consistently across environments.
 
-<br>
-<br>
-<br>
 
-# Troubleshooting the installation
-
-If the four steps above did not work for you and re-running the setup.sh script
-a couple of times did not help, try running the following steps manually
-
-1. Open a new MacOS, Linux or WSL(Windows-Subsystem-Linux) terminal and navigate
-   to the repository with `cd`. Then ensure that curl is installed
-   ```shell
-   curl --version
-   ```
-   The output should be something similar to `curl X.X.X`, if not, try to
-   install curl in one of the following ways
-   #### MacOS
-   ```shell
-   brew install --formulae curl
-   ```
-   #### Linux/WSL
-   ```shell
-   sudo apt-get install curl
-   ```
-   If you are not using Ubuntu, you will need to install curl with your package
-   manager of choice
-
----
-2. Download Determinate Nix
-   ```shell
-   curl --proto '=https' --tlsv1.2 -ssf --progress-bar -L https://install.determinate.systems/nix -o install-nix.sh
-   ```
----
-
-3. Install Determinate Nix
-   ```shell
-   sh install-nix.sh install --determinate --no-confirm --verbose
-   ```
-
----
-4. Install direnv using nix
-   ```shell
-   nix profile install nixpkgs#direnv
-   ```
-   If you encounter a permission error, try running with sudo
-   ```shell
-   sudo nix profile install nixpkgs#direnv
-   ```
----
-
-5. Find out what shell you are using
-   ```shell
-   echo $SHELL
-   ```
-
----
-6. Hook direnv into your shell according to [this guide](https://github.com/direnv/direnv/blob/master/docs/hook.md)
----
-
-7. Allow direnv to access the repository
-   ```shell
-   direnv allow
-   ```
-
-If all troubleshooting steps above still did not work for you, try the following
-as a **last resort**: Open a new terminal and navigate to the client repository
-with `cd`. Run the command. Close the terminal again and do this for each of the
-six commands above, running each one in its own terminal, one after the other.
-
-<br>
-<br>
-<br>
-
-# Available commands after successful installation
-
-With the installation steps above your system now has all necessary tools for
-developing and running the sopra frontend application. Amongst others, two
-javascript runtimes have been installed for running the app:
-
-- [NodeJS](https://nodejs.org)
-- [Deno](https://deno.com)
-
-Runtimes is what your system needs to compile
-[typescript](https://www.typescriptlang.org) code (used in this project) to
-javascript and execute the application. You can use either runtime for this
-project, according to your preference. Both come with an included package
-manager, `npm` for nodejs and `deno` for deno. Thereby, the
-[package.json](./package.json) file defines possible commands that can be
-executed (using either `deno` or `npm`). The following commands are available in
-this repository:
-
-1. **Running the development server** - This will start the application in
-   development mode, meaning that changes to the code are instantly visible live
-   on [http://localhost:3000](http://localhost:3000) in the browser
-   ```bash
-   deno task dev
-   ```
-2. **Building a production-ready application** - This will create an optimized
-   production build that is faster and takes up less space. It is a static
-   build, meaning that changes to the code will only be included when the
-   command is run again
-   ```bash
-   deno task build
-   ```
-3. **Running the production application** - This will start the optimized
-   production build and display it on
-   [http://localhost:3000](http://localhost:3000) in the browser. This command
-   can only be run _after_ a production build has been created with the command
-   above and will not preview live code changes
-   ```bash
-   deno task start
-   ```
-4. **Linting the entire codebase** - This command allows to check the entire
-   codebase for mistakes, errors and warnings
-   ```bash
-   deno task lint
-   ```
-5. **Formatting the entire codebase** - This command will ensure that proper
-   indentation, spacing and further styling is applied to the code. This ensures
-   that the code looks uniform and the same across your team members, it is best
-   to run this command _every time before pushing changes to your repository_!
-   ```bash
-   deno task fmt
-   ```
-
-All of the above mentioned commands can also be run using the nodejs runtime by
-substituting `deno task` with `npm run`, i.e
-
-```bash
-npm run dev
+<a name="high-level-components"></a>
+## High level components
+Here we show you the component tree at L1 for this repository where you see most key components of the game. We explain the ones that are most important both for the game play and functioning.
+```
+├── ReduxProvider.tsx
+├── __tests__/
+├── api/
+├── auth/
+├── favicon.ico
+├── game/
+├── gameSlice.ts
+├── history/
+├── hooks/
+├── index.ts
+├── layout.tsx
+├── leaderboard/
+├── lobby/
+├── navbar.tsx
+├── page.tsx
+├── statistics/
+├── styles/
+├── types/
+├── userSlice.ts
+├── users/
+└── utils/
 ```
 
-<br>
-<br>
-<br>
+### [`app`](./app)
+Primary directory of the next app where all the frontend pages, logic, and hooks reside. The tree above is from this directory.
 
-# Docker
+### Redux - [`userSlice and gameSlice`](./app/gameSlice.ts)
+We use Reduxstore to maintain and process game and user states. We create slices for both to strategically navigate storage and access the local variables during a user's session. We setup the redux provider `ReduxProvider.tsx` accordingly.
 
-### Introduction
-This year, for the first time, Docker will be used to ease the process of deployment.\
-Docker is a tool that uses containers as isolated environments, ensuring that the application runs consistently and uniformly across different devices.\
-Everything in this repository is already set up to minimize your effort for deployment.\
-All changes to the main branch will automatically be pushed to dockerhub and optimized for production.
+### [`game`](./app/game/)
+Core of the game play is hosted in the `game` directory which holds the access, creation, and playing the games; access the home page where all the game types are dispalyed [here](./app/game/page.tsx). Once user starts a user creates a game for others to join, they see other players, ready, and begin options [here](./app/game/start/[id]/page.tsx). The game itself will be displayed [here](./app/game/[id]/page.tsx)
 
-### Setup
-1. **One** member of the team should create an account on [dockerhub](https://hub.docker.com/), _incorporating the group number into the account name_, for example, `SoPra_group_XX`.\
-2. This account then creates a repository on dockerhub with the _same name as the group's Github repository name_.\
-3. Finally, the person's account details need to be added as [secrets](https://docs.github.com/en/actions/security-guides/using-secrets-in-github-actions#creating-secrets-for-a-repository) to the group's repository:
-    - dockerhub_username (the username of the dockerhub account from step 1, for example, `SoPra_group_XX`)
-    - dockerhub_password (a generated PAT([personal access token](https://docs.docker.com/docker-hub/access-tokens/)) of the account with read and write access)
-    - dockerhub_repo_name (the name of the dockerhub repository from step 2)
+### [`leaderboard`](./app/leaderboard/page.tsx)
+Laderboard shows the top 10 players across the games. 
 
-### Pull and run
-Once the image is created and has been successfully pushed to dockerhub, the image can be run on any machine.\
-Ensure that [Docker](https://www.docker.com/) is installed on the machine you wish to run the container.\
-First, pull (download) the image with the following command, replacing your username and repository name accordingly.
+### [`hooks`](./app/hooks/)
+Hooks folder holds some of the recurrent and crucial functionality we hold in the game. This includes important blocks such as [authorization](./app/hooks/authWrapper.tsx) and **[interative map](./app/hooks/interactiveMap.tsx). `Interactive Map` is the most important component of the game**. This holds the map visualisation and the interaction bits that are on the map. This hosts logic to display and also on the actions upon clicks.
 
-```docker pull <dockerhub_username>/<dockerhub_repo_name>```
+### [`navbar`](./app/navbar.tsx)
+Navigtion bar holds the home, user actions like checking [statistics](./app/statistics/page.tsx) and accessing user profile information, hone, and access to the leaderboard.
 
-Then, run the image in a container with the following command, again replacing _<dockerhub_username>_ and _<dockerhub_repo_name>_ accordingly.
+## Launch and Deployment
+<a name="Launch and Deployment"></a>
 
-```docker run -p 3000:3000 <dockerhub_username>/<dockerhub_repo_name>```
+You will need to \
+For Frontend: `git clone https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client` \
+For Backend: `git clone https://github.com/T0hsakaR1n126/sopra-fs25-group-10-server`
 
-<br>
-<br>
-<br>
+**Optional (for full compatibility)**
+ - You have to briefly follow the steps for `nix` set up so that the project's development environment is setup as required. You can follow follow more detailed instructions for your development setup [here](SetupScratch.md)
+- Once you have installed `nix` and other pre-requisites, you will be prompted to allow `direnv`. Then please do `direnv allow`.
 
-# Installing additional software by modifying [flake.nix](./flake.nix)
+**Straight Forward Setup** 
+- For your local development environment, you will need Node.js.\
+You need to install the version **v22.10.0** which comes with the npm package manager. You can download it [here](https://nodejs.org/download/release/v22.10.0/).\
+Feel free to use these direct links:
+- **MacOS:** [node-v22.10.0.pkg](https://nodejs.org/download/release/v22.10.0/node-v22.10.0.pkg)
+- **Windows 32-bit:** [node-v22.10.0-x86.msi](https://nodejs.org/download/release/v22.10.0/node-v22.10.0-x86.msi)
+- **Windows 64-bit:** [node-v22.10.0-x64.msi](https://nodejs.org/download/release/v22.10.0/node-v22.10.0-x64.msi)
+- **Linux:** [node-v22.10.0.tar.xz](https://nodejs.org/dist/v22.10.0/node-v22.10.0-linux-x64.tar.xz) (use this [installation guide](https://github.com/nodejs/help/wiki/Installation#how-to-install-nodejs-via-binary-archive-on-linux) if you are new to Linux)
 
-As this project uses Determinate Nix for managing development software,
-installing additional tools you might need is straightforward. You only need to
-adjust the section `nativeBuildInputs = with pkgs;` in the
-[nix flake](./flake.nix) with the package you would like to install. For
-example, if you want to use docker (the [Dockerfile](./Dockerfile) and
-[.dockerignore](./.dockerignore) are already included in this repo) you can
-simply add:
+If you happen to have a package manager the following commands can be used:
 
-```nix
-nativeBuildInputs = with pkgs;
-  [
-    nodejs
-    git
-    deno
-    watchman
-    docker ### <- added docker here
-  ]
-  ++ lib.optionals stdenv.isDarwin [
-    xcodes
-  ]
-  ++ lib.optionals (system == "aarch64-linux") [
-    qemu
-  ];
-```
+- **Homebrew:** `brew install node@v22.10.0`
+- **Chocolatey:** `choco install nodejs-lts --version=v22.10.0`
 
-and add the package path to the `shellHook''` section
+After the installation, update the npm package manager to **10.9.0** by running ```npm install -g npm@10.9.0```\
+You can ensure the correct version of node and npm by running ```node -v``` and ```npm --version```, which should give you **v22.10.0** and **10.9.0** respectively.\
 
-```nix
-        devShells.default = pkgs.mkShell {
-          inherit nativeBuildInputs;
+Before you start your application for the first time, run this command to install all other dependencies, including React:\
+```npm install```
 
-          shellHook = ''
-            export HOST_PROJECT_PATH="$(pwd)"
-            export COMPOSE_PROJECT_NAME=sopra-fs25-template-client
-            
-            export PATH="${pkgs.nodejs}/bin:$PATH"
-            export PATH="${pkgs.git}/bin:$PATH"
-            export PATH="${pkgs.deno}/bin:$PATH"
-            export PATH="${pkgs.watchman}/bin:$PATH"
-            export PATH="${pkgs.docker}/bin:$PATH" ### <- added docker path here
-            
-            ### rest of code ###
-        };
-```
+Next, you can start the app with:\
+```npm run dev```
 
-and finally do `direnv reload` in your terminal inside the repository folder. If
-you need a specific version of a package, you can override it in the `overlays`
-section
+Now you can open [http://localhost:3000](http://localhost:3000) to view it in the browser.\
+Notice that the page will reload if you make any edits. You will also see any lint errors in the console (use a Chrome-based browser).\
+In order for these requests to work, you need to install and start the server as well.
 
-```nix
-overlays = [
-  (self: super: {
-    nodejs = super.nodejs_23; ### <- changed to nodejs 23
-  })
-];
-```
+```npm run lint```
+Automatically check an format your code following predefined ESlint rules.
 
-<br>
-<br>
-<br>
+### Build
+Finally, `npm run build` builds the app for production to the `build` folder.<br>
+It correctly bundles React in production mode and optimizes the build for the best performance:\
+The build is minified, and the filenames include hashes.<br>
 
-# Miscellaneous
+See the section about [deployment](https://nextjs.org/docs/deployment) for more information on deploying a Next.js application and on [vercel](https://vercel.com/docs/frameworks/nextjs)
 
-This project uses
-[`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts)
-to automatically optimize and load [Geist](https://vercel.com/font), a new font
-family for Vercel.
+<a name="illustration"></a>
 
-## Learn More
+## Illustrations and Game Flow
+This  `.gif` image depicts our game flow rather quickly. This is aimed to help players understand game flow easily. 
 
-To learn more about Next.js, take a look at the following resources:
+![MapMaster demo](/assets/mapmaster2.gif)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js
-  features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Main User Flow
+This section explains some intricacies of the game modes, instructions/ game rules, and the scoring logic.
 
-You can check out
-[the Next.js GitHub repository](https://github.com/vercel/next.js) - your
-feedback and contributions are welcome!
+1. **User Registration, Login and Game Modes:**
+    - Users can register with username and password.
+    - After registration, users will log in and access the game home and they will be able choose one of the game modes.
+    
+2. **Combat Mode and Lobby (Game Creation):**
+    - We will see the most important mode called the "Combat" mode where multiple players can play a game together and compete against each other. 
+    Clicking on Combat wil take you to the Lobby where you can create or join combat games.
 
-## Deploy on Vercel
+    **Combat mode** is where a group of players can compete against each other. A maximum number of 5 players are allowed (currently). There is one leader (who starts the game) and the rest can join either using a passcode or a game password. Once all the players are ready, the leader can start the game.
 
-The easiest way to deploy your Next.js app is to use the
-[Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme)
-from the creators of Next.js.
+3. **Lobby (Game Joinining):**'
+    Users can create or join game in the game lobby. Game lobby represents all the ongoing combat games. This also provides a "community/lobby chat" function similar to live stream chat. 
 
-Check out our
-[Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying)
-for more details.
+    Users can either join a game with open places or create their own game for other to join. If they are joining someone else's game, they can set status to ready. Once everyone is ready game leader gets to start the game. 
 
-## Windows users
+4. **Game Start:**
+    Game starts with the set time during the creation and clock runs till the end of that time. Each player can guess as many questions as they want during this time. Players will be able to see each other's score during the game.
 
-Please ensure that the repository folder is inside the WSL2 filesystem
-(otherwise, the disk IO performance will be horrible). If you followed the
-tutorial closely, this is already the case. If for whatever reason you deviated
-from the instructions, please take the time now to ensure the repo is on the WSL
-filesystem. You can do this either by
+5. **Scoring:**
+    As depicted here, in the combat mode and the solo mode, each user can score a `maximum of 100 points per country`. If none of the hidden hints are used. Each hint will cost the user `20 points`. 
+    For example: If a user uses all the hints and guesses the question correct they will get 20 points. If the user guesses the question wrong they will get `0 points`.
 
-1. _Cloning the repository again with git in a WSL/Ubuntu terminal using the
-   following command and deleting the repository on the windows filesystem_
-   ```shell
-   git clone https://github.com/HASEL-UZH/sopra-fs25-template-client
-   ```
-2. _Using the Windows explorer to move the repository from the windows
-   filesystem to WSL filesystem_ In the left overview of all folders and drives
-   there should be a new filesystem called Linux (also check in the network
-   tab). Open the Linux drive and open the folder named "home", followed by your
-   username. Copy the whole repository folder from your current location to the
-   Linux folder /home/your-username (note that the folder will initially be
-   empty). Finally, delete the folder from your current location such that you
-   only have the folder inside the Linux filesystem.
-3. _Using the command line in WSL to move the repo_ Open a new Ubuntu / WSL2
-   terminal window. This will automatically open your home folder of the Linux
-   file system. You then need to locate where the repository / folder that you
-   have downloaded resides. You can use the `cp -ar` command to copy the folder
-   from the Windows drive to the Linux filesystem. The command takes the
-   following arguments: cp **source_file** _target_file_. Thus we need to
-   specify **source_file** the folder we want to copy from Windows filesystem
-   and the _target_file_ where to copy the folder to in the Linux filesystem. As
-   visible in this screenshot
-   ![copyFolderToUbuntu](https://github.com/user-attachments/assets/d483e495-e3af-4e85-929c-61dce1a39e10)
-   the repository folder resides under the C drive in /mnt/c/. If your file is
-   not on your C drive, the folder path will be something like /mnt/d/. In the
-   screenshot, the downloaded repository folder is in the Downloads folder of
-   the current user on the C drive, thus the path for **source_file** is
-   `/mnt/c/Users/immol/Downloads`. The terminal in the screenshot is currently
-   in the home directory, indicated by ~ in the path in blue. As we want to copy
-   the folder to the home folder (/home/your-username) we can specify the
-   current directory (.) as the _target_file_, thus the dot at the end of the
-   command. If you happen to not be in the home folder, you can also run the
-   command with explicitly copying to the home folder as such:
-   ```bash
-   cp -ar /mnt/c/your-path /home/your-username
-   ```
-   Else you can run
-   ```bash
-   cp -ar /mnt/c/your-path .
-   ```
-   with . indicating to copy to the current path (in this case your home
-   folder). You can check if the repository was successfully copied over using
-   `ls` to list folders and files, as visible in the screenshot. You can then
-   delete the downloaded folder / repository from the Windows filesystem in the
-   explorer.
+    Highest point winning player is announced as the winner.
+    <div style="text-align: center;">
+        <img src="assets/screenshots/21.png" alt="Game Score" width="500"/>
+    </div>
+
+    <div style="text-align: center;">
+        <img src="assets/screenshots/22.png" alt="Select" width="500"/>
+    </div>
+    
+    <div style="text-align: center;">
+        <img src="assets/screenshots/23.png" alt="BackExit" width="500"/>
+    </div>
+
+6. **Other Modes:**
+
+    <div style="text-align: center;">
+        <img src="assets/screenshots/19.png" alt="Other Modes Solo" width="500"/>
+    </div>
+
+    <div style="text-align: center;">
+        <img src="assets/screenshots/4.png" alt="Other Modes Exercise" width="500"/>
+    </div>
+
+<a name="roadmap"></a>
+
+## Roadmap
+
+- [ ] 🔄 Guest players can join games without registration  - partially implemented
+- [ ] 🔄 Team vs Team gameplay mode  - partially implemented
+- [ ] Configurable settings:  
+  - [ ] Select continents or countries to be tested on  
+  - [ ] Choose difficulty levels
+- [ ] Add other themes such as cities, rivers, food etc.
+- [ ] Ability to end a round early  
+- [ ] 🔄 Live chat feature in the ongoing game – Lobby and Game start chat available, can be extended for within game
+- [ ] Ability to set a different time limit in combat mode when players want to play another round.
+
+
+<a name="authors"></a>
+
+## Authors
+
+| Name          | Personal page                                                                                                                                  |
+|-------------------|----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Rohit KOONIREDDY  | [![GitHub followers](https://img.shields.io/github/followers/rkoonireddy?label=Follow&style=social)](https://github.com/rkoonireddy)  |
+| Zheyuan FU        | [![GitHub followers](https://img.shields.io/github/followers/T0hsakaR1n126?label=Follow&style=social)](https://github.com/T0hsakaR1n126) |
+| Ziqi YANG         | [![GitHub followers](https://img.shields.io/github/followers/yzq0325?label=Follow&style=social)](https://github.com/yzq0325)      |
+| Xinyu FU          | [![GitHub followers](https://img.shields.io/github/followers/fuxinyu01?label=Follow&style=social)](https://github.com/fuxinyu01)    |
+| Jiawei Pei        | [![GitHub followers](https://img.shields.io/github/followers/JaveyBae?label=Follow&style=social)](https://github.com/JaveyBae)   |
+
+<a name="acknowledgement"></a>
+### Acknowledgement
+
+- This repository code derives the framework from the kind **UZH HASEL team** provided [SoPra FS25 - Client Template](https://github.com/HASEL-UZH/sopra-fs25-template-client).
+- Many thanks to **[Silvan Schlegel](https://github.com/silvanschlegel)** who helped us as our TA and Scrum Master during this project.
+
+<a name="license"></a>
+## License
+We publish the code under the terms of the [Apache 2.0 License](https://github.com/T0hsakaR1n126/sopra-fs25-group-10-client/blob/main/LICENSE) that allows distribution, modification, and commercial use. This software, however, comes without any warranty or liability.
