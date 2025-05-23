@@ -219,6 +219,13 @@ const GameStart = () => {
         setTimeout(() => {
           setIsLocked(true);
           setCountDown(null);
+          try {
+            apiService.put(`/startcounter/${gameId}`, {});
+          } catch (err) {
+            if (err instanceof Error) {
+              showErrorToast(err.message);
+            }
+          }
           requestAnimationFrame(() => {
             router.push(`/game/${gameId}`);
           });
