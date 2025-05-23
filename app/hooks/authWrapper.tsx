@@ -53,7 +53,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
     };
 
     verifyToken();
-  }, [router, apiService]);
+  }, [router, apiService, token, pathname]);
 
   return <>{children}</>;
 }
