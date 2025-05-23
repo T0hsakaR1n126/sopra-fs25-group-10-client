@@ -9,5 +9,6 @@ export interface User {
   level: string | null;
   isReady?: boolean | null;
   readyMap: Record<number, boolean> | null;
+  isPlayingGame: boolean | null;
 }
     

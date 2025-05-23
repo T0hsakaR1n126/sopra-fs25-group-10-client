@@ -9,6 +9,8 @@ import NavbarWrapper from "./hooks/navbarWrapper";
 import AuthWrapper from "./hooks/authWrapper";
 import { ToastContainer } from "react-toastify";
 import LockOverlay from "./hooks/lockOverlay";
+import { useHeartbeatManager } from "./hooks/useHeartbeatManager";
+import HeartbeatRunner from "./heartbeatRunner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -49,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <NavbarWrapper>
                 <AntdRegistry>
                   <LockOverlay />
+                  <HeartbeatRunner />
                   {children}
                 </AntdRegistry>
                 <ToastContainer

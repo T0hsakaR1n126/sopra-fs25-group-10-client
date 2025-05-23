@@ -13,6 +13,7 @@ import { clearGameState } from "@/gameSlice";
 import { motion } from "framer-motion";
 import { showErrorToast } from "@/utils/showErrorToast";
 import { showSuccessToast } from "@/utils/showSuccessToast";
+import { enableHeartbeat } from "@/heartbeatSlice";
 
 const { Content } = Layout;
 
@@ -45,6 +46,7 @@ const Register: React.FC = () => {
             level: Number(response.level) ?? 0,
           })
         );
+        dispatch(enableHeartbeat());
         dispatch(clearGameState()); // Clear game state on login
 
         // Navigate to the user overview (or wherever the user should go after registration)

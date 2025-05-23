@@ -146,7 +146,9 @@ const gameSlice = createSlice({
     collectGuessTime: (state, action) => {
       state.guessTimeList.push(action.payload);
     },
-
+    resetHintUsage: (state) => {
+      state.hintUsage = 1; // Reset hint usage when a new game starts
+    },
   },
 });
 
@@ -155,6 +157,7 @@ export const {
   gameStart, gameInitialize, gameTimeInitialize, hintUsageIncrement, hintUpdate, hintUsageClear,
   scoreBoardResultSet, gameIdUpdate, ownerUpdate, clearGameState, answerUpdate,
   incrementQuestionCount, incrementCorrectCount, resetQuestionStats, setLastSubmitTime, collectGuessTime
+  , resetHintUsage
 } = gameSlice.actions;
 
 export default gameSlice.reducer;
