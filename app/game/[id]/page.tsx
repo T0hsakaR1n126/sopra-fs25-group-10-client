@@ -170,14 +170,13 @@ const GameBoard: React.FC = () => {
             setEndMessage(data);
             dispatch(resetQuestionStats());
             setTimeout(() => {
-              if (String(userId) === String(ownerId)) {
-                apiService.put(`/save/${gameId}`, {})
-                  .then()
-                  .catch((error) => {
-                    showErrorToast("Error saving game: " + (error as Error).message);
-                    router.push("/game");
-                  });
-              }
+              apiService.put(`/save/${gameId}`, {})
+                .then()
+                .catch((error) => {
+                  showErrorToast("Error saving game: " + (error as Error).message);
+                  router.push("/game");
+                });
+
               setTransitionDirection("out");
               setTimeout(() => router.push(`/game/results/${gameId}`), 800);
             }, 1000);
@@ -228,40 +227,40 @@ const GameBoard: React.FC = () => {
   };
 
   return (
-//     <div className={styles.container}>
-//       <div className={styles.topBar}>
-//         <div className={styles.topLeft}>
-//           {gameMode !== "exercise" ? (
-//             <div className={styles.scoreboardWrapper}>
-//               <button className={styles.userBoxRed} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
-//             </div>
-//           ) : (
-//             <div className={styles.scoreboardWrapper}>
-//               <button className={styles.userBoxGreen} onClick={async () => {
-//                 if (nextLocked) return;
-//                 setNextLocked(true);
+    //     <div className={styles.container}>
+    //       <div className={styles.topBar}>
+    //         <div className={styles.topLeft}>
+    //           {gameMode !== "exercise" ? (
+    //             <div className={styles.scoreboardWrapper}>
+    //               <button className={styles.userBoxRed} onClick={() => setShowExitWindow(prev => !prev)}>Exit</button>
+    //             </div>
+    //           ) : (
+    //             <div className={styles.scoreboardWrapper}>
+    //               <button className={styles.userBoxGreen} onClick={async () => {
+    //                 if (nextLocked) return;
+    //                 setNextLocked(true);
 
-//                 try {
-//                   const response: Game = await apiService.post(`/next/${gameId}`, {});
-//                   dispatch(hintUpdate(response.hints ?? []));
-//                   dispatch(hintUsageClear());
-//                   dispatch(answerUpdate(response.answer ?? ""));
-//                 } catch (err) {
-//                   console.error('error', err);
-//                   showErrorToast(`${err}`);
-//                 } finally {
-//                   setTimeout(() => setNextLocked(false), 500);
-//                 }
-//               }}>
-//                 Next
-//               </button>
-//             </div>
-//           )}
-//           {showExitWindow && (
-//             <div className={styles.modalOverlay}>
-//               <div className={styles.exitModal}>
-//                 <p>The game is still ongoing.<br />Are you sure you want to exit?</p>
-//                 <div className={styles.exitButtons}>
+    //                 try {
+    //                   const response: Game = await apiService.post(`/next/${gameId}`, {});
+    //                   dispatch(hintUpdate(response.hints ?? []));
+    //                   dispatch(hintUsageClear());
+    //                   dispatch(answerUpdate(response.answer ?? ""));
+    //                 } catch (err) {
+    //                   console.error('error', err);
+    //                   showErrorToast(`${err}`);
+    //                 } finally {
+    //                   setTimeout(() => setNextLocked(false), 500);
+    //                 }
+    //               }}>
+    //                 Next
+    //               </button>
+    //             </div>
+    //           )}
+    //           {showExitWindow && (
+    //             <div className={styles.modalOverlay}>
+    //               <div className={styles.exitModal}>
+    //                 <p>The game is still ongoing.<br />Are you sure you want to exit?</p>
+    //                 <div className={styles.exitButtons}>
     <>
       {transitionDirection !== "none" && (
         <motion.div

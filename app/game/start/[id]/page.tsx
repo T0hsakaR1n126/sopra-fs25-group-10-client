@@ -42,6 +42,7 @@ const GameStart = () => {
   const username = useSelector((state: { user: { username: string } }) => state.user.username);
   const gameCode = useSelector((state: { game: { gameCode: string } }) => state.game.gameCode);
   const playersNumber = useSelector((state: { game: { playersNumber: number } }) => state.game.playersNumber);
+  const ownerId = useSelector((state: { game: { ownerId: string } }) => state.game.ownerId);
 
   const [players, setPlayers] = useState<User[]>([]);
   const [gameCodeShown, setGameCodeShown] = useState<string | null>(null);
@@ -67,6 +68,11 @@ const GameStart = () => {
       setHasUnread(true);
     }
   }, [chatMessages]);
+
+  const ownerIdRef = useRef(ownerId);
+  useEffect(() => {
+    ownerIdRef.current = ownerId;
+  }, [ownerId]);
 
   // mini profile
   interface miniProfile {
@@ -97,6 +103,17 @@ const GameStart = () => {
         setOwnerName(response[0].username ?? "");
         dispatch(ownerUpdate(response[0].userId ?? ""));
 
+        if (String(userId) === String(ownerIdRef.current)) {
+          try {
+            await apiService.put(`/checkready/${gameId}`, {});
+            setCanStart(true);
+          } catch (error) {
+            if (error instanceof Error) {
+              return;
+            }
+          }
+        }
+
         const initialReady: Record<number, boolean> = response[0].readyMap ?? {};
         setReadyStatus(initialReady);
       } catch (error) {
@@ -125,7 +142,7 @@ const GameStart = () => {
 
         stompClient.subscribe(`/topic/ready/${gameId}/status`, (message) => {
           const map: Record<string, boolean> = JSON.parse(message.body);
-          console.log(">> STATUS RECEIVED:", map); 
+          console.log(">> STATUS RECEIVED:", map);
 
           const normalizedMap: Record<string, boolean> = {};
           for (const [k, v] of Object.entries(map)) {
@@ -137,7 +154,7 @@ const GameStart = () => {
 
         stompClient.subscribe(`/topic/ready/${gameId}/canStart`, (message) => {
           const can: boolean = JSON.parse(message.body);
-          console.log(">> STATUS RECEIVED:", can); 
+          console.log(">> STATUS RECEIVED:", can);
           setCanStart(can);
         });
 

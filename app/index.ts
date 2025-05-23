@@ -3,6 +3,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import userReducer from "./userSlice";
 import gameReducer from "./gameSlice"; // Import your game slice reducer
+import heartbeatReducer from "./heartbeatSlice"; // Import your heartbeat slice reducer
 
 // Redux Persist configuration
 const persistConfig = {
@@ -14,6 +15,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   user: userReducer, // user slice
   game: gameReducer,
+  heartbeat: heartbeatReducer,
 });
 
 // Wrap the rootReducer with persistReducer

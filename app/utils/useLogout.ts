@@ -8,6 +8,7 @@ import { logout } from "@/userSlice"; // Import the logout action from userSlice
 import { RootState } from "../"; // Import RootState to type the useSelector hook
 import { User } from "@/types/user";
 import { showSuccessToast } from "./showSuccessToast";
+import { disableHeartbeat } from "@/heartbeatSlice";
 
 export const useLogout = () => {
   const router = useRouter();
@@ -21,6 +22,7 @@ export const useLogout = () => {
 
   const handleLogout = async (): Promise<void> => {
     if (!currentUserId || !userToken) {
+      dispatch(disableHeartbeat());
       dispatch(logout());
       router.push("/");
       return;
@@ -34,6 +36,7 @@ export const useLogout = () => {
       await apiService.post<User>(`/logout`, { token: userToken });
 
       // Dispatch the logout action to reset Redux state
+      dispatch(disableHeartbeat());
       setTimeout(() => {
         dispatch(logout());
       }

@@ -35,6 +35,7 @@ interface UserState {
   gameResults: GameResults | null; // Store the last game result
   avatar: string | null; // Avatar URL or path
   level: number | null; // User level (e.g., "beginner", "intermediate", "expert")
+  justLoggedIn: boolean;
 }
 
 // Initial state setup for both guest and registered users
@@ -51,6 +52,7 @@ const initialState: UserState = {
   gameResults: null, // Initially, there are no results
   avatar: null, // Avatar URL or path
   level: null, // User level (e.g., "beginner", "intermediate", "expert")
+  justLoggedIn: false,
 };
 
 // Create the user slice
@@ -67,6 +69,7 @@ const userSlice = createSlice({
       state.status = action.payload.status;
       state.avatar = action.payload.avatar; // Set avatar if provided
       state.level = action.payload.level; // Set user level if provided
+      state.justLoggedIn = true; // Set justLoggedIn to true on login
     },
     // Logout action to reset the user state
     logout(state) {
@@ -82,6 +85,7 @@ const userSlice = createSlice({
       state.currentTeamId = null;
       state.avatar = null; // Clear avatar
       state.level = null; // Clear user level
+      state.justLoggedIn = false; // Reset justLoggedIn on logout
     },
     // Update the user details (username, etc.)
     updateUserInfo(state, action: PayloadAction<{ username: string, avatar: string, level: number }>) {
@@ -133,6 +137,11 @@ const userSlice = createSlice({
       state.currentTeamId = null;
       state.avatar = null; // Clear avatar
       state.level = null; // Clear user level
+      state.justLoggedIn = false; // Reset justLoggedIn on logout
+    },
+    // Reset justLoggedIn state
+    resetJustLoggedIn(state) {
+      state.justLoggedIn = false; // Reset justLoggedIn state
     },
   },
 });
@@ -141,7 +150,7 @@ const userSlice = createSlice({
 export const { 
   login, logout, updateUserInfo, setCurrentGameMode, 
   addGameHistory, updateLearningProgress, setTeamId, setGameResults,
-  clearUserState
+  clearUserState, resetJustLoggedIn
 } = userSlice.actions;
 
 export default userSlice.reducer;
