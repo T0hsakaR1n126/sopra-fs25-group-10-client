@@ -417,6 +417,8 @@ const GameBoard: React.FC = () => {
                       <li>🚫 Every hint deducts 20 scores.</li>
                       <li>❗ You can use a maximum of 5 hints.</li>
                       <li>➡️ You will start the next guess after submitting.</li>
+                      <li>🎯 You will get a 10% score discount in easy mode.</li>
+                      <li>🌐 Keep a good internet connection to avoid offline.</li>
                     </ul>
                   </div>
                 </>
@@ -678,6 +680,8 @@ const GameBoard: React.FC = () => {
                   <li>🚫 Every hint deducts 20 scores.</li>
                   <li>❗ You can use a maximum of 5 hints.</li>
                   <li>➡️ Click Next to start the next guess.</li>
+                  <li>🎯 You will get a 10% score discount in easy mode.</li>
+                  <li>🌐 Keep a good internet connection to avoid offline.</li>
                 </ul>
               </div>
             )}
