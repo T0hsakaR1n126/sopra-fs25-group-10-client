@@ -216,7 +216,7 @@ This section explains some intricacies of the game modes, instructions/ game rul
   - [ ] Choose difficulty levels
 - [ ] Add other themes such as cities, rivers, food etc.
 - [ ] Ability to end a round early  
-- [ ] 🔄 Live chat feature – partially implemented  
+- [ ] 🔄 Live chat feature in the ongoing game – Lobby and Game start chat available, can be extended for within game
 - [ ] Ability to set a different time limit in combat mode when players want to play another round.
 
 
