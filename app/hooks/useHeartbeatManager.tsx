@@ -6,7 +6,8 @@ import { User } from "@/types/user";
 import { showSuccessToast } from "@/utils/showSuccessToast";
 import { useRouter } from "next/navigation";
 import { clearGameState, resetHintUsage } from "@/gameSlice";
-import { resetJustLoggedIn } from "@/userSlice";
+import { logout, resetJustLoggedIn } from "@/userSlice";
+import { disableHeartbeat } from "@/heartbeatSlice";
 
 export const useHeartbeatManager = () => {
   const token = useSelector((state: RootState) => state.user.token);
@@ -29,28 +30,11 @@ export const useHeartbeatManager = () => {
         const response: User[] = await apiService.post(`/heartbeat/${userId}`, {});
         const user = response.find((user) => String(user.userId) === String(userId));
         if (!user) {
+          dispatch(disableHeartbeat());
           dispatch(clearGameState());
-        } else {
-          if (!hasReconnectedRef.current && !justLoggedIn) {
-            hasReconnectedRef.current = true;
-            if (user.isPlayingGame) {
-              showSuccessToast("You are reconnected! Redirecting to your game...");
-              setTimeout(() => {
-                dispatch(resetHintUsage());
-                router.push(`/game/${gameId}`);
-              }, 800);
-            } else {
-              showSuccessToast("You are reconnected! Redirecting to game hall...");
-              setTimeout(() => {
-                dispatch(clearGameState());
-                router.push("/game");
-              }, 800);
-            }
-          }
-        }
-        if (justLoggedIn) {
-          dispatch(resetJustLoggedIn());
-        }
+          dispatch(logout());
+          router.push("/");
+        } 
       } catch (error) {
         console.error("Error sending heartbeat:", error);
       }

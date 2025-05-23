@@ -180,6 +180,7 @@ const Lobby: React.FC = () => {
           questionCount: 1,
           lastSubmitTime: Date.now(),
           guessTimeList: [],
+          enterLegally: true,
         }
       ));
 
