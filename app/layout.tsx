@@ -21,7 +21,7 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: 'MapMaster',
   icons: {
-    icon: '/favicon.ico',
+    icon: '/map',
   },
 };
 

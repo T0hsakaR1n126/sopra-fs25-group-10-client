@@ -154,20 +154,16 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 <a name="illustration"></a>
 
 ## Illustrations and Game Flow
+This  `.gif` image depicts our game flow rather quickly. This is aimed to help players understand game flow easily. 
 
-![MapMaster demo](/assets/mapmaster.gif)
+![MapMaster demo](/assets/mapmaster2.gif)
 
 ### Main User Flow
+This section explains some intricacies of the game modes, instructions/ game rules, and the scoring logic.
+
 1. **User Registration, Login and Game Modes:**
     - Users can register with username and password.
     - After registration, users will log in and access the game home and they will be able choose one of the game modes.
-
-        <div style="text-align: center;">
-            <img src="assets/screenshots/2.png" alt="Register Login" width="500"/>
-        </div>
-        <div style="text-align: center;">
-            <img src="assets/screenshots/3.png" alt="Game Home" width="500"/>
-        </div>
     
 2. **Combat Mode and Lobby (Game Creation):**
     - We will see the most important mode called the "Combat" mode where multiple players can play a game together and compete against each other. 
@@ -175,32 +171,13 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
 
     **Combat mode** is where a group of players can compete against each other. A maximum number of 5 players are allowed (currently). There is one leader (who starts the game) and the rest can join either using a passcode or a game password. Once all the players are ready, the leader can start the game.
 
-    <div style="text-align: center;">
-        <img src="assets/screenshots/11.png" alt="Lobby" width="500"/>
-    </div>
-
-    <div style="text-align: center;">
-        <img src="assets/screenshots/12.png" alt="Game Creation and Player Wait" width="500"/>
-    </div>
-
 3. **Lobby (Game Joinining):**'
     Users can create or join game in the game lobby. Game lobby represents all the ongoing combat games. This also provides a "community/lobby chat" function similar to live stream chat. 
 
     Users can either join a game with open places or create their own game for other to join. If they are joining someone else's game, they can set status to ready. Once everyone is ready game leader gets to start the game. 
-    <div style="text-align: center;">
-        <img src="assets/screenshots/2_2.png" alt="Game Join" width="500"/>
-    </div>
-    <div style="text-align: center;">
-        <img src="assets/screenshots/2_4.png" alt="Game Join" width="500"/>
-    </div>
-
 
 4. **Game Start:**
     Game starts with the set time during the creation and clock runs till the end of that time. Each player can guess as many questions as they want during this time. Players will be able to see each other's score during the game.
-    <div style="text-align: center;">
-        <img src="assets/screenshots/13.png" alt="Game Start" width="500"/>
-    </div>
-
 
 5. **Scoring:**
     As depicted here, in the combat mode and the solo mode, each user can score a `maximum of 100 points per country`. If none of the hidden hints are used. Each hint will cost the user `20 points`. 
@@ -217,20 +194,6 @@ See the section about [deployment](https://facebook.github.io/create-react-app/d
     
     <div style="text-align: center;">
         <img src="assets/screenshots/23.png" alt="BackExit" width="500"/>
-    </div>
-
-    <div style="text-align: center;">
-        <img src="assets/screenshots/14.png" alt="Game Result" width="500"/>
-    </div>
-
-6. **Leader Board:**
-    <div style="text-align: center;">
-        <img src="assets/screenshots/2_5.png" alt="Game Result" width="500"/>
-    </div>
-
-7. **Learning:**
-    <div style="text-align: center;">
-        <img src="assets/screenshots/2_5.png" alt="Game Result" width="500"/>
     </div>
 
 6. **Other Modes:**
