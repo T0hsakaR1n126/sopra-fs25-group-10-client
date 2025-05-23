@@ -45,7 +45,6 @@ Frontend
 - **[Vercel](https://vercel.com/)** – Cloud platform for static sites and serverless functions, optimized for Next.js deployments.
 - **[STOMP.js](https://stomp-js.github.io/stomp-websocket/)** – A simple text-oriented messaging protocol used over WebSocket.
 - **[SockJS](https://github.com/sockjs)** – WebSocket emulation library ensuring fallback options for real-time communication.
-- **[OpenAI API](https://platform.openai.com/docs)** – Enables access to powerful AI models for intelligent text or chat interactions. We use it for clue generation for the countries dynamically.
 - **[Ant Design (AntD)](https://ant.design/)** – Enterprise-level React UI component library with elegant design and robust components.
 - **[React Toastify](https://fkhadra.github.io/react-toastify/introduction/)** – Toast notifications made easy with auto-dismiss and theming.
 - **[Redux Toolkit](https://redux-toolkit.js.org/)** – Modern and efficient Redux state management tool.
