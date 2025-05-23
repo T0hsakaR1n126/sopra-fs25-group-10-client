@@ -147,7 +147,7 @@ Finally, `npm run build` builds the app for production to the `build` folder.<br
 It correctly bundles React in production mode and optimizes the build for the best performance:\
 The build is minified, and the filenames include hashes.<br>
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+See the section about [deployment](https://nextjs.org/docs/deployment) for more information on deploying a Next.js application and on [vercel](https://vercel.com/docs/frameworks/nextjs)
 
 <a name="illustration"></a>
 
