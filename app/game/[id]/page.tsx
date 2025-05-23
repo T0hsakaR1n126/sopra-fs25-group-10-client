@@ -226,6 +226,45 @@ const GameBoard: React.FC = () => {
     }
   };
 
+  // avoid forward and backward
+  // const enterLegally = useSelector((state: { game: { enterLegally: boolean } }) => state.game.enterLegally);
+  // useEffect(() => {
+  //   if (!enterLegally) {
+  //     showErrorToast("You are entering game illegally! Redirect to game hall...");
+  //     dispatch(clearGameState());
+  //     router.push("/game");
+  //   }
+  // }, []);
+  // useEffect(() => {
+  //   const handler = (event: PopStateEvent) => {
+  //     event.preventDefault();
+  //     showErrorToast("You are trying to forward or backward! Give up the game and redirect to game hall...")
+  //     setTransitionDirection("out");
+  //     dispatch(hintUsageClear());
+  //     dispatch(clearGameState());
+  //     dispatch(resetQuestionStats());
+  //     setTimeout(async () => {
+  //       try {
+  //         window.dispatchEvent(new Event("globalLock"));
+  //         await apiService.put(`/giveup/${userId}`, {});
+  //         if (gameMode === "combat") {
+  //           router.push('/lobby');
+  //         } else {
+  //           router.push('/game');
+  //         }
+  //       } catch (error) {
+  //         console.error('Error leaving game:', error);
+  //       }
+  //     }, 800);
+  //   };
+
+  //   history.pushState(null, '', location.href);
+  //   window.addEventListener('popstate', handler);
+  //   return () => {
+  //     window.removeEventListener('popstate', handler);
+  //   };
+  // }, []);
+
   return (
     //     <div className={styles.container}>
     //       <div className={styles.topBar}>
@@ -321,6 +360,7 @@ const GameBoard: React.FC = () => {
                         className={styles.exitButton}
                         onClick={async () => {
                           setTransitionDirection("out");
+                          dispatch(hintUsageClear());
                           dispatch(clearGameState());
                           dispatch(resetQuestionStats());
                           setTimeout(async () => {

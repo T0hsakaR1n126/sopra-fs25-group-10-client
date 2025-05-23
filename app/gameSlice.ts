@@ -44,6 +44,7 @@ interface GameState {
   correctCount: number; //keeps correct answers of individual user
   lastSubmitTime: number,
   guessTimeList: number[],
+  enterLegally: boolean;
 }
 
 // Initial state setup for each game
@@ -69,6 +70,7 @@ const initialState: GameState = {
   correctCount: 0,
   lastSubmitTime: 0,
   guessTimeList: [],
+  enterLegally: false,
 };
 
 // Create the game slice

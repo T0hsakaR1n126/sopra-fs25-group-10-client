@@ -72,6 +72,7 @@ const CreateForm: React.FC = () => {
             correctCount: 0,
             lastSubmitTime: Date.now(),
             guessTimeList: [],
+            enterLegally: true,
           }
         ));
         router.push(`/game/start/${response.gameId}`);

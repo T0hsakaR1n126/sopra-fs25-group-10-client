@@ -444,7 +444,7 @@ const GameStart = () => {
         <div className={styles.buttonBar}>
           {username !== ownerName && (
             <button className={styles.fancyButton} onClick={toggleReady}>
-              {readyStatus[userId.toString()] ? "Cancel" : "Ready"}
+              {readyStatus[userId?.toString()] ? "Cancel" : "Ready"}
             </button>
           )}
           {username === ownerName && (
