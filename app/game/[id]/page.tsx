@@ -416,6 +416,7 @@ const GameBoard: React.FC = () => {
                       <li>🔒 The initial score for each country is 100.</li>
                       <li>🚫 Every hint deducts 20 scores.</li>
                       <li>❗ You can use a maximum of 5 hints.</li>
+                      <li>➡️ You will start the next guess after submitting.</li>
                     </ul>
                   </div>
                 </>
@@ -676,6 +677,7 @@ const GameBoard: React.FC = () => {
                   <li>🔒 The initial score for each country is 100.</li>
                   <li>🚫 Every hint deducts 20 scores.</li>
                   <li>❗ You can use a maximum of 5 hints.</li>
+                  <li>➡️ Click Next to start the next guess.</li>
                 </ul>
               </div>
             )}
