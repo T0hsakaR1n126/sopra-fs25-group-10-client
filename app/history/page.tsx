@@ -48,7 +48,7 @@ const GameHistoryPage: React.FC = () => {
               "totalQuestions" in item &&
               "gameTime" in item &&
               "gameCreationDate" in item &&
-              "modeType" in item && 
+              "modeType" in item &&
               "difficulty" in item
           )
         ) {
@@ -84,6 +84,10 @@ const GameHistoryPage: React.FC = () => {
   });
 
   const paginated = filtered.slice(start, end);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filter]);
 
   function formatTimestampToYMDHM(timestamp: string): string {
     const iso = timestamp.split(".")[0] + "Z";

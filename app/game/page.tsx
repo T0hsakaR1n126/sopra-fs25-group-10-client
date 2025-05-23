@@ -135,6 +135,13 @@ const Dashboard: React.FC = () => {
             setTimeout(async () => {
               window.dispatchEvent(new Event("navbarExit"));
               await new Promise((res) => setTimeout(res, 500));
+              try {
+                apiService.put(`/startcounter/${gameId}`, {});
+              } catch (err) {
+                if (err instanceof Error) {
+                  showErrorToast(err.message);
+                }
+              }
               router.push(`/game/${gameId}`);
             }, 1500);
           });
